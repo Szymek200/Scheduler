@@ -1,7 +1,9 @@
 from datetime import datetime, time, timedelta
+import Shift
 
+#calendar - collection of shifts in the month
 class Calendar:
-    def __init__(month):
+    def __init__(self, month):
         
         self.destination = today.replace(month=month, day=1)
         
@@ -19,11 +21,23 @@ def add_shift(self, shift_object):
         #else:
             #throw exception
 
+      
+        
+
 def add_shifts(self, shift_list):
         if isinstance(shift_list, list) and all(isinstance(item, Shift) for item in shift_list):
             for shift in shift_list:
                 self.shift_list.append(shift)
 
 def sortShifts(self):
-     self.shift_list.sort(key=lambda x: x.begin.)
+     #from the earliest to the latest
+     self.shift_list.sort(key=lambda x: x.begin)
      
+def getShift(self, myDate):
+     
+     #local variable
+
+     fitShifts = []
+
+
+
