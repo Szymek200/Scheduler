@@ -1,4 +1,12 @@
-import Calendar
+
+from calendar import Calendar
+from datetime import datetime, time, timedelta
+from itertools import combinations
+
+
+import utils
+
+from shift import ShiftPlace
 
 class Worker:
 
@@ -26,8 +34,7 @@ class Worker:
         
 
        
-    def requiredHours():
-        return timedelta(hours=etat * 160)
+   
         
             
 
@@ -38,20 +45,23 @@ class Worker:
             self.rqSchedule = rqSchedule
 
     def worksToday(self, date):
-        for shift in rqSchedule:
+        for shift in self.rqSchedule:
              if shift.begin.date == date or shift.end.date:
                     return True
         return False
 
     #different alrguments for rules
     def compliesRules(self, shift):
-        for rule in rules:
+        for rule in self.rules:
             if not rule.isFulfilled():
                 return False
         return True   
     
     def addWorkerShift(self, shift):
         self.acquiredSchedule.append(shift)
+
+    def addRule(self, rule):
+        self.rules.append(rule)
 
     def howManyHours(self):
 
@@ -66,7 +76,7 @@ class Worker:
         #every place multiplies availability
         #we count hours not shifts!?!?!?
 
-        for shift in self.rqSchedule:
+        for i in range(len(self.rqSchedule)):
             #we take sum of shifts which do not overlap
 
             #NEED TO CHECK RULES FOR THESE SHIFTS!!!!!
@@ -78,9 +88,9 @@ class Worker:
 
             #checking if combinations comly with rules
 
-            if(complyWithRules(shiftCombinations)==1):
-                if(hoursSum(shiftCombinations) > maxHours):
-                    maxHours = hoursSum(shiftCombinations)
+            if(self.complyWithRules(shiftCombinations)==1):
+                if(utils.hoursSum(shiftCombinations) > maxHours):
+                    maxHours = utils.hoursSum(shiftCombinations)
 
 
 

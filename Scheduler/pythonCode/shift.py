@@ -1,6 +1,5 @@
 from datetime import datetime, time, timedelta
-import Place
-import Worker
+
 
 class Shift:
 
@@ -14,7 +13,7 @@ class Shift:
         #available places he wants to work
 
     def duration(self):
-        return end - begin
+        return self.end - self.begin
     
     def __eq__(self, other):
 
@@ -42,6 +41,7 @@ class ShiftPlace(Shift):
      def __init__(self, begin, end, places, worker):
         super().__init__(begin, end)
 
+        from worker import Worker
         #available places he wants to work
         if isinstance(places, set):
             self.places = places
@@ -79,7 +79,7 @@ class ShiftPlace(Shift):
                 #set intersection
                 if self.places == shift.places:
                     return True 
-         return False
+            return False
         
 
 

@@ -1,11 +1,12 @@
+import calendar #system library for monthrange
 from datetime import datetime, time, timedelta
-import Shift
+from shift import Shift, ShiftPlace
 
 #calendar - collection of shifts in the month
 class Calendar:
     def __init__(self, month):
         
-        self.destination = today.replace(month=month, day=1)
+        self.destination = datetime.today.replace(month=month, day=1)
         
         #returns tuple - first day of the month - 0 
         #1 - number of days

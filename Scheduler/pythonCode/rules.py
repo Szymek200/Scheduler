@@ -2,19 +2,21 @@
 #cyclic = every: day, month, year
 
 from abc import ABC, abstractmethod
-import Shift
-import ShiftPlace
+from shift import Shift, ShiftPlace
+
 from datetime import datetime, time, timedelta, date
-import worker
-import place
+from worker import Worker
+from place import Place
 
 class Rule(ABC):
 
     idBase = 0
 
-    def __init__(self):
+    def __init__(self, name):
         self.id = idBase
         idBase+=1
+        self.type_name = "basic"
+        self.name = ""
     
     @abstractmethod
     def isFulfilled(self, shift):
@@ -28,19 +30,22 @@ class Rule(ABC):
 
     @abstractmethod
     def uncompliedShifts(self, shift):
+        pass
+
+    #returns required form options to create this rule
         
 #rules for requested Schedule
 
 #only in particular days it can work
 class UnorderedRule(Rule):
-
-    def __init__(self, shiftList):
-        super().__init__()
-
+    def __init__(self, shiftList, name):
+        super().__init__(name)
+        self.type_name = "unordered"
         if not(isinstance(shiftList, list) and all(isinstance(item, ShiftPlace) for item in shiftList)):
             return 0 #is there exception
 
         self.shiftList = shiftList
+        
     
     def isFulfilled(self, shift):
         for item in self.shiftList:
@@ -48,20 +53,26 @@ class UnorderedRule(Rule):
                 return True
 
         return False
+    
+
+
+
 
 class CyclicRule(Rule):
 
-    def __init__(self, begin, interval):
-        
+    def __init__(self, begin, interval, name):
+        super().__init__(name)
         if not (isinstance(begin, ShiftPlace)):
             return 0 #exception would be better
         
+        self.type_name = "cyclic"
         self.begin = begin
         self.interval = interval
+        self.name = name
 
     def isFulfilled(self, shift):
 
-        pointer = begin
+        pointer = self.begin
 
         if(pointer == shift):
             return True
@@ -77,18 +88,23 @@ class CyclicRule(Rule):
         
 
         return False
+    
+
 
 class WorkerRule(ABC):
     idBase = 0
 
-    def __init__(self, worker):
+    def __init__(self, worker, name):
+        
         self.id = idBase
         idBase+=1
 
         if not (isinstance(worker, Worker)):
             return 0
         
+        self.type_name = "basic worker"
         self.worker = worker
+        self.name = name
     
     @abstractmethod
     def isFulfilled(self):
@@ -96,10 +112,13 @@ class WorkerRule(ABC):
 
 
 #doesn't check weekends on the edge of months
-class FreeWeekend(WorkerRuleRule):
+class FreeWeekend(WorkerRule):
 
-    def __init__(self, worker):
-        self.worker = worker
+    def __init__(self, worker, name):
+        super().__init__(worker, name)
+      
+        self.type_name = "free weekends"
+        self.name = name
 
     def isFulfilled(self):
 
@@ -128,14 +147,16 @@ class FreeWeekend(WorkerRuleRule):
 
 
 class BetweenShifts(WorkerRule):
-    def __init__(self, worker):
-        self.worker = worker
+    def __init__(self, worker, name):
+        super().__init__(worker, name)
+     
+        self.type_name = "between shifts"
 
     def isFulfilled(self):
 
         
-        for i in range(1, len(worker.acquiredSchedule)):
-            if acquiredSchedule[i].begin - acquiredSchedule[i-1].end < timedelta(hours = 11):
+        for i in range(1, len(self.worker.acquiredSchedule)):
+            if self.worker.acquiredSchedule[i].begin - self.worker.acquiredSchedule[i-1].end < timedelta(hours = 11):
                 return False
         return True
             
@@ -146,13 +167,15 @@ class BetweenShifts(WorkerRule):
 class PlaceRule(ABC):
     idBase = 0
 
-    def __init__(self, place):
+    def __init__(self, place, name):
         self.id = idBase
+        self.name = name
         idBase+=1
 
         if not (isinstance(place, Place)):
             return 0
         
+        self.type_name = "basic place"
         self.place = place
     
     @abstractmethod

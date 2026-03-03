@@ -1,4 +1,4 @@
-import Calendar
+from calendar import Calendar
 
 class Place:
 
@@ -22,10 +22,13 @@ class Place:
             self.schedule = rqSchedule
     
     def compliesRules(self, shift, worker):
-        for rule in rules:
+        for rule in self.rules:
             if not rule.isFulfilled():
                 return False
         return True   
+    
+    def addRule(self, rule):
+        self.rules.append(rule)
 
     def availableShift(self, argShift):
         for shift in self.schedule:

@@ -1,8 +1,12 @@
-import Worker
-import Place
-import ShiftPlace
+from worker import Worker
+from place import Place
+from shift import ShiftPlace
 from itertools import product
+from datetime import datetime, time, timedelta
+from itertools import combinations
+from dataclasses import dataclass, field
 import copy
+import utils
 
 #for rotation purposes
 @dataclass #automatically creates init and rept methods
@@ -30,14 +34,14 @@ class Scheduler:
             #default value - 0
         #returns availability
         self.availability = [0] * len(workers)
-        requiredHours = [0] * len(workers)
+        self.availabilityrequiredHours = [0] * len(workers)
 
         #zip arrays together
         #workers, self.availability, self.requiredHours
 
         
     #sort workers on how many shifts they can take in relation to his demands(hours he needs to work)    
-    def availability():
+    def availability(self):
 
         #every place multiplies availability
         #we count hours not shifts!?!?!?
@@ -61,18 +65,18 @@ class Scheduler:
 
             #availability = all hours, even if shifts overlap
 
-            for shift in workers.rqSchedule:
+            for shift in self.workers.rqSchedule:
                 
                 
                 for place in shift.places:
-                    availability[i] += shift.duration()
+                    self.availability[i] += shift.duration()
             
-            availability[i] /= worker[i].requiredHours()
+            self.availability[i] /= self.workers[i].requiredHours()
 
 #checks if worker gave enough availability to complete required hours
 #max shift hours with shifts complying with Place Rules
 #returns how much hours he can work with complying with the rules
-    def requiredHours():
+    def requiredHours(self):
 
         for i in range(len(self.workers)):
              
@@ -80,28 +84,24 @@ class Scheduler:
 
             maxHours = timedelta(0)
 
-            for i in range(len(workers.rqSchedule)):
+            for i in range(len(self.workers.rqSchedule)):
             #second argument - number of shifts is combination
-                shiftCombinations = list(combinations(shifts, i))
+
+                #I dont know if combinations argument is correct
+                shiftCombinations = list(combinations(self.rqSchedule.shifts, i))
 
                 #checking if combinations comly with rules
 
-                if(complyWithRules(shiftCombinations)==1):
-                    if(hoursSum(shiftCombinations) > maxHours):
-                        maxHours = hoursSum(shiftCombinations)
+                if(self.complyWithRules(shiftCombinations)==1):
+                    if(utils.hoursSum(shiftCombinations) > maxHours):
+                        maxHours = utils.hoursSum(shiftCombinations)
 
-            requiredHours[i] = maxHours
+            self.requiredHours[i] = maxHours
         
-        return requiredHours
+       
                     
                     
-    #it can be static function
-    def hoursSum(shiftList):
-        hourSum = timedelta(0)
-        for shift in shiftList:
-            hourSum += shift.duration()
-        
-        return hourSum
+   
 
     #for every shift we check
     #place and worker rules
@@ -167,7 +167,7 @@ class Scheduler:
         w, a, r = zip(*combined)
         
         #back to lists
-        self.workers, self.availability, self.requiredHours = list(w), list(a), lists(r)
+        self.workers, self.availability, self.requiredHours = list(w), list(a), list(r)
 
         #easy shedule
         #if all fit at first place - great
