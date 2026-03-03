@@ -33,10 +33,21 @@ class Worker:
 
         
 
-       
-   
-        
+    def serializer(self):
+        return{
+            "__type__": "Worker",
+            "name": self.name,
+            "surname": self.surname,
+            "pesel":self.pesel,
+            "id":self.id,
+            "acquiredSchedule": self.acquiredSchedule,
+            #serializer for every rule
+            "rules":[rule.serializer() for rule in self.rules],
+            "etat": self.etat,
+            "rqSchedule":self.rqSchedule
             
+        }
+       
 
     def addRequestedSchedule(self, rqSchedule):
 
@@ -51,11 +62,19 @@ class Worker:
         return False
 
     #different alrguments for rules
-    def compliesRules(self, shift):
+    def compliesRules(self, shift, rule_class=None):
         for rule in self.rules:
+            # Jeśli podaliśmy klasę bazową, sprawdzamy czy reguła po niej dziedziczy.
+            # Jeśli nie, pomijamy ją i idziemy do następnej w pętli.
+            if rule_class is not None and not isinstance(rule, rule_class):
+                continue
+            
+            # Sprawdzamy czy reguła jest spełniona
+            # (Uwaga: upewnij się, czy w danym przypadku isFulfilled wymaga 'shift' czy nie)
             if not rule.isFulfilled():
                 return False
-        return True   
+                
+        return True 
     
     def addWorkerShift(self, shift):
         self.acquiredSchedule.append(shift)

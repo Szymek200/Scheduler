@@ -10,13 +10,19 @@ from PySide6.QtCore import Qt
 #regular expression - input veryfication
 from PySide6.QtGui import QRegularExpressionValidator
 from PySide6.QtCore import QRegularExpression
+from PySide6.QtGui import QCloseEvent
 
 #first filename than class name
 from worker import Worker
 from place import Place
 from shift import ShiftPlace
+from scheduler import Scheduler
+
+from drawSchedule import MainWindow as ScheduleWindow
 
 import rules
+
+from saving import Saving
 
 class MainWindow(QMainWindow):
 
@@ -35,19 +41,24 @@ class MainWindow(QMainWindow):
     hours_regex = QRegularExpression(r"^(?:[01]?\d|2[0-3])[:.][0-5]\d$")
 
     def __init__(self):
-        super().__init__()
 
+        super().__init__()
         self.workers_list = []
         self.place_list = []
 
+        setup_saver = Saving(self.workers_list, self.place_list, "MojeDane")
+    
+        self.workers_list, self.place_list = setup_saver.reading() 
+
+        
+        self.saving = Saving(self.workers_list, self.place_list, "MojeDane")
+       
+
         #rules typoe dictionary
-        self.worker_rules_registry = {
+        self.rules_registry = {
             "Free Weekend": self.create_empty_ui,
             "Between Shifts": self.create_between_shifts_ui, # Jeśli nie ma parametrów, dajemy empty
-            "Unordered Rule": self.create_unordered_ui
-        }
-
-        self.place_rules_registry = {
+            "Unordered Rule": self.create_unordered_ui,
             "Cyclic Rule": self.create_cyclic_ui,
             "Place Specific Rule": self.create_empty_ui
         }
@@ -73,6 +84,21 @@ class MainWindow(QMainWindow):
         self.ui.add_workplace.clicked.connect(self.add_workplace)
         self.ui.view_worker.clicked.connect(self.view_worker)
         self.ui.view_workplace.clicked.connect(self.view_workplace)
+
+        self.scheduler = Scheduler(self.workers_list, self.place_list)
+
+        self.ui.worker_availability.clicked.connect(self.open_schedule_view)
+
+    def closeEvent(self, event: QCloseEvent):
+        # This triggers right before the window closes
+       
+        
+        saver = Saving(self.workers_list, self.place_list, "MojeDane")
+        saver.saving()
+        
+        # Accept the event, meaning "Yes, go ahead and close the window now"
+        event.accept()
+
 
     def add_worker(self):
      
@@ -104,9 +130,6 @@ class MainWindow(QMainWindow):
         # .exec() zatrzymuje kod w tym miejscu, aż zamkniesz okno
         wynik = self.dialog.exec() 
 
-      
-      
-
         if wynik == 1: # Jeśli użytkownik kliknął OK (standard w QDialog)
            name = self.dialog.name_line.text()
            surname = self.dialog.surname_line.text()
@@ -116,7 +139,14 @@ class MainWindow(QMainWindow):
 
            self.workers_list.append(worker)
           
-           
+    def open_schedule_view(self):
+
+        #create new window and class
+        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list)
+  
+        self.ui.hide()
+
+        self.schedule_window.ui.show()
 
     def add_workplace(self):
      
@@ -182,7 +212,7 @@ class MainWindow(QMainWindow):
             btn_rules.clicked.connect(lambda checked = False, obj=self.place_list[i]: self.manage_rules(obj))
             
             # Wstawiamy przycisk do tabeli
-            self.ui.workplace_list.setCellWidget(i, 3, btn_rules)
+            self.dialog.workplace_list.setCellWidget(i, 3, btn_rules)
 
         self.dialog.show() 
 
@@ -276,17 +306,10 @@ class MainWindow(QMainWindow):
 
         self.dialog.combo_rule_type.clear()
 
-        # choosing worker or workplace register
-        if isinstance(self.current_entity, Worker):
-            registry = self.worker_rules_registry
-        else:
-            registry = self.place_rules_registry
-
         # building pages 
-        for rule_name, ui_builder in registry.items():
+        for rule_name, ui_builder in self.rules_registry.items():
             #name in combo box
             self.dialog.combo_rule_type.addItem(rule_name)
-            
             
             page_widget = ui_builder()
             self.dialog.rule_form.addWidget(page_widget)
@@ -394,10 +417,6 @@ class MainWindow(QMainWindow):
          # filling combo box
         self.shift_dialog.selected_place.addItems(place_names)
 
-        # Zabezpieczenie przed pustym polem
-        etat_text = self.shift_dialog.etat_line.text()
-        etat = int(etat_text) if etat_text else 0
-
         # 4. Wyświetlenie jako okno modalne
         # .exec() zatrzymuje kod w tym miejscu, aż zamkniesz okno
         wynik = self.shift_dialog.exec() 
@@ -405,11 +424,14 @@ class MainWindow(QMainWindow):
         if wynik == 1: # Jeśli użytkownik kliknął OK (standard w QDialog)
            begin = self.shift_dialog.begin_time.text()
            end = self.shift_dialog.end_time.text()
-           place = self.shift_dialog.selected_place.current_text()
+           place = self.shift_dialog.selected_place.currentText()
            
            shift = ShiftPlace(begin, end, place, sender)
 
            return shift
+        
+        self.shift_dialog.deleteLater()
+        return None
 
 
 #functions that return widget for selected rule

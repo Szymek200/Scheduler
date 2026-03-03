@@ -73,36 +73,6 @@ class Scheduler:
             
             self.availability[i] /= self.workers[i].requiredHours()
 
-#checks if worker gave enough availability to complete required hours
-#max shift hours with shifts complying with Place Rules
-#returns how much hours he can work with complying with the rules
-    def requiredHours(self):
-
-        for i in range(len(self.workers)):
-             
-             #we check every permutation that complies with the rules and take max
-
-            maxHours = timedelta(0)
-
-            for i in range(len(self.workers.rqSchedule)):
-            #second argument - number of shifts is combination
-
-                #I dont know if combinations argument is correct
-                shiftCombinations = list(combinations(self.rqSchedule.shifts, i))
-
-                #checking if combinations comly with rules
-
-                if(self.complyWithRules(shiftCombinations)==1):
-                    if(utils.hoursSum(shiftCombinations) > maxHours):
-                        maxHours = utils.hoursSum(shiftCombinations)
-
-            self.requiredHours[i] = maxHours
-        
-       
-                    
-                    
-   
-
     #for every shift we check
     #place and worker rules
     def complyWithRules(self, shift):
@@ -113,10 +83,11 @@ class Scheduler:
             return True
         return False
     
+    #check requirements
+    #if there is enough workers and shifts to work
     def schedulePossible(self):
 
-         #check requirements
-        #if there is enough workers and shifts to work
+         
         placeHours = timedelta(0)
 
         for place in self.places:
@@ -145,7 +116,6 @@ class Scheduler:
 
         return False 
         
-    
     def createPlan(self):
 
        
@@ -214,6 +184,14 @@ class Scheduler:
         if needRotation == True:
             self.rotations()
 
+    #request schedule which is designed only based on rules for worker
+    def defaultSchedule(self, worker):
+        worker.rqSchedule.clear()
+
+        for place in self.places:
+            for shift in place.schedule:
+                if(worker.compliesRules(shift)):
+                    worker.rqSchedule.append(shift)
 
     #returns list of people who could have work this shift
     #but currently can't because of other shifts
@@ -360,7 +338,7 @@ class Scheduler:
                  return 0
         return -1
                     
-
+    
 
 
 

@@ -8,6 +8,11 @@ from datetime import datetime, time, timedelta, date
 from worker import Worker
 from place import Place
 
+#there are different types of rules
+#rules of days worker is available - worker rules
+
+#rules deciding quality of work - break between work and so on
+
 class Rule(ABC):
 
     idBase = 0
@@ -32,11 +37,18 @@ class Rule(ABC):
     def uncompliedShifts(self, shift):
         pass
 
+    @abstractmethod
+    def serializer(self):
+        pass
+
     #returns required form options to create this rule
         
 #rules for requested Schedule
 
 #only in particular days it can work
+
+#RULE - can worker or place is available
+#only for schedule purpose
 class UnorderedRule(Rule):
     def __init__(self, shiftList, name):
         super().__init__(name)
@@ -54,10 +66,18 @@ class UnorderedRule(Rule):
 
         return False
     
+    def serializer(self):
+        return{
+            "__type__": "UnorderedRule",
+            "id": self.id,
+            "name": self.name,
+            'shiftList': [shift.serializer() for shift in self.shiftList]
+        }
+    
 
 
 
-
+#WORKER RULE
 class CyclicRule(Rule):
 
     def __init__(self, begin, interval, name):
@@ -89,6 +109,15 @@ class CyclicRule(Rule):
 
         return False
     
+    def serializer(self):
+        return{
+            "__type__": "CyclicRule",
+            "id": self.id,
+            "name": self.name,
+            "begin": self.begin.serializer(),
+            "interval": self.interval
+        }
+    
 
 
 class WorkerRule(ABC):
@@ -109,6 +138,11 @@ class WorkerRule(ABC):
     @abstractmethod
     def isFulfilled(self):
         pass
+
+    @abstractmethod
+    def serializer(self):
+        pass
+
 
 
 #doesn't check weekends on the edge of months
@@ -144,6 +178,14 @@ class FreeWeekend(WorkerRule):
                     emptyWeekend+=1
         
         return emptyWeekend
+    
+    def serializer(self):
+        return{
+            "__type__": "FreeWeekend",
+            "id": self.id,
+            "worker": self.worker.id,
+            "name": self.name
+        }
 
 
 class BetweenShifts(WorkerRule):
@@ -159,6 +201,14 @@ class BetweenShifts(WorkerRule):
             if self.worker.acquiredSchedule[i].begin - self.worker.acquiredSchedule[i-1].end < timedelta(hours = 11):
                 return False
         return True
+    
+    def serializer(self):
+        return{
+            "__type__": "BetweenShifts",
+            "id": self.id,
+            "worker": self.worker.id,
+            "name": self.name
+        }
             
 
         
@@ -180,6 +230,10 @@ class PlaceRule(ABC):
     
     @abstractmethod
     def isFulfilled(self):
+        pass
+
+    @abstractmethod
+    def serializer(self):
         pass
 
 

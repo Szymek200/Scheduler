@@ -1,4 +1,5 @@
 from calendar import Calendar
+import json
 
 class Place:
 
@@ -14,6 +15,18 @@ class Place:
 
         self.availableId += 1
         self.rules = []
+
+    
+    def serializer(self):
+        return{
+            "__type__": "Place",
+            "name": self.name,
+            "address":self.address,
+            "id":self.id,
+            "rules":[rule.serializer() for rule in self.rules],
+            "schedule":self.schedule
+            
+        }
         
 
     def addRequestedSchedule(self, rqSchedule):
@@ -51,3 +64,12 @@ class Place:
         if self.schedule.first.worker == None:
             return False
         return True
+    
+    def serializer(self):
+        return{
+            "__type__": "Place",
+            "name": self.name,
+            "address": self.address,
+            "id": self.id,
+            "rules": [rule.serializer() for rule in self.rules]
+        }

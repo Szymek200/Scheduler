@@ -1,4 +1,5 @@
 from datetime import datetime, time, timedelta
+import json
 
 
 class Shift:
@@ -16,7 +17,8 @@ class Shift:
         return self.end - self.begin
     
     def __eq__(self, other):
-
+        if not isinstance(other, Shift):
+            return False
         if self.begin == other.end and self.end == other.end:
             return True
         
@@ -31,6 +33,24 @@ class Shift:
                 return True
             
         return False
+    
+    def serializer(self):
+        return{
+            "__type__": "Shift",
+            "begin": self.begin,
+            "end": self.end
+        }
+    
+    #something like static class
+    #requires cls object - something similar to self in methods for objects
+
+    #@staticmethod doesn't have cls, so it needs already existing object to work on
+    @classmethod
+    def deserializer(cls, json_string):
+        #translate json file into data structure we understand
+        dane = json.loads(json_string)
+
+        return cls(begin = dane["begin"], end = dane["end"])
     
     
 
@@ -81,5 +101,21 @@ class ShiftPlace(Shift):
                     return True 
             return False
         
+
+     def serializer(self):
+        return{
+            "__type__": "ShiftPlace",
+            "begin": self.begin,
+            "end": self.end,
+            "place": self.place.id,
+            "worker": self.worker.id
+        }
+     
+     @classmethod
+     def deserializer(cls, json_string):
+        #translate json file into data structure we understand
+        dane = json.loads(json_string)
+
+        return cls(begin = dane["begin"], end = dane["end"], places = dane["places"], worker = dane["worker"])
 
 
