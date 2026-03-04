@@ -1,122 +1,154 @@
 [
     {
-        "__type__": "Place",
-        "name": "Burowiec",
-        "address": "Konna",
+        "__type__": "Worker",
+        "name": "Bartek",
+        "surname": "Nowak",
+        "pesel": "32687148172",
         "id": 1,
+        "acquiredSchedule": [],
         "rules": [
             {
                 "__type__": "CyclicRule",
-                "id": 0,
-                "name": "rano1",
+                "id": 8,
+                "name": "jeden",
                 "begin": {
                     "__type__": "ShiftPlace",
                     "begin": "2026-03-04T06:00:00",
                     "end": "2026-03-04T14:00:00",
                     "place": "Burowiec",
-                    "worker": null
+                    "worker": 1
                 },
-                "interval": 1
+                "interval": 7
             },
             {
                 "__type__": "CyclicRule",
-                "id": 1,
-                "name": "rano2",
+                "id": 9,
+                "name": "dwa",
                 "begin": {
                     "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T06:00:00",
-                    "end": "2026-03-04T14:00:00",
+                    "begin": "2026-03-05T06:00:00",
+                    "end": "2026-03-05T14:00:00",
                     "place": "Burowiec",
-                    "worker": null
+                    "worker": 1
                 },
-                "interval": 1
-            },
-            {
-                "__type__": "CyclicRule",
-                "id": 2,
-                "name": "popo1",
-                "begin": {
-                    "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T14:00:00",
-                    "end": "2026-03-04T22:00:00",
-                    "place": "Burowiec",
-                    "worker": null
-                },
-                "interval": 1
-            },
-            {
-                "__type__": "CyclicRule",
-                "id": 3,
-                "name": "popo2",
-                "begin": {
-                    "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T14:00:00",
-                    "end": "2026-03-04T22:00:00",
-                    "place": "Burowiec",
-                    "worker": null
-                },
-                "interval": 1
+                "interval": 7
             }
-        ]
+        ],
+        "etat": 60,
+        "rqSchedule": []
     },
     {
-        "__type__": "Place",
-        "name": "Zadole",
-        "address": "Ceglana",
-        "id": 1,
+        "__type__": "Worker",
+        "name": "Zosia",
+        "surname": "Samosia",
+        "pesel": "23719823792",
+        "id": 2,
+        "acquiredSchedule": [],
         "rules": [
             {
                 "__type__": "CyclicRule",
-                "id": 4,
-                "name": "rano1",
-                "begin": {
-                    "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T06:00:00",
-                    "end": "2026-03-04T14:00:00",
-                    "place": "Burowiec",
-                    "worker": null
-                },
-                "interval": 1
-            },
-            {
-                "__type__": "CyclicRule",
-                "id": 5,
-                "name": "rano2",
-                "begin": {
-                    "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T06:00:00",
-                    "end": "2026-03-04T14:00:00",
-                    "place": "Burowiec",
-                    "worker": null
-                },
-                "interval": 1
-            },
-            {
-                "__type__": "CyclicRule",
-                "id": 6,
-                "name": "popo1",
+                "id": 10,
+                "name": "codzienie",
                 "begin": {
                     "__type__": "ShiftPlace",
                     "begin": "2026-03-04T14:00:00",
                     "end": "2026-03-04T22:00:00",
                     "place": "Burowiec",
-                    "worker": null
-                },
-                "interval": 1
-            },
-            {
-                "__type__": "CyclicRule",
-                "id": 7,
-                "name": "popo2",
-                "begin": {
-                    "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T14:00:00",
-                    "end": "2026-03-04T22:00:00",
-                    "place": "Burowiec",
-                    "worker": null
+                    "worker": 2
                 },
                 "interval": 1
             }
-        ]
+        ],
+        "etat": 120,
+        "rqSchedule": []
+    },
+    {
+        "__type__": "Worker",
+        "name": "Artur",
+        "surname": "Niedzielski",
+        "pesel": "48127984231",
+        "id": 3,
+        "acquiredSchedule": [],
+        "rules": [
+            {
+                "__type__": "CyclicRule",
+                "id": 11,
+                "name": "jeden przerwa",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T14:00:00",
+                    "end": "2026-03-04T22:00:00",
+                    "place": "Burowiec",
+                    "worker": 3
+                },
+                "interval": 3
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 12,
+                "name": "jeden przerwy",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T06:00:00",
+                    "end": "2026-03-04T14:00:00",
+                    "place": "Zadole",
+                    "worker": 3
+                },
+                "interval": 3
+            }
+        ],
+        "etat": 0,
+        "rqSchedule": []
+    },
+    {
+        "__type__": "Worker",
+        "name": "Basia",
+        "surname": "Pawlowska",
+        "pesel": "23147812374",
+        "id": 4,
+        "acquiredSchedule": [],
+        "rules": [
+            {
+                "__type__": "CyclicRule",
+                "id": 13,
+                "name": "codziennie",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T06:00:00",
+                    "end": "2026-03-04T14:00:00",
+                    "place": "Burowiec",
+                    "worker": 4
+                },
+                "interval": 1
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 14,
+                "name": "codziennie zadole",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T06:00:00",
+                    "end": "2026-03-04T01:04:00",
+                    "place": "Zadole",
+                    "worker": 4
+                },
+                "interval": 1
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 15,
+                "name": "popo",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T14:00:00",
+                    "end": "2026-03-04T22:00:00",
+                    "place": "Zadole",
+                    "worker": 4
+                },
+                "interval": 1
+            }
+        ],
+        "etat": 0,
+        "rqSchedule": []
     }
 ]

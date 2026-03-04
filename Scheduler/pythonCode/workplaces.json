@@ -100,7 +100,7 @@
                     "begin": "2026-03-04T14:00:00",
                     "end": "2026-03-04T22:00:00",
                     "place": "Burowiec",
-                    "worker": null
+                    "worker": 1
                 },
                 "interval": 1
             },
@@ -113,7 +113,7 @@
                     "begin": "2026-03-04T14:00:00",
                     "end": "2026-03-04T22:00:00",
                     "place": "Burowiec",
-                    "worker": null
+                    "worker": 1
                 },
                 "interval": 1
             }

@@ -147,7 +147,7 @@ class MainWindow(QObject):
     def open_schedule_view(self):
 
         #create new window and class
-        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list)
+        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler, self.ui)
   
         self.ui.hide()
 

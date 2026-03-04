@@ -91,7 +91,7 @@ class Scheduler:
         placeHours = timedelta(0)
 
         for place in self.places:
-            for shift in place.shedule:
+            for shift in place.schedule:
                 placeHours += shift.duration
 
         #etat workers hours
@@ -185,13 +185,50 @@ class Scheduler:
             self.rotations()
 
     #request schedule which is designed only based on rules for worker
-    def defaultSchedule(self, worker):
+    def defaultSchedule(self, worker, year, month):
         worker.rqSchedule.clear()
+        
+        # 1. Obliczamy ramy czasowe dla wybranego miesiąca
+        start_date = datetime(year, month, 1, 0, 0, 0)
+        
+        # Obliczamy koniec miesiąca
+        if month == 12:
+            end_date = datetime(year + 1, 1, 1, 0, 0, 0) - timedelta(seconds=1)
+        else:
+            end_date = datetime(year, month + 1, 1, 0, 0, 0) - timedelta(seconds=1)
+        
+        # 2. GENEROWANIE PUSTEGO HARMONOGRAMU DLA MIEJSC
+        for place in self.places:
+            place.schedule.clear()
+            
+            for rule in place.rules:
+                if rule.type_name == "cyclic":
+                    pointer_begin = rule.begin.begin
+                    pointer_end = rule.begin.end
+                    interval = rule.interval
+                    
+                    # Przewijanie do obecnego miesiąca
+                    if pointer_begin < start_date:
+                        delta_days = (start_date.date() - pointer_begin.date()).days
+                        jumps = (delta_days // interval) + (1 if delta_days % interval != 0 else 0)
+                        pointer_begin += timedelta(days=jumps * interval)
+                        pointer_end += timedelta(days=jumps * interval)
 
+                    while pointer_begin <= end_date:
+                        new_shift = ShiftPlace(pointer_begin, pointer_end, place, None)
+                        place.schedule.append(new_shift)
+                        
+                        pointer_begin += timedelta(days=interval)
+                        pointer_end += timedelta(days=interval)
+
+        # 3. GENEROWANIE REQUEST SCHEDULE DLA PRACOWNIKA
         for place in self.places:
             for shift in place.schedule:
-                if(worker.compliesRules(shift)):
-                    worker.rqSchedule.append(shift)
+                # UŻYWAMY FILTRU: sprawdzamy tylko reguły dziedziczące po rules.Rule
+                if worker.compliesRules(shift, rules.Rule):
+                    worker_shift = copy.deepcopy(shift)
+                    worker_shift.worker = worker
+                    worker.rqSchedule.append(worker_shift)
 
     #returns list of people who could have work this shift
     #but currently can't because of other shifts

@@ -15,6 +15,7 @@ class Place:
 
         self.availableId += 1
         self.rules = []
+        self.schedule = []
 
     
     def serializer(self):

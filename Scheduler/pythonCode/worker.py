@@ -74,7 +74,7 @@ class Worker:
             
             # Sprawdzamy czy reguła jest spełniona
             # (Uwaga: upewnij się, czy w danym przypadku isFulfilled wymaga 'shift' czy nie)
-            if not rule.isFulfilled():
+            if not rule.isFulfilled(shift):
                 return False
                 
         return True 
@@ -89,7 +89,7 @@ class Worker:
 
         workingTime = timedelta(0)
         for shift in self.acquiredSchedule:
-            timedelta += shift.duration()
+            workingTime += shift.duration()
         return workingTime
         
     #how many hours maximum with rules it could work    
