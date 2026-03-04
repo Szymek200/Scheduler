@@ -4,13 +4,16 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QTableWidg
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile
 #for creating rule form
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QSpinBox, QListWidget, QListWidgetItem
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QSpinBox, QListWidget, QListWidgetItem, QHBoxLayout
 from PySide6.QtCore import Qt
 
 #regular expression - input veryfication
 from PySide6.QtGui import QRegularExpressionValidator
 from PySide6.QtCore import QRegularExpression
 from PySide6.QtGui import QCloseEvent
+
+#different opening and closing window
+from PySide6.QtCore import QObject 
 
 #first filename than class name
 from worker import Worker
@@ -19,12 +22,12 @@ from shift import ShiftPlace
 from scheduler import Scheduler
 
 from drawSchedule import MainWindow as ScheduleWindow
-
+from datetime import datetime, time, timedelta
 import rules
 
 from saving import Saving
 
-class MainWindow(QMainWindow):
+class MainWindow(QObject):
 
 
   
@@ -75,9 +78,12 @@ class MainWindow(QMainWindow):
         if not ui_file.open(QFile.ReadOnly):
             print(f"File not found {ui_path}")
             sys.exit(-1)
-            
-        self.ui = loader.load(ui_file, self)
+        #when we don't pass self argument our window won't have parent -which is good
+        self.ui = loader.load(ui_file)
         ui_file.close()
+
+        #our own method for closing window
+        self.ui.closeEvent = self.closeEvent
 
         #activating button
         self.ui.add_worker.clicked.connect(self.add_worker)
@@ -96,8 +102,7 @@ class MainWindow(QMainWindow):
         saver = Saving(self.workers_list, self.place_list, "MojeDane")
         saver.saving()
         
-        # Accept the event, meaning "Yes, go ahead and close the window now"
-        event.accept()
+        event.accept() #allow to close the window
 
 
     def add_worker(self):
@@ -183,21 +188,21 @@ class MainWindow(QMainWindow):
         ui_file.open(QFile.ReadOnly)
         
         
-        self.dialog = loader.load(ui_file, self.ui)
+        self.place_view = loader.load(ui_file, self.ui)
         ui_file.close()
 
-        self.dialog.return_to_main.clicked.connect(self.return_to_main)
+        self.place_view.return_to_main.clicked.connect(self.return_to_main)
         
 
         for i in range(len(self.place_list)):
             #create new row
-            self.dialog.workplace_list.insertRow(i)
+            self.place_view.workplace_list.insertRow(i)
 
 
     
             #adding content to columnsclea
-            self.dialog.workplace_list.setItem(i, 0, QTableWidgetItem(self.place_list[i].name))
-            self.dialog.workplace_list.setItem(i, 1, QTableWidgetItem(self.place_list[i].address))
+            self.place_view.workplace_list.setItem(i, 0, QTableWidgetItem(self.place_list[i].name))
+            self.place_view.workplace_list.setItem(i, 1, QTableWidgetItem(self.place_list[i].address))
            
 
             #adding button to last column
@@ -212,9 +217,9 @@ class MainWindow(QMainWindow):
             btn_rules.clicked.connect(lambda checked = False, obj=self.place_list[i]: self.manage_rules(obj))
             
             # Wstawiamy przycisk do tabeli
-            self.dialog.workplace_list.setCellWidget(i, 3, btn_rules)
+            self.place_view.workplace_list.setCellWidget(i, 3, btn_rules)
 
-        self.dialog.show() 
+        self.place_view.show() 
 
     def view_worker(self):
 
@@ -227,21 +232,21 @@ class MainWindow(QMainWindow):
         ui_file.open(QFile.ReadOnly)
         
         
-        self.dialog = loader.load(ui_file, self.ui)
+        self.workers_view = loader.load(ui_file, self.ui)
         ui_file.close()
 
-        self.dialog.return_to_main.clicked.connect(self.return_to_main)
+        self.workers_view.return_to_main.clicked.connect(self.return_to_main)
 
         for i in range(len(self.workers_list)):
             #create new row
-            self.dialog.workers_list.insertRow(i)
+            self.workers_view.workers_list.insertRow(i)
 
 
     
             #adding content to columns
-            self.dialog.workers_list.setItem(i, 0, QTableWidgetItem(self.workers_list[i].name))
-            self.dialog.workers_list.setItem(i, 1, QTableWidgetItem(self.workers_list[i].surname))
-            self.dialog.workers_list.setItem(i, 2, QTableWidgetItem(self.workers_list[i].pesel))
+            self.workers_view.workers_list.setItem(i, 0, QTableWidgetItem(self.workers_list[i].name))
+            self.workers_view.workers_list.setItem(i, 1, QTableWidgetItem(self.workers_list[i].surname))
+            self.workers_view.workers_list.setItem(i, 2, QTableWidgetItem(self.workers_list[i].pesel))
 
             #adding button to last column
 
@@ -255,20 +260,25 @@ class MainWindow(QMainWindow):
             btn_rules.clicked.connect(lambda checked = False, obj=self.workers_list[i]: self.manage_rules(obj))
             
             # Wstawiamy przycisk do tabeli
-            self.dialog.workers_list.setCellWidget(i, 3, btn_rules)
+            self.workers_view.workers_list.setCellWidget(i, 3, btn_rules)
 
 
        
 
          # 4. Wyświetlenie jako okno modalne
         # .exec() zatrzymuje kod w tym miejscu, aż zamkniesz okno
-        self.dialog.show() 
+        self.workers_view.show() 
 
     def return_to_main(self):
 
 
+        #close view if exists
+        if hasattr(self, 'workers_view'):
+            self.workers_view.close()
     
-        self.dialog.close()
+    
+        if hasattr(self, 'place_view'):
+            self.place_view.close()
 
         #focus on main window
 
@@ -295,60 +305,79 @@ class MainWindow(QMainWindow):
         loader = QUiLoader()
         ui_file = QFile(ui_path)
         ui_file.open(QFile.ReadOnly)
-        self.dialog = loader.load(ui_file, self.ui)
+        self.rules_dialog = loader.load(ui_file, self.ui)
         ui_file.close()
 
         #cleaning widget
-        while self.dialog.rule_form.count() > 0:
-            widget = self.dialog.rule_form.widget(0)
-            self.dialog.rule_form.removeWidget(widget)
+        while self.rules_dialog.rule_form.count() > 0:
+            widget = self.rules_dialog.rule_form.widget(0)
+            self.rules_dialog.rule_form.removeWidget(widget)
             widget.deleteLater()
 
-        self.dialog.combo_rule_type.clear()
+        self.rules_dialog.combo_rule_type.clear()
 
         # building pages 
         for rule_name, ui_builder in self.rules_registry.items():
+
+      
+
             #name in combo box
-            self.dialog.combo_rule_type.addItem(rule_name)
+            self.rules_dialog.combo_rule_type.addItem(rule_name)
             
             page_widget = ui_builder()
-            self.dialog.rule_form.addWidget(page_widget)
+            self.rules_dialog.rule_form.addWidget(page_widget)
 
-        self.dialog.combo_rule_type.currentIndexChanged.connect(self.dialog.rule_form.setCurrentIndex)
+        self.rules_dialog.combo_rule_type.currentIndexChanged.connect(self.rules_dialog.rule_form.setCurrentIndex)
 
-        self.dialog.return_view.clicked.connect(self.dialog.close)
-        self.dialog.add_rule.clicked.connect(self.add_rule_handler)
-        self.dialog.delete_rule.clicked.connect(self.delete_rule_handler)
+        self.rules_dialog.return_view.clicked.connect(self.rules_dialog.close)
+        self.rules_dialog.add_rule.clicked.connect(self.add_rule_handler)
+        self.rules_dialog.delete_rule.clicked.connect(self.delete_rule_handler)
 
         self.refresh_rules_table()
-        self.dialog.exec()
+        self.rules_dialog.exec()
 
 
     #show all rules in rule window
     def refresh_rules_table(self):
-        self.dialog.rules_list.setRowCount(0)
+        # 1. KRYTYCZNE: Ustawiamy liczbę kolumn i ich nagłówki!
+        self.rules_dialog.rules_list.setColumnCount(2)
+        self.rules_dialog.rules_list.setHorizontalHeaderLabels(["Rule Details", "Type"])
+        
+        # 2. Czyścimy wiersze przed ponownym załadowaniem
+        self.rules_dialog.rules_list.setRowCount(0)
         
         for i, rule in enumerate(self.current_entity.rules):
-            self.dialog.rules_list.insertRow(i)
+            self.rules_dialog.rules_list.insertRow(i)
            
-           #if rule does not have name attribute
-            nazwa = getattr(rule, 'name', 'Brak nazwy')
+            # 3. Wyciągamy typ i nazwę (zabezpieczone getattr)
+            typ = rule.type_name
+            nazwa_reguly = getattr(rule, 'name', 'Brak nazwy')
             
-            self.dialog.rules_list.setItem(i, 0, QTableWidgetItem(nazwa))
-            self.dialog.rules_list.setItem(i, 1, QTableWidgetItem(rule.type_name))
+            # Łączymy to w jeden czytelny tekst
+            wyswietlany_tekst = f" {nazwa_reguly}"
+            
+            # 4. Dodajemy elementy do kolumny 0 i kolumny 1
+            self.rules_dialog.rules_list.setItem(i, 0, QTableWidgetItem(wyswietlany_tekst))
+            self.rules_dialog.rules_list.setItem(i, 1, QTableWidgetItem(typ))
+            
+        # Opcjonalnie: Rozszerzenie kolumn, żeby ładnie wyglądały
+        self.rules_dialog.rules_list.horizontalHeader().setStretchLastSection(True)
 
 
     def add_rule_handler(self):
-        rule_type = self.dialog.combo_rule_type.currentText()
-        rule_name = self.dialog.rule_name.text()
+        rule_type = self.rules_dialog.combo_rule_type.currentText()
+        rule_name = self.rules_dialog.rule_name.text()
         
         # currectly chosen page number
-        current_page = self.dialog.rule_form.currentWidget()
+        current_page = self.rules_dialog.rule_form.currentWidget()
         
         new_rule = None
 
         if rule_type == "Free Weekend":
             new_rule = rules.FreeWeekend(self.current_entity, rule_name)
+
+        elif rule_type == "Between Shifts":
+            new_rule = rules.BetweenShifts(self.current_entity, rule_name)
             
         elif rule_type == "Unordered Rule":
             shift_list_widget = current_page.findChild(QListWidget, "unordered_shift_list")
@@ -371,21 +400,24 @@ class MainWindow(QMainWindow):
         elif rule_type == "Cyclic Rule":
             
             interval_widget = current_page.findChild(QSpinBox, "interval_input")
-            if interval_widget:
+            
+            # Sprawdzamy, czy użytkownik ustawił "begin_shift" przyciskiem i zapisał to w obiekcie strony
+            if interval_widget and hasattr(current_page, 'selected_begin_shift') and current_page.selected_begin_shift:
                 interval = interval_widget.value()
-                # creating cyclic rule
-                begin_shift = self.new_shift(self.current_entity)
-                if begin_shift:
-                    new_rule = rules.CyclicRule(begin_shift, interval, rule_name)
+                begin_shift = current_page.selected_begin_shift
+                new_rule = rules.CyclicRule(begin_shift, interval, rule_name)
+            else:
+                # Opcjonalnie: tutaj można dodać okienko z błędem dla użytkownika (QMessageBox)
+                print("Błąd: Musisz najpierw ustawić zmianę początkową (Set Begin Shift)!")
 
         if new_rule:
             self.current_entity.rules.append(new_rule)
             self.refresh_rules_table()
-            self.dialog.rule_name.clear()
+            self.rules_dialog.rule_name.clear()
 
 
     def delete_rule_handler(self):
-        selected_row = self.dialog.rules_list.currentRow()
+        selected_row = self.rules_dialog.rules_list.currentRow()
         
         if selected_row >= 0:
             # delete rule from memory
@@ -394,45 +426,68 @@ class MainWindow(QMainWindow):
             self.refresh_rules_table()
 
     def new_shift(self, sender):
-        ui_path = os.path.join(os.path.dirname(__file__), "GUI", "new_shift.ui")
-       
+        ui_path = os.path.join(os.path.dirname(__file__), "GUI", "new_datetime_shift.ui")
         loader = QUiLoader()
         ui_file = QFile(ui_path)
         ui_file.open(QFile.ReadOnly)
-        
-        
         self.shift_dialog = loader.load(ui_file, self.ui)
         ui_file.close()
 
-        validator = QRegularExpressionValidator(self.hours_regex, self)
-        #adding to particular ui object
-        self.shift_dialog.begin_time.setValidator(validator)
-
-        self.shift_dialog.end_time.setValidator(validator)
-
-        place_names =[]
-        for place in self.place_list:
-            place_names.append(place.name)
-
-         # filling combo box
+        # filling combobox with places
+        place_names = [place.name for place in self.place_list]
         self.shift_dialog.selected_place.addItems(place_names)
 
-        # 4. Wyświetlenie jako okno modalne
-        # .exec() zatrzymuje kod w tym miejscu, aż zamkniesz okno
+        now = datetime.now()
+        # Tworzymy obiekt QDateTime z dzisiejszą datą i aktualną godziną z widgetu
+        current_begin = self.shift_dialog.begin_datetime.dateTime()
+        current_begin.setDate(now.date()) 
+        
+        self.shift_dialog.begin_datetime.setDateTime(current_begin)
+        self.shift_dialog.end_datetime.setDateTime(current_begin) # End też startuje z dzisiejszą datą
+
+        # 2. Automatyczna zmiana daty w end_time przy zmianie w begin_time
+        # Używamy sygnału dateTimeChanged
+        self.shift_dialog.begin_datetime.dateTimeChanged.connect(self.sync_shift_dates)
+
+        # show window
         wynik = self.shift_dialog.exec() 
 
-        if wynik == 1: # Jeśli użytkownik kliknął OK (standard w QDialog)
-           begin = self.shift_dialog.begin_time.text()
-           end = self.shift_dialog.end_time.text()
-           place = self.shift_dialog.selected_place.currentText()
-           
-           shift = ShiftPlace(begin, end, place, sender)
+        if wynik == 1: #ok ok button is clicked
+            # 1. Pobieramy obiekty QDateTime z widgetów
+            begin_qt = self.shift_dialog.begin_datetime.dateTime() 
+            end_qt = self.shift_dialog.end_datetime.dateTime()
+            
+            # 2. Konwertujemy na natywny datetime Pythona
+            begin_dt = begin_qt.toPython() 
+            end_dt = end_qt.toPython()
+            
+            # 3. Pobieramy wybrane miejsce
+            place_name = self.shift_dialog.selected_place.currentText()
+            
+            # 4. Tworzymy obiekt ShiftPlace (pamiętaj, że ShiftPlace przyjmuje set miejsc)
+            shift = ShiftPlace(begin_dt, end_dt, place_name, sender)
 
-           return shift
+            return shift
         
         self.shift_dialog.deleteLater()
         return None
 
+
+    def sync_shift_dates(self, new_datetime):
+        """
+        Automatycznie ustawia datę w end_time na taką samą, 
+        jaka została wybrana w begin_time, zachowując godzinę w end_time.
+        """
+        # Pobieramy aktualny stan end_time
+        end_dt = self.shift_dialog.end_datetime.dateTime()
+        
+        # Podmieniamy tylko datę na tę z new_datetime (begin_time)
+        end_dt.setDate(new_datetime.date())
+        
+        # Blokujemy sygnały na chwilę, aby uniknąć pętli, jeśli end_time też coś wyzwala
+        self.shift_dialog.end_datetime.blockSignals(True)
+        self.shift_dialog.end_datetime.setDateTime(end_dt)
+        self.shift_dialog.end_datetime.blockSignals(False)
 
 #functions that return widget for selected rule
 
@@ -448,14 +503,41 @@ class MainWindow(QMainWindow):
     def create_cyclic_ui(self):
         """Form for cyclic rule"""
         page = QWidget()
-        layout = QFormLayout()
+        layout = QVBoxLayout()
         
+        # 1. Pole do wpisywania interwału
+        form_layout = QFormLayout()
         spin_box = QSpinBox()
         spin_box.setMinimum(1)
-        # BARDZO WAŻNE: Nadajemy objectName, żeby potem łatwo wyciągnąć z niego dane!
         spin_box.setObjectName("interval_input") 
+        form_layout.addRow("Interval (days):", spin_box)
+        layout.addLayout(form_layout)
+
+        # 2. Przycisk i etykieta dla zmiany (Shift)
+        shift_layout = QHBoxLayout()
+        btn_set_shift = QPushButton("Set Begin Shift")
+        lbl_shift_info = QLabel("No shift selected")
         
-        layout.addRow("Interval (days):", spin_box)
+        # Zmienna wewnątrz obiektu strony, by przechować wybraną zmianę
+        page.selected_begin_shift = None
+
+        # Funkcja wewnętrzna wywoływana po kliknięciu "Set Begin Shift"
+        def handle_set_shift():
+            shift = self.new_shift(self.current_entity)
+            if shift:
+                page.selected_begin_shift = shift # Zapisujemy zmianę w obiekcie strony
+                
+                # Aktualizujemy tekst etykiety
+                początek = shift.begin.strftime('%Y-%m-%d %H:%M')
+                miejsce = getattr(shift.place, 'name', shift.place)
+                lbl_shift_info.setText(f"Selected: {początek} at {miejsce}")
+
+        btn_set_shift.clicked.connect(handle_set_shift)
+
+        shift_layout.addWidget(btn_set_shift)
+        shift_layout.addWidget(lbl_shift_info)
+        layout.addLayout(shift_layout)
+
         page.setLayout(layout)
         return page
 
@@ -480,20 +562,19 @@ class MainWindow(QMainWindow):
         
         if new_shift_obj:
             # currently opened shift list
-            current_page = self.dialog.rule_form.currentWidget()
+            current_page = self.rules_dialog.rule_form.currentWidget()
             shift_list = current_page.findChild(QListWidget, "unordered_shift_list")
             
             if shift_list:
-                # text for user
-                display_text = f"Shift: {new_shift_obj.begin} - {new_shift_obj.end} at {new_shift_obj.places}"
+               
+                początek = new_shift_obj.begin.strftime('%Y-%m-%d %H:%M')
+                koniec = new_shift_obj.end.strftime('%H:%M')
+                miejsce = new_shift_obj.place
                 
+                display_text = f"Shift: {początek} - {koniec} at {miejsce}"
                 
                 item = QListWidgetItem(display_text)
-                
-                # we save shiftPlace object
                 item.setData(Qt.UserRole, new_shift_obj) 
-                
-                # add to the view
                 shift_list.addItem(item)
     
     def create_unordered_ui(self):
@@ -523,4 +604,11 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
     window.ui.show() 
+
+
+    # saving when command Q
+    app.aboutToQuit.connect(window.saving.saving) 
+
+    window.ui.show()
+
     sys.exit(app.exec())

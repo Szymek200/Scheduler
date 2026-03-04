@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>515</width>
-    <height>339</height>
+    <width>542</width>
+    <height>314</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,36 +29,16 @@
     <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>370</x>
-     <y>20</y>
-     <width>58</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>New shift</string>
-   </property>
-  </widget>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>80</y>
+     <x>40</x>
+     <y>60</y>
      <width>415</width>
      <height>80</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="2">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>End</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="1">
      <widget class="QLabel" name="label_4">
       <property name="text">
@@ -66,8 +46,15 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QDateTimeEdit" name="begin_datetime"/>
+    <item row="0" column="2">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>End</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QComboBox" name="selected_place"/>
     </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label_2">
@@ -76,11 +63,11 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QComboBox" name="selected_place"/>
+    <item row="0" column="1">
+     <widget class="QDateEdit" name="begin_time"/>
     </item>
     <item row="0" column="3">
-     <widget class="QDateTimeEdit" name="end_datetime"/>
+     <widget class="QDateEdit" name="end_time"/>
     </item>
    </layout>
   </widget>

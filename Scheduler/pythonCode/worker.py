@@ -21,13 +21,16 @@ class Worker:
         self.pesel = pesel
 
         self.id = self.availableId
-        self.availableId += 1
+        Worker.availableId += 1
 
         self.notEnoughHours = False
         self.etat = etat
 
         #schedule that worker will actually work
         self.acquiredSchedule = []
+
+        #requested schedule
+        self.rqSchedule = [] #
 
         self.rules = []
 
@@ -40,11 +43,11 @@ class Worker:
             "surname": self.surname,
             "pesel":self.pesel,
             "id":self.id,
-            "acquiredSchedule": self.acquiredSchedule,
+            "acquiredSchedule": [shift.serializer() for shift in self.acquiredSchedule],
             #serializer for every rule
             "rules":[rule.serializer() for rule in self.rules],
             "etat": self.etat,
-            "rqSchedule":self.rqSchedule
+            "rqSchedule":[shift.serializer() for shift in self.rqSchedule]
             
         }
        

@@ -1,0 +1,36 @@
+[
+    {
+        "__type__": "Place",
+        "name": "kmacscs",
+        "address": "31141321",
+        "id": 1,
+        "rules": [
+            {
+                "__type__": "CyclicRule",
+                "id": 0,
+                "name": "",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T00:00:00",
+                    "end": "2026-03-04T00:00:00",
+                    "place": "kmacscs",
+                    "worker": 1
+                },
+                "interval": 1
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 1,
+                "name": "",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T00:00:00",
+                    "end": "2026-03-04T00:00:00",
+                    "place": "kmacscs",
+                    "worker": 1
+                },
+                "interval": 1
+            }
+        ]
+    }
+]

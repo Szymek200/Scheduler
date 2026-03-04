@@ -18,10 +18,10 @@ class Rule(ABC):
     idBase = 0
 
     def __init__(self, name):
-        self.id = idBase
-        idBase+=1
+        self.id = Rule.idBase
+        Rule.idBase+=1
         self.type_name = "basic"
-        self.name = ""
+        self.name = name
     
     @abstractmethod
     def isFulfilled(self, shift):
@@ -54,7 +54,7 @@ class UnorderedRule(Rule):
         super().__init__(name)
         self.type_name = "unordered"
         if not(isinstance(shiftList, list) and all(isinstance(item, ShiftPlace) for item in shiftList)):
-            return 0 #is there exception
+            return None #is there exception
 
         self.shiftList = shiftList
         
@@ -74,6 +74,27 @@ class UnorderedRule(Rule):
             'shiftList': [shift.serializer() for shift in self.shiftList]
         }
     
+    #shifts which cause conflict
+    def uncompliedShifts(self, shift):
+           
+         
+           if isinstance(shift, ShiftPlace):
+                for item in self.shiftList:
+                    if (item != shift):
+                        #this shift does not comply with the rule
+                        return shift
+                return #when this shift is complies with rules
+           
+           if isinstance(shift, list ) and all(isinstance(item, ShiftPlace) for item in shift):
+                issue_shifts = []
+                for elem in shift:
+                    for item in self.shiftList:
+                        if (item != shift):
+                            issue_shifts.append(elem)
+                return issue_shifts #when this shift is complies with rules
+
+        
+    
 
 
 
@@ -83,7 +104,7 @@ class CyclicRule(Rule):
     def __init__(self, begin, interval, name):
         super().__init__(name)
         if not (isinstance(begin, ShiftPlace)):
-            return 0 #exception would be better
+            return None 
         
         self.type_name = "cyclic"
         self.begin = begin
@@ -118,6 +139,25 @@ class CyclicRule(Rule):
             "interval": self.interval
         }
     
+    #check which shifts cause conflicts
+    def uncompliedShifts(self, shift):
+       
+        if isinstance(shift, ShiftPlace):
+            if not self.isFulfilled(shift):
+                return shift  
+            return None      
+            
+        # Jeśli przekazano LISTĘ zmian
+        elif isinstance(shift, list) and all(isinstance(item, ShiftPlace) for item in shift):
+            issue_shifts = []
+            for item in shift:
+                if not self.isFulfilled(item):
+                    issue_shifts.append(item)
+            return issue_shifts #returns shifts which cause conflict
+            
+        return None
+
+    
 
 
 class WorkerRule(ABC):
@@ -125,11 +165,11 @@ class WorkerRule(ABC):
 
     def __init__(self, worker, name):
         
-        self.id = idBase
-        idBase+=1
+        self.id = WorkerRule.idBase
+        WorkerRule.idBase+=1
 
         if not (isinstance(worker, Worker)):
-            return 0
+            return
         
         self.type_name = "basic worker"
         self.worker = worker
@@ -183,7 +223,7 @@ class FreeWeekend(WorkerRule):
         return{
             "__type__": "FreeWeekend",
             "id": self.id,
-            "worker": self.worker.id,
+            "worker": self.worker.id if hasattr(self, 'worker') else None, #when this rule is used for place
             "name": self.name
         }
 
@@ -206,7 +246,7 @@ class BetweenShifts(WorkerRule):
         return{
             "__type__": "BetweenShifts",
             "id": self.id,
-            "worker": self.worker.id,
+            "worker": self.worker.id if hasattr(self, 'worker') else None,
             "name": self.name
         }
             
@@ -218,12 +258,12 @@ class PlaceRule(ABC):
     idBase = 0
 
     def __init__(self, place, name):
-        self.id = idBase
+        self.id = PlaceRule.idBase
         self.name = name
-        idBase+=1
+        PlaceRule.idBase+=1
 
         if not (isinstance(place, Place)):
-            return 0
+            return None
         
         self.type_name = "basic place"
         self.place = place
@@ -239,3 +279,60 @@ class PlaceRule(ABC):
 
 
 
+# Dodaj na samym końcu pliku rules.py
+
+def deserialize_rule(rule_data, entity):
+    """
+    Deserialization for every rule
+    """
+    rule_type = rule_data.get("__type__")
+    rule_name = rule_data.get("name", "")
+    rule_id = rule_data.get("id")
+
+    new_rule = None
+
+   
+    if rule_type == "FreeWeekend":
+        new_rule = FreeWeekend(entity, rule_name)
+
+    elif rule_type == "BetweenShifts":
+        new_rule = BetweenShifts(entity, rule_name)
+
+    elif rule_type == "UnorderedRule":
+        shifts_array = []
+        for s_data in rule_data.get("shiftList", []):
+            try:
+                begin_dt = datetime.fromisoformat(s_data["begin"])
+                end_dt = datetime.fromisoformat(s_data["end"])
+            except (ValueError, TypeError, KeyError):
+                print(f"Błąd parsowania daty w UnorderedRule: {s_data}")
+                continue
+            
+            # Jeśli entity to pracownik, przypisz go do zmiany. Jeśli miejsce - zostaw None
+            worker_ref = entity if isinstance(entity, Worker) else None
+            shift = ShiftPlace(begin_dt, end_dt, s_data.get("place", ""), worker_ref)
+            shifts_array.append(shift)
+            
+        new_rule = UnorderedRule(shifts_array, rule_name)
+
+    elif rule_type == "CyclicRule":
+        begin_data = rule_data.get("begin", {})
+        interval = rule_data.get("interval", 1)
+        
+        try:
+            begin_dt = datetime.fromisoformat(begin_data["begin"])
+            end_dt = datetime.fromisoformat(begin_data["end"])
+        except (ValueError, TypeError, KeyError):
+            print(f"Błąd parsowania daty w CyclicRule: {begin_data}")
+            return None
+        
+        worker_ref = entity if isinstance(entity, Worker) else None
+        begin_shift = ShiftPlace(begin_dt, end_dt, begin_data.get("place", ""), worker_ref)
+        
+        new_rule = CyclicRule(begin_shift, interval, rule_name)
+
+    # Przywracanie ID, jeśli udało się stworzyć regułę
+    if new_rule and rule_id is not None:
+        new_rule.id = rule_id
+
+    return new_rule
