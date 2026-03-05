@@ -8,6 +8,8 @@ from dataclasses import dataclass, field
 import copy
 import utils
 
+from rules import *
+
 #for rotation purposes
 @dataclass #automatically creates init and rept methods
 class WorkerData:
@@ -225,7 +227,7 @@ class Scheduler:
         for place in self.places:
             for shift in place.schedule:
                 # UŻYWAMY FILTRU: sprawdzamy tylko reguły dziedziczące po rules.Rule
-                if worker.compliesRules(shift, rules.Rule):
+                if worker.compliesRulesRequest(shift, Rule):
                     worker_shift = copy.deepcopy(shift)
                     worker_shift.worker = worker
                     worker.rqSchedule.append(worker_shift)

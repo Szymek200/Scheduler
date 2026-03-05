@@ -63,7 +63,7 @@
         "__type__": "Place",
         "name": "Zadole",
         "address": "Ceglana",
-        "id": 1,
+        "id": 2,
         "rules": [
             {
                 "__type__": "CyclicRule",
@@ -73,7 +73,7 @@
                     "__type__": "ShiftPlace",
                     "begin": "2026-03-04T06:00:00",
                     "end": "2026-03-04T14:00:00",
-                    "place": "Burowiec",
+                    "place": "Zadole",
                     "worker": null
                 },
                 "interval": 1
@@ -86,7 +86,7 @@
                     "__type__": "ShiftPlace",
                     "begin": "2026-03-04T06:00:00",
                     "end": "2026-03-04T14:00:00",
-                    "place": "Burowiec",
+                    "place": "Zadole",
                     "worker": null
                 },
                 "interval": 1
@@ -99,7 +99,7 @@
                     "__type__": "ShiftPlace",
                     "begin": "2026-03-04T14:00:00",
                     "end": "2026-03-04T22:00:00",
-                    "place": "Burowiec",
+                    "place": "Zadole",
                     "worker": null
                 },
                 "interval": 1
@@ -112,7 +112,7 @@
                     "__type__": "ShiftPlace",
                     "begin": "2026-03-04T14:00:00",
                     "end": "2026-03-04T22:00:00",
-                    "place": "Burowiec",
+                    "place": "Zadole",
                     "worker": null
                 },
                 "interval": 1

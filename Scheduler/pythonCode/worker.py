@@ -79,6 +79,34 @@ class Worker:
                 
         return True 
     
+
+    def compliesRulesRequest(self, shift, rule_class=None):
+        import rules # Import wewnątrz, żeby uniknąć problemów
+        
+        # Zbieramy reguły do sprawdzenia
+        rules_to_check = [r for r in self.rules if rule_class is None or isinstance(r, rule_class)]
+        
+        # Jeśli pracownik nie ma żadnych reguł, zależy to od Twojej logiki biznesowej.
+        # Obecnie zakładamy, że jeśli nie ma reguł, to nie ma zdefiniowanej dostępności.
+        if not rules_to_check:
+            return False
+            
+        # 1. Logika dla reguł dostępności (CyclicRule, UnorderedRule)
+        # Zmiana musi pasować do PRZYNAJMNIEJ JEDNEJ reguły (logika OR)
+        if rule_class == rules.Rule:
+            for rule in rules_to_check:
+                if rule.isFulfilled(shift):
+                    return True # Wystarczy jedna pasująca reguła!
+            return False
+            
+        # 2. Logika dla innych reguł (np. odpoczynek - WorkerRule)
+        # Zmiana musi spełniać WSZYSTKIE reguły tego typu (logika AND)
+        for rule in rules_to_check:
+            if not rule.isFulfilled(shift):
+                return False
+                
+        return True
+    
     def addWorkerShift(self, shift):
         self.acquiredSchedule.append(shift)
 

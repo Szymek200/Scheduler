@@ -104,7 +104,7 @@ class CyclicRule(Rule):
     def __init__(self, begin, interval, name):
         super().__init__(name)
         if not (isinstance(begin, ShiftPlace)):
-            return None 
+            raise TypeError("Parametr 'begin' musi być instancją ShiftPlace")
         
         self.type_name = "cyclic"
         self.begin = begin
@@ -112,22 +112,27 @@ class CyclicRule(Rule):
         self.name = name
 
     def isFulfilled(self, shift):
+       
+        if not isinstance(shift, ShiftPlace):
+            return False
 
-        pointer = self.begin
-
-        if(pointer == shift):
-            return True
+        #checked shift must be after original shift in rule
+        if shift.begin < self.begin.begin:
+            return False
+            
+        #difference between shifts
+        delta = shift.begin - self.begin.begin
         
-
-
-        while(pointer < shift):
-        
-            pointer += self.interval
-
-            if(pointer == shift):
+       
+        if delta.days % self.interval == 0 and delta.seconds == 0:
+            
+            #check place
+            miejsce_badane = getattr(shift.place, 'name', shift.place)
+            miejsce_cyklu = getattr(self.begin.place, 'name', self.begin.place)
+            
+            if miejsce_badane == miejsce_cyklu:
                 return True
-        
-
+                    
         return False
     
     def serializer(self):
