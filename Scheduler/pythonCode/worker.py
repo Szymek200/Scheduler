@@ -125,12 +125,13 @@ class Worker:
 
         #every place multiplies availability
         #we count hours not shifts!?!?!?
+        maxHours = 0
 
         for i in range(len(self.rqSchedule)):
             #we take sum of shifts which do not overlap
 
             #NEED TO CHECK RULES FOR THESE SHIFTS!!!!!
-            maxHours = 0
+            
 
             #availability = all hours, even if shifts overlap
 
@@ -141,6 +142,8 @@ class Worker:
             if(self.complyWithRules(shiftCombinations)==1):
                 if(utils.hoursSum(shiftCombinations) > maxHours):
                     maxHours = utils.hoursSum(shiftCombinations)
+
+        return maxHours
 
 
 

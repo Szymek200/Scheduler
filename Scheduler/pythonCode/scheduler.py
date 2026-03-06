@@ -31,6 +31,8 @@ class Scheduler:
             return -1
         
         
+        self.placeSchedule = False
+        self.ready = 0
         self.places = places
         self.workers = workers
             #default value - 0
@@ -50,8 +52,6 @@ class Scheduler:
 
         #everything is a reference
 
-  
-
         #number of workers
         size = len(self.workers)
 
@@ -67,13 +67,13 @@ class Scheduler:
 
             #availability = all hours, even if shifts overlap
 
-            for shift in self.workers.rqSchedule:
+            for shift in self.workers[i].rqSchedule:
                 
                 
                 for place in shift.places:
                     self.availability[i] += shift.duration()
             
-            self.availability[i] /= self.workers[i].requiredHours()
+            self.availability[i] /= self.workers[i].etat
 
     #for every shift we check
     #place and worker rules
@@ -99,14 +99,14 @@ class Scheduler:
         #etat workers hours
 
         etatWorkersHours = timedelta(0)
-        nonEtatHours = 0
+        nonEtatHours = timedelta(0)
         for worker in self.workers:
 
             if worker.etat == 0:
-                nonEtatHours += worker.availability()
+                nonEtatHours += timedelta(hours = worker.availability())
                 
             else:
-                etatWorkersHours += worker.etat
+                etatWorkersHours += timedelta(hours=worker.etat)
 
         #all etat workers will work
         if(placeHours < etatWorkersHours):
@@ -117,10 +117,15 @@ class Scheduler:
             return True
 
         return False 
-        
-    def createPlan(self):
+    
 
-       
+        
+    def createPlan(self, year, month):
+        
+        self.placeSchedule = False
+
+        for worker in self.workers:
+            self.defaultSchedule(worker, year, month)
 
         if self.schedulePossible() == False:
             return -1
@@ -130,16 +135,16 @@ class Scheduler:
         self.requiredHours()
 
         #sorting all lists for rising availability
-        combined = list(zip(self.workers, self.availability, self.requiredHours))
+        combined = list(zip(self.workers, self.availability))
 
         #sort by availability
         combined.sort(key=lambda x: x[1])
 
         #returns tuples
-        w, a, r = zip(*combined)
+        w, a = zip(*combined)
         
         #back to lists
-        self.workers, self.availability, self.requiredHours = list(w), list(a), list(r)
+        self.workers, self.availability, = list(w), list(a)
 
         #easy shedule
         #if all fit at first place - great
@@ -186,11 +191,9 @@ class Scheduler:
         if needRotation == True:
             self.rotations()
 
-    #request schedule which is designed only based on rules for worker
-    def defaultSchedule(self, worker, year, month):
-        worker.rqSchedule.clear()
-        
-        # 1. Obliczamy ramy czasowe dla wybranego miesiąca
+        self.ready = 1
+
+    def defaultPlaceSchedule(self, year, month):
         start_date = datetime(year, month, 1, 0, 0, 0)
         
         # Obliczamy koniec miesiąca
@@ -222,6 +225,16 @@ class Scheduler:
                         
                         pointer_begin += timedelta(days=interval)
                         pointer_end += timedelta(days=interval)
+        
+        self.placeSchedule = True
+
+    #request schedule which is designed only based on rules for worker
+    def defaultSchedule(self, worker, year, month):
+        worker.rqSchedule.clear()
+
+        #defaultPlaceSchedule required first
+        if self.placeSchedule == False:
+            self.defaultPlaceSchedule( year, month)
 
         # 3. GENEROWANIE REQUEST SCHEDULE DLA PRACOWNIKA
         for place in self.places:

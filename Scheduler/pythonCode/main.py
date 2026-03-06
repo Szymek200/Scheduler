@@ -4,7 +4,10 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QTableWidg
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile
 #for creating rule form
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QSpinBox, QListWidget, QListWidgetItem, QHBoxLayout
+from PySide6.QtWidgets import (QApplication, QMainWindow, QPushButton, QTableWidgetItem, 
+                               QWidget, QVBoxLayout, QFormLayout, QLabel, QSpinBox, 
+                               QListWidget, QListWidgetItem, QHBoxLayout, QComboBox, 
+                               QDialog, QDialogButtonBox)
 from PySide6.QtCore import Qt
 
 #regular expression - input veryfication
@@ -84,12 +87,19 @@ class MainWindow(QObject):
 
         #our own method for closing window
         self.ui.closeEvent = self.closeEvent
+        self.ui.info_label.setText(f"")
 
         #activating button
         self.ui.add_worker.clicked.connect(self.add_worker)
         self.ui.add_workplace.clicked.connect(self.add_workplace)
         self.ui.view_worker.clicked.connect(self.view_worker)
         self.ui.view_workplace.clicked.connect(self.view_workplace)
+
+        self.ui.workplace_availability.clicked.connect(self.view_workplace_aval)
+
+        self.ui.create_schedule.clicked.connect(self.create_schedule)
+
+        self.ui.worker_schedule.clicked.connect(self.worker_schedule)
 
         self.scheduler = Scheduler(self.workers_list, self.place_list)
 
@@ -104,6 +114,65 @@ class MainWindow(QObject):
         
         event.accept() #allow to close the window
 
+    def view_workplace_aval(self):
+        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'place', self.ui)
+  
+        self.ui.hide()
+
+        self.schedule_window.ui.show()
+
+    def create_schedule(self):
+        dialog = QDialog(self.ui)
+        dialog.setWindowTitle("Select Schedule Period")
+        layout = QFormLayout(dialog)
+
+        # 2. Tworzymy pole wyboru roku (QSpinBox)
+        year_spin = QSpinBox()
+        year_spin.setRange(2024, 2050) # Zakres lat
+        year_spin.setValue(datetime.today().year) # Domyślnie obecny rok
+
+        # 3. Tworzymy listę rozwijaną dla miesiąca (QComboBox)
+        month_combo = QComboBox()
+        months = ["January", "February", "March", "April", "May", "June", 
+                  "July", "August", "September", "October", "November", "December"]
+        month_combo.addItems(months)
+        month_combo.setCurrentIndex(datetime.today().month - 1) # Domyślnie obecny miesiąc
+
+        # Dodajemy elementy do okna
+        layout.addRow("Year:", year_spin)
+        layout.addRow("Month:", month_combo)
+
+        # 4. Przyciski OK / Cancel
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        layout.addWidget(buttons)
+
+        # 5. Wyświetlamy okno i czekamy na reakcję
+        if dialog.exec() == QDialog.Accepted:
+            selected_year = year_spin.value()
+            selected_month = month_combo.currentIndex() + 1
+            
+            # Resetujemy flagę gotowości przed nowym generowaniem
+            self.scheduler.ready = 0
+            
+            # Uruchamiamy algorytm dla wybranego miesiąca
+            result = self.scheduler.createPlan(selected_year, selected_month)
+            
+            if result == -1:
+                self.ui.info_label.setText("Failed to create schedule (Check availability).")
+            else:
+                self.ui.info_label.setText(f"Schedule created for {months[selected_month-1]} {selected_year}")
+
+
+        
+
+    def worker_schedule(self):
+        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'worker', self.ui)
+  
+        self.ui.hide()
+
+        self.schedule_window.ui.show()
 
     def add_worker(self):
      
@@ -147,7 +216,7 @@ class MainWindow(QObject):
     def open_schedule_view(self):
 
         #create new window and class
-        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler, self.ui)
+        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'request_worker', self.ui)
   
         self.ui.hide()
 

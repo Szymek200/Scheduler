@@ -173,7 +173,400 @@
             }
         ],
         "etat": 120,
-        "rqSchedule": []
+        "rqSchedule": [
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T14:00:00",
+                "end": "2026-03-05T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T14:00:00",
+                "end": "2026-03-09T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T14:00:00",
+                "end": "2026-03-11T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T14:00:00",
+                "end": "2026-03-17T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T14:00:00",
+                "end": "2026-03-21T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T14:00:00",
+                "end": "2026-03-23T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T14:00:00",
+                "end": "2026-03-27T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T14:00:00",
+                "end": "2026-03-05T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T14:00:00",
+                "end": "2026-03-09T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T14:00:00",
+                "end": "2026-03-11T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T14:00:00",
+                "end": "2026-03-17T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T14:00:00",
+                "end": "2026-03-21T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T14:00:00",
+                "end": "2026-03-23T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T14:00:00",
+                "end": "2026-03-27T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Burowiec",
+                "worker": 2
+            }
+        ]
     },
     {
         "__type__": "Worker",
@@ -211,7 +604,288 @@
             }
         ],
         "etat": 0,
-        "rqSchedule": []
+        "rqSchedule": [
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Burowiec",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T06:00:00",
+                "end": "2026-03-04T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T06:00:00",
+                "end": "2026-03-07T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T06:00:00",
+                "end": "2026-03-10T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T06:00:00",
+                "end": "2026-03-13T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T06:00:00",
+                "end": "2026-03-16T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T06:00:00",
+                "end": "2026-03-19T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T06:00:00",
+                "end": "2026-03-22T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T06:00:00",
+                "end": "2026-03-25T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T06:00:00",
+                "end": "2026-03-28T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T06:00:00",
+                "end": "2026-03-31T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T06:00:00",
+                "end": "2026-03-04T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T06:00:00",
+                "end": "2026-03-07T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T06:00:00",
+                "end": "2026-03-10T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T06:00:00",
+                "end": "2026-03-13T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T06:00:00",
+                "end": "2026-03-16T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T06:00:00",
+                "end": "2026-03-19T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T06:00:00",
+                "end": "2026-03-22T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T06:00:00",
+                "end": "2026-03-25T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T06:00:00",
+                "end": "2026-03-28T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T06:00:00",
+                "end": "2026-03-31T14:00:00",
+                "place": "Zadole",
+                "worker": 3
+            }
+        ]
     },
     {
         "__type__": "Worker",
@@ -1464,7 +2138,400 @@
             }
         ],
         "etat": 160,
-        "rqSchedule": []
+        "rqSchedule": [
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T06:00:00",
+                "end": "2026-03-04T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T06:00:00",
+                "end": "2026-03-05T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T06:00:00",
+                "end": "2026-03-06T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T06:00:00",
+                "end": "2026-03-07T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T06:00:00",
+                "end": "2026-03-08T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T06:00:00",
+                "end": "2026-03-09T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T06:00:00",
+                "end": "2026-03-10T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T06:00:00",
+                "end": "2026-03-11T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T06:00:00",
+                "end": "2026-03-12T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T06:00:00",
+                "end": "2026-03-13T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T06:00:00",
+                "end": "2026-03-14T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T06:00:00",
+                "end": "2026-03-15T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T06:00:00",
+                "end": "2026-03-16T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T06:00:00",
+                "end": "2026-03-17T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T06:00:00",
+                "end": "2026-03-18T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T06:00:00",
+                "end": "2026-03-19T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T06:00:00",
+                "end": "2026-03-20T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T06:00:00",
+                "end": "2026-03-21T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T06:00:00",
+                "end": "2026-03-22T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T06:00:00",
+                "end": "2026-03-23T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T06:00:00",
+                "end": "2026-03-24T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T06:00:00",
+                "end": "2026-03-25T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T06:00:00",
+                "end": "2026-03-26T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T06:00:00",
+                "end": "2026-03-27T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T06:00:00",
+                "end": "2026-03-28T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T06:00:00",
+                "end": "2026-03-29T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T06:00:00",
+                "end": "2026-03-30T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T06:00:00",
+                "end": "2026-03-31T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T06:00:00",
+                "end": "2026-03-04T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T06:00:00",
+                "end": "2026-03-05T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T06:00:00",
+                "end": "2026-03-06T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T06:00:00",
+                "end": "2026-03-07T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T06:00:00",
+                "end": "2026-03-08T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T06:00:00",
+                "end": "2026-03-09T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T06:00:00",
+                "end": "2026-03-10T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T06:00:00",
+                "end": "2026-03-11T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T06:00:00",
+                "end": "2026-03-12T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T06:00:00",
+                "end": "2026-03-13T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T06:00:00",
+                "end": "2026-03-14T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T06:00:00",
+                "end": "2026-03-15T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T06:00:00",
+                "end": "2026-03-16T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T06:00:00",
+                "end": "2026-03-17T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T06:00:00",
+                "end": "2026-03-18T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T06:00:00",
+                "end": "2026-03-19T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T06:00:00",
+                "end": "2026-03-20T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T06:00:00",
+                "end": "2026-03-21T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T06:00:00",
+                "end": "2026-03-22T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T06:00:00",
+                "end": "2026-03-23T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T06:00:00",
+                "end": "2026-03-24T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T06:00:00",
+                "end": "2026-03-25T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T06:00:00",
+                "end": "2026-03-26T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T06:00:00",
+                "end": "2026-03-27T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T06:00:00",
+                "end": "2026-03-28T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T06:00:00",
+                "end": "2026-03-29T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T06:00:00",
+                "end": "2026-03-30T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T06:00:00",
+                "end": "2026-03-31T14:00:00",
+                "place": "Zadole",
+                "worker": 5
+            }
+        ]
     },
     {
         "__type__": "Worker",
@@ -1489,7 +2556,204 @@
             }
         ],
         "etat": 160,
-        "rqSchedule": []
+        "rqSchedule": [
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Burowiec",
+                "worker": 6
+            }
+        ]
     },
     {
         "__type__": "Worker",
@@ -1527,7 +2791,120 @@
             }
         ],
         "etat": 0,
-        "rqSchedule": []
+        "rqSchedule": [
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Burowiec",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Burowiec",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Burowiec",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Burowiec",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Burowiec",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Burowiec",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T06:00:00",
+                "end": "2026-03-07T14:00:00",
+                "place": "Zadole",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T06:00:00",
+                "end": "2026-03-14T14:00:00",
+                "place": "Zadole",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T06:00:00",
+                "end": "2026-03-21T14:00:00",
+                "place": "Zadole",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T06:00:00",
+                "end": "2026-03-28T14:00:00",
+                "place": "Zadole",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T06:00:00",
+                "end": "2026-03-07T14:00:00",
+                "place": "Zadole",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T06:00:00",
+                "end": "2026-03-14T14:00:00",
+                "place": "Zadole",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T06:00:00",
+                "end": "2026-03-21T14:00:00",
+                "place": "Zadole",
+                "worker": 7
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T06:00:00",
+                "end": "2026-03-28T14:00:00",
+                "place": "Zadole",
+                "worker": 7
+            }
+        ]
     },
     {
         "__type__": "Worker",
@@ -1552,7 +2929,400 @@
             }
         ],
         "etat": 0,
-        "rqSchedule": []
+        "rqSchedule": [
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T14:00:00",
+                "end": "2026-03-05T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T14:00:00",
+                "end": "2026-03-09T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T14:00:00",
+                "end": "2026-03-11T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T14:00:00",
+                "end": "2026-03-17T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T14:00:00",
+                "end": "2026-03-21T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T14:00:00",
+                "end": "2026-03-23T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T14:00:00",
+                "end": "2026-03-27T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T14:00:00",
+                "end": "2026-03-05T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T14:00:00",
+                "end": "2026-03-09T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T14:00:00",
+                "end": "2026-03-11T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T14:00:00",
+                "end": "2026-03-17T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T14:00:00",
+                "end": "2026-03-21T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T14:00:00",
+                "end": "2026-03-23T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T14:00:00",
+                "end": "2026-03-27T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Zadole",
+                "worker": 8
+            }
+        ]
     },
     {
         "__type__": "Worker",
@@ -1590,7 +3360,792 @@
             }
         ],
         "etat": 160,
-        "rqSchedule": []
+        "rqSchedule": [
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T14:00:00",
+                "end": "2026-03-05T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T14:00:00",
+                "end": "2026-03-09T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T14:00:00",
+                "end": "2026-03-11T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T14:00:00",
+                "end": "2026-03-17T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T14:00:00",
+                "end": "2026-03-21T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T14:00:00",
+                "end": "2026-03-23T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T14:00:00",
+                "end": "2026-03-27T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T14:00:00",
+                "end": "2026-03-05T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T14:00:00",
+                "end": "2026-03-09T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T14:00:00",
+                "end": "2026-03-11T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T14:00:00",
+                "end": "2026-03-17T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T14:00:00",
+                "end": "2026-03-21T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T14:00:00",
+                "end": "2026-03-23T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T14:00:00",
+                "end": "2026-03-27T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Burowiec",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T06:00:00",
+                "end": "2026-03-04T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T06:00:00",
+                "end": "2026-03-05T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T06:00:00",
+                "end": "2026-03-06T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T06:00:00",
+                "end": "2026-03-07T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T06:00:00",
+                "end": "2026-03-08T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T06:00:00",
+                "end": "2026-03-09T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T06:00:00",
+                "end": "2026-03-10T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T06:00:00",
+                "end": "2026-03-11T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T06:00:00",
+                "end": "2026-03-12T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T06:00:00",
+                "end": "2026-03-13T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T06:00:00",
+                "end": "2026-03-14T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T06:00:00",
+                "end": "2026-03-15T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T06:00:00",
+                "end": "2026-03-16T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T06:00:00",
+                "end": "2026-03-17T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T06:00:00",
+                "end": "2026-03-18T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T06:00:00",
+                "end": "2026-03-19T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T06:00:00",
+                "end": "2026-03-20T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T06:00:00",
+                "end": "2026-03-21T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T06:00:00",
+                "end": "2026-03-22T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T06:00:00",
+                "end": "2026-03-23T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T06:00:00",
+                "end": "2026-03-24T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T06:00:00",
+                "end": "2026-03-25T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T06:00:00",
+                "end": "2026-03-26T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T06:00:00",
+                "end": "2026-03-27T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T06:00:00",
+                "end": "2026-03-28T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T06:00:00",
+                "end": "2026-03-29T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T06:00:00",
+                "end": "2026-03-30T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T06:00:00",
+                "end": "2026-03-31T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T06:00:00",
+                "end": "2026-03-04T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T06:00:00",
+                "end": "2026-03-05T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T06:00:00",
+                "end": "2026-03-06T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T06:00:00",
+                "end": "2026-03-07T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T06:00:00",
+                "end": "2026-03-08T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T06:00:00",
+                "end": "2026-03-09T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T06:00:00",
+                "end": "2026-03-10T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T06:00:00",
+                "end": "2026-03-11T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T06:00:00",
+                "end": "2026-03-12T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T06:00:00",
+                "end": "2026-03-13T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T06:00:00",
+                "end": "2026-03-14T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T06:00:00",
+                "end": "2026-03-15T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T06:00:00",
+                "end": "2026-03-16T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T06:00:00",
+                "end": "2026-03-17T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T06:00:00",
+                "end": "2026-03-18T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T06:00:00",
+                "end": "2026-03-19T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T06:00:00",
+                "end": "2026-03-20T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T06:00:00",
+                "end": "2026-03-21T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T06:00:00",
+                "end": "2026-03-22T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T06:00:00",
+                "end": "2026-03-23T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T06:00:00",
+                "end": "2026-03-24T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T06:00:00",
+                "end": "2026-03-25T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T06:00:00",
+                "end": "2026-03-26T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T06:00:00",
+                "end": "2026-03-27T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T06:00:00",
+                "end": "2026-03-28T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T06:00:00",
+                "end": "2026-03-29T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T06:00:00",
+                "end": "2026-03-30T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T06:00:00",
+                "end": "2026-03-31T14:00:00",
+                "place": "Zadole",
+                "worker": 9
+            }
+        ]
     },
     {
         "__type__": "Worker",
@@ -1628,6 +4183,791 @@
             }
         ],
         "etat": 0,
-        "rqSchedule": []
+        "rqSchedule": [
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T14:00:00",
+                "end": "2026-03-05T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T14:00:00",
+                "end": "2026-03-09T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T14:00:00",
+                "end": "2026-03-11T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T14:00:00",
+                "end": "2026-03-17T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T14:00:00",
+                "end": "2026-03-21T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T14:00:00",
+                "end": "2026-03-23T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T14:00:00",
+                "end": "2026-03-27T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T14:00:00",
+                "end": "2026-03-05T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T14:00:00",
+                "end": "2026-03-09T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T14:00:00",
+                "end": "2026-03-11T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T14:00:00",
+                "end": "2026-03-17T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T14:00:00",
+                "end": "2026-03-21T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T14:00:00",
+                "end": "2026-03-23T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T14:00:00",
+                "end": "2026-03-27T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Burowiec",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T14:00:00",
+                "end": "2026-03-05T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T14:00:00",
+                "end": "2026-03-09T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T14:00:00",
+                "end": "2026-03-11T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T14:00:00",
+                "end": "2026-03-17T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T14:00:00",
+                "end": "2026-03-21T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T14:00:00",
+                "end": "2026-03-23T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T14:00:00",
+                "end": "2026-03-27T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-04T14:00:00",
+                "end": "2026-03-04T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-05T14:00:00",
+                "end": "2026-03-05T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-06T14:00:00",
+                "end": "2026-03-06T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-07T14:00:00",
+                "end": "2026-03-07T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-08T14:00:00",
+                "end": "2026-03-08T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-09T14:00:00",
+                "end": "2026-03-09T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-10T14:00:00",
+                "end": "2026-03-10T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-11T14:00:00",
+                "end": "2026-03-11T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-12T14:00:00",
+                "end": "2026-03-12T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-13T14:00:00",
+                "end": "2026-03-13T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-14T14:00:00",
+                "end": "2026-03-14T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-15T14:00:00",
+                "end": "2026-03-15T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-16T14:00:00",
+                "end": "2026-03-16T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-17T14:00:00",
+                "end": "2026-03-17T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-18T14:00:00",
+                "end": "2026-03-18T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-19T14:00:00",
+                "end": "2026-03-19T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-20T14:00:00",
+                "end": "2026-03-20T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-21T14:00:00",
+                "end": "2026-03-21T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-22T14:00:00",
+                "end": "2026-03-22T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-23T14:00:00",
+                "end": "2026-03-23T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-24T14:00:00",
+                "end": "2026-03-24T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-25T14:00:00",
+                "end": "2026-03-25T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-26T14:00:00",
+                "end": "2026-03-26T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-27T14:00:00",
+                "end": "2026-03-27T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-28T14:00:00",
+                "end": "2026-03-28T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-29T14:00:00",
+                "end": "2026-03-29T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-30T14:00:00",
+                "end": "2026-03-30T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            },
+            {
+                "__type__": "ShiftPlace",
+                "begin": "2026-03-31T14:00:00",
+                "end": "2026-03-31T22:00:00",
+                "place": "Zadole",
+                "worker": 10
+            }
+        ]
     }
 ]
