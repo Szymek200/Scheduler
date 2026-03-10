@@ -40,6 +40,7 @@ class Scheduler:
         self.availability = [0] * len(workers)
         self.availabilityrequiredHours = [0] * len(workers)
 
+
         #zip arrays together
         #workers, self.availability, self.requiredHours
 
@@ -85,6 +86,59 @@ class Scheduler:
             return True
         return False
     
+
+    #substitude comply with rules
+
+    def substitudeCompliance(self, shiftOne, rulesTypes):
+
+        #we check 2 shifts
+        #first shift is for substitution guy - only rulesTypes
+
+        #substitution shift
+        #shift inside has every required info
+        if shiftOne.place.compliesRules(shiftOne):
+            for rule in  shiftOne.worker.rules:
+                #if that rule is chosen to check
+                for type in rulesTypes:
+                    if rule.rule_type == type:
+                        if not rule.isFulfilled(shiftOne):
+                            return False
+                        break
+
+        
+        return True
+
+        
+    
+    #we add shift without worker and automatically ads and deletes if unsucessfull
+
+    #container for comply with rules
+    def checkCompliance(self, shift, worker):
+            
+
+            oldWorker = shift.worker
+
+            shift.worker = worker
+
+            is_compliant = self.complyWithRules(shift)
+
+            shift.worker = oldWorker
+
+            #we are only checking - not applying changes
+            return is_compliant
+
+            """
+            if self.complyWithRules(shift):
+                #it should because this does first stage
+                worker.addWorkerShift(shift)
+                return True
+            else:
+                shift.worker = oldWorker
+                return False
+            """
+
+
+
     #check requirements
     #if there is enough workers and shifts to work
     def schedulePossible(self):
@@ -118,80 +172,72 @@ class Scheduler:
 
         return False 
     
-
-        
-    def createPlan(self, year, month):
-        
-        self.placeSchedule = False
-
-        for worker in self.workers:
-            self.defaultSchedule(worker, year, month)
-
+    def createPlan(self, month, year):
+        self.ready = False
         if self.schedulePossible() == False:
-            return -1
-
-        self.availability()
-        #if everyone gave enough availability
-        self.requiredHours()
-
-        #sorting all lists for rising availability
-        combined = list(zip(self.workers, self.availability))
-
-        #sort by availability
-        combined.sort(key=lambda x: x[1])
-
-        #returns tuples
-        w, a = zip(*combined)
+            return 
         
-        #back to lists
-        self.workers, self.availability, = list(w), list(a)
+        #cleaning old data
+        for worker in self.workers:
+            worker.acquiredSchedule.clear()
+            self.defaultSchedule(worker, year, month)
+          
+        emptyShifts = []
 
-        #easy shedule
-        #if all fit at first place - great
-
-        #begin will least available worker
-        for i in range(len(self.workers)):
-
-            #in firsty round we skip non etat workers
-            if self.workers[i].etat == 0:
-                continue
-            
-            for avalShift in self.workers[i].rqSchedule:
-                
-                #if in place this shift is empty
-                if avalShift.place.availableShift(avalShift):
-                    #if all rules are complied with
-                    if(avalShift.place.compliesRules(avalShift) and avalShift.worker.compliesRules(avalShift)):
-                        avalShift.place.addWorkerShift(avalShift)
-                        avalShift.worker.addWorkerShift(avalShift)
-        
-        
-        #now check if all place shifts are filled and every worker has required hours
-
-        #hours that worker needs to do but haven't gave enough availability
-
-        #ABOUT WORKERS - if more than zero - etat workers have not enough hours
-        unfilledHours = [0] * len(self.workers)
-        for i in range(len(self.requiredHours)):
-             
-            if self.workers[i].howManyhours() < self.workers[i].etat:
-                unfilledHours[i] = self.workers[i].etat - self.workers[i].howManyhours()
-        
-        needRotation = False
-
-        
-
-        #if places have all shifts occupied
         for place in self.places:
-            if place.allShiftsOccupied() == False:
+            emptyShifts.extend(place.schedule)
 
-                needRotation = True
-                break
+        #sort shift by least available workers for this shift
+        shiftDemand = [0] * len(emptyShifts)
         
-        if needRotation == True:
-            self.rotations()
+        #pointers to workers for particular shift
+        #I create sublist for every elem
+        workerPointers = [[] for _ in range(len(emptyShifts))]
 
-        self.ready = 1
+        for index, shift in enumerate(emptyShifts):
+            for worker in self.workers:
+                if worker.availableToday(shift):
+                    shiftDemand[index] += 1
+                    workerPointers[index].append(worker) 
+
+        #sort shifts by demands
+        #default - ascending
+        sorted_shifts = sorted(zip(emptyShifts,shiftDemand, workerPointers), key=lambda x: x[1])
+
+        #* - pours lists into separate ones
+        emptyShifts, shiftDemand, workerPointers = zip(*sorted_shifts)
+
+
+        #shifts which noone gave availability
+        i = 0
+        orphans = []
+        while(shiftDemand[i] == 0):
+            orphans.append(emptyShifts[i])
+            emptyShifts.pop(i)
+            shiftDemand.pop(i)
+            workerPointers.pop(i)
+
+        #every shift has at least one worker
+        for index, shift in enumerate(emptyShifts):
+             #chose worker with least fullfilled etat
+             #worker and fraction of etat
+            sortedWorkers = [] * len(workerPointers[index])
+            
+            for worker in workerPointers[index]:
+                sortedWorkers.append((worker, worker.getEtat()[1]))
+
+            sortedWorkers.sort(key=lambda pair: pair[1])
+            for worker in sortedWorkers:
+                shift.worker = worker[0]
+                if self.complyWithRules(shift):
+                    worker[0].addWorkerShift(shift)
+                else:
+                    #delete worker from shift
+                    shift.worker = None   
+
+
+        self.ready = True
+    
 
     def defaultPlaceSchedule(self, year, month):
         start_date = datetime(year, month, 1, 0, 0, 0)
@@ -292,60 +338,171 @@ class Scheduler:
 
         return -1
 
+    #if two schedules have the same shift(without workers)
+    def schedulesIntersect(scheduleOne, scheduleTwo):
+        scheduleOne.sorted(key=lambda shift: shift.begin)
+        scheduleTwo.sorted(key=lambda shift: shift.begin)
+
+        intersected = []
+        for i, one in enumerate(scheduleOne):
+            for j, two in enumerate(scheduleTwo):
+
+                if two.begin > one.begin:
+                    break
+
+                if one.sameShift(two):
+                    intersected.append((one, (i, j) ))
+            
+        return intersected
+
+    #priority for rotations
+    def workerPriority(self, worker):
+        rule = worker.getEtatRule()
+
+        if rule:
+            if not rule.isComplete():
+                return 0
+            else:
+                return 2 #overtime
+        else:
+            return 1
 
     #move shifts because at first round we weren't able to fill all shifts
     def rotations(self):
+
+        #repetition from createPlan
+
         emptyShifts = []
-       
+
         for place in self.places:
-            
+
             for shift in place.schedule:
                 if shift.worker == None:
                     emptyShifts.append(shift)
 
+        #sort shift by least available workers for this shift
+        shiftDemand = [0] * len(emptyShifts)
+        
+        #pointers to workers for particular shift
+        #I create sublist for every elem
+        workerPointers = [[] for _ in range(len(emptyShifts))]
 
-        while len(emptyShifts) != 0:
+        for index, shift in enumerate(emptyShifts):
+            for worker in self.workers:
+                if worker.availableToday(shift):
+                    shiftDemand[index] += 1
+                    workerPointers[index].append(worker) 
 
-            #even if we don't find substitution we delete it from list
-            theShift = emptyShifts.pop(0)
+        #sort shifts by demands
+        #default - ascending
+        sorted_shifts = sorted(zip(emptyShifts,shiftDemand, workerPointers), key=lambda x: x[1])
 
-            #substitude - guywho we want to move to new shift location
-            for substitude in self.whoCanWorkToday(theShift):
+        #* - pours lists into separate ones
+       # emptyShifts, shiftDemand, workerPointers = zip(*sorted_shifts)
 
-                #shift - zmiany, ktore musimy zastapic, aby przeniesienie pracownika mialo sens
-                substutionGuys = [None] * len(substitude.list)
-                allSubstitutions = True
 
-                for i in range(len(substitude.list)):
-                    #for collision shifts we look for new workers
-                    #luckly those would until now couldn't work
+        #begin rotations from shift with least worker availability
 
-                    newGuy = self.findSubstitution(substitude.list[i])
+        for index in range(len(sorted_shifts)):
+            newGuyFound = False
 
-                    if( isinstance (newGuy, Worker)):
-                        #we have substitution
-                        #but be don't ably changes until we will have found all substitutions
-                        substutionGuys[i] = newGuy
-                    else:
-                        allSubstitutions = False
-                        #we can't find all substitutions for this change - abort changes
-                        break
+            #sort workers - first with not enough hours in etat
 
+            sorted_shifts[index][2].sort(key=self.workerPriority)            
+
+            #go through workerPointers
+            for importWorker in sorted_shifts[index][2]:
+
+                #import worker - the guy who can work that shift but rules don't allow
+                #reduced rules
+                #issue with different duration of exchagne shifts
+
+                rulesTypes = ["free weekend", "between shifts"]
+
+                if self.substitudeCompliance( sorted_shifts[index][0], rulesTypes):
+
+                    #list of all workers with not enough work hours
+                    lessEtat = []
+
+                    noEtat = []
+                    lackEtat = []
+                    for worker in self.workers:
+                        
+                        existingRule = worker.getEtatRule()
+
+
+                        if existingRule:
+                            if not existingRule.isComplete():
+                                lackEtat.append(worker)
+                        else:
+                            noEtat.append(worker)
+
+                    lessEtat = lackEtat + noEtat
+                    
+                        
+
+
+                        
+
+                    #find new guy for other import worker shift
+
+                    #to do - it would be better to check first for collisions around added shift!!!!!
+                    #to do - remember exchages to stop echange loop
+
+                    for shift in importWorker.acquiredSchedule:
+                        # we check if new guy can work here
+                        for newGuy in lessEtat:
+                            for rqShift in newGuy.rqSchedule:
+                                if shift.sameShift(rqShift) and self.checkCompliance( shift, newGuy):
+                                     
+
+                                    #now we need to check is exchange did resolve issue with import Guy
+                                    
+                                    importWorker.acquiredSchedule.remove(shift)
+
+                                    #this is ok
+                                    shift.worker = newGuy
+                                    newGuy.addWorkerShift(shift)
+                                    
+
+                                    #we check if this below is ok
+                                
+
+                                    if self.checkCompliance(sorted_shifts[index][0], importWorker):
+                                        #it should because this does first stage
+
+                                        #is it necessary here???
+                                        sorted_shifts[index][0].worker = importWorker
+                                        importWorker.addWorkerShift(sorted_shifts[index][0])
+
+                             
+                                        #we check if the newGuy is still available for other shifts to take
+                                        existingRule = newGuy.getEtatRule()
+                                        if existingRule and existingRule.isComplete():
+                                            lessEtat.remove(newGuy)
+
+                                        newGuyFound = True
+
+                                        break
+                                    else:
+
+                                        newGuy.acquiredSchedule.remove(shift)
+                                        shift.worker = importWorker #odl worker, which was before
+                                        importWorker.addWorkerShift(shift)
+
+
+                                        
+                                       
+
+                                        
+                            
+                            if(newGuyFound):
+                                break
+
+                if newGuyFound:
+                    break      
                            
-                
-                if allSubstitutions == True:
-                    theShift.worker = substitude.worker
-
-                    #we apply changes
-                    for i in range(len(substitude.list)):
-                        substitude.list[i].worker = substutionGuys[i]
-
-
-                    #this rotation was successful
-                    #now we need to save this rotations]
-                    #so we want to it other way around!!!!!!!!!!!!!
-                    break
-                
+    
 
     def ErrandWorkers(self):
 

@@ -5,8 +5,8 @@ from itertools import combinations
 
 
 import utils
-
-from shift import ShiftPlace
+from rules import EtatRule
+from shift import ShiftPlace, Shift
 
 class Worker:
 
@@ -50,7 +50,17 @@ class Worker:
             "rqSchedule":[shift.serializer() for shift in self.rqSchedule]
             
         }
-       
+
+    """ 
+    def getEtat(self,):
+        for rule in self.rules:
+            if rule.type_name == "etat":
+                return rule.isFulfilled()
+    
+        #is work time is unlimited 
+        return (True, 0)
+
+        """
 
     def addRequestedSchedule(self, rqSchedule):
 
@@ -63,6 +73,14 @@ class Worker:
              if shift.begin.date == date or shift.end.date:
                     return True
         return False
+
+    def availableToday(self, shift):
+        if isinstance(shift, Shift) or isinstance(shift, ShiftPlace):
+            for elem in self.rqSchedule:
+                if shift == elem:
+                    return True
+        return False
+
 
     #different alrguments for rules
     def compliesRules(self, shift, rule_class=None):
@@ -112,6 +130,12 @@ class Worker:
 
     def addRule(self, rule):
         self.rules.append(rule)
+
+    def getEtatRule(self):
+        for rule in self.rules:
+            if rule.rule_type == 'EtatRule':
+                return rule
+        
 
     def howManyHours(self):
 
