@@ -35,11 +35,30 @@ class Place:
         if isinstance(rqSchedule, Calendar):
             self.schedule = rqSchedule
     
-    def compliesRules(self, shift, worker):
-        for rule in self.rules:
-            if not rule.isFulfilled():
-                return False
-        return True   
+    def compliesRules(self, shift, worker=None):
+            import rules
+       
+            #rules specyfic for this particular place - RulePlace - all at once need to be fullfilled
+            place_rules = [r for r in self.rules if isinstance(r, rules.PlaceRule)]
+            for rule in place_rules:
+                if not rule.isFulfilled(shift):
+                    return False
+                    
+         
+            #availability rules - for example Cyclic rule - OR
+            availability_rules = [r for r in self.rules if isinstance(r, rules.Rule)]
+            if availability_rules:
+                passed_any = False
+                for rule in availability_rules:
+                    if rule.isFulfilled(shift):
+                        passed_any = True
+                        break
+                
+                #if we didn't find any complied rule -> false
+                if not passed_any:
+                    return False
+                    
+            return True
     
     def addRule(self, rule):
         self.rules.append(rule)

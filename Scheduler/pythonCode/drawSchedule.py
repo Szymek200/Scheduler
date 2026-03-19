@@ -124,6 +124,7 @@ class MainWindow(QObject):
         # Ważne: defaultSchedule musi dostać miesiąc z ComboBoxa, a nie z daty dzisiejszej
         selected_month = self.ui.monthCombo.currentIndex() + 1
 
+        """
         if self.window_type == 'request_worker':
             #request schedule
             self.scheduler.defaultSchedule(worker, year, selected_month)
@@ -136,18 +137,18 @@ class MainWindow(QObject):
                 
                 # Stylowanie, aby label był widoczny i czytelny
                 self.overlay_label.setStyleSheet("""
-                    background-color: rgba(255, 255, 255, 230);
-                    font-size: 18px;
-                    font-weight: bold;
-                    color: #7f8c8d;
-                """)
-                self.overlay_label.setAlignment(Qt.AlignCenter)
+                   # background-color: rgba(255, 255, 255, 230);
+                   # font-size: 18px;
+                   # font-weight: bold;
+                   # color: #7f8c8d;
+                #)
+                #self.overlay_label.setAlignment(Qt.AlignCenter)
             
                 # Dopasowujemy rozmiar labela do aktualnego rozmiaru tabeli
-                self.overlay_label.resize(self.ui.tableWidget.size())
-                self.overlay_label.setText("Schedule not available")
-                self.overlay_label.show()
-                return
+               # self.overlay_label.resize(self.ui.tableWidget.size())
+               # self.overlay_label.setText("Schedule not available")
+              #  self.overlay_label.show()
+              #return"""
 
 
         row_trackers = {i: 0 for i in range(7)}
@@ -169,13 +170,18 @@ class MainWindow(QObject):
             else:
                 # Jeśli scheduler.ready != 1, blokujemy widok
                 self.ui.schedule_label.setText("SCHEDULE NOT READY")
-                self.toggle_overlay(True, "The final schedule is not generated yet.\nPlease wait for the administrator.")
-                return # Przerywamy rysowanie, żeby tabela została pusta pod napisem
+                
+                # POPRAWKA: Zamiast wywoływać nieistniejącą funkcję toggle_overlay, 
+                # po prostu czyścimy zawartość tabeli i przerywamy rysowanie.
+                self.ui.tableWidget.clearContents()
+                return
 
         elif self.window_type == 'place':
             place = self.place_list[index]
             self.ui.schedule_label.setText(f"PLACE OCCUPANCY: {place.name}")
-            # Bierzemy grafik miejsca (pamiętaj o małej literze 'schedule'!)
+            #we create default schedule only ifit isn't created
+            if self.scheduler.ready != 1:
+                self.scheduler.defaultPlaceSchedule(year, selected_month)
             shifts_to_draw = place.schedule
         else:
             return
@@ -185,30 +191,41 @@ class MainWindow(QObject):
         # Pobieramy numer tygodnia z daty zmiany
             shift_week = shift.begin.isocalendar()[1] 
         
-        # only particular week
-        if shift_week == self.week_num:
+            # only particular week
+            if shift_week == self.week_num:
+                
+                # weekday() returns: 0=Monday, 6=Sunday
+                col_index = shift.begin.weekday() 
+                row_index = row_trackers[col_index]
+
+                # adding new row
+                if row_index >= schedule_table.rowCount():
+                    schedule_table.insertRow(schedule_table.rowCount())
+
+                shift_text = ''
+
+      
+        
+                if self.window_type == 'place':
+                    # Zabezpieczamy się na wypadek, gdyby zmiana nie miała jeszcze przypisanego pracownika (jest None)
+                    if shift.worker:
+                        worker_info = f"{shift.worker.name} {shift.worker.surname}"
+                    else:
+                        worker_info = "Empty" # LUB: "Brak"
+                        
+                    shift_text = f"{shift.begin.strftime('%H:%M')} - {shift.end.strftime('%H:%M')} \n {worker_info} "
+                    
+                elif self.window_type == 'worker' or self.window_type == 'request_worker':
+                        # Wyciągamy konkretnie nazwę miejsca, a nie cały obiekt w pamięci
+                        # Używamy getattr na wypadek gdyby shift.place był zwykłym stringiem (zależnie od tego jak wczytujesz reguły)
+                        place_name = getattr(shift.place, 'name', shift.place)
+                        
+                        shift_text = f"{shift.begin.strftime('%H:%M')} - {shift.end.strftime('%H:%M')} \n {place_name} "
             
-            # weekday() returns: 0=Monday, 6=Sunday
-            col_index = shift.begin.weekday() 
-            row_index = row_trackers[col_index]
+                item = QTableWidgetItem(shift_text)
+                schedule_table.setItem(row_index, col_index, item)
 
-            # adding new row
-            if row_index >= schedule_table.rowCount():
-                schedule_table.insertRow(schedule_table.rowCount())
-
-            shift_text = ''
-            if self.window_type == 'place':
-                #nie wyswietlamy miejsca
-                shift_text = f"{shift.begin.strftime('%H:%M')} - {shift.end.strftime('%H:%M')} \n {shift.worker} "
-            elif self.window_type == 'worker':
-                 shift_text = f"{shift.begin.strftime('%H:%M')} - {shift.end.strftime('%H:%M')} \n {shift.place} "
-            elif self.window_type == 'request_worker':
-                 shift_text = f"{shift.begin.strftime('%H:%M')} - {shift.end.strftime('%H:%M')} \n {shift.place} "
-
-            item = QTableWidgetItem(shift_text)
-            schedule_table.setItem(row_index, col_index, item)
-
-            row_trackers[col_index] += 1
+                row_trackers[col_index] += 1
 
                 
         schedule_table.resizeRowsToContents()

@@ -82,7 +82,7 @@ class Scheduler:
 
         #check only one shift
         #shift inside has every required info
-        if shift.place.compliesRules(shift) and shift.worker.compliesRules(shift):
+        if shift.place.compliesRules(shift, shift.worker) and shift.worker.compliesRules(shift):
             return True
         return False
     
@@ -142,7 +142,7 @@ class Scheduler:
     #check requirements
     #if there is enough workers and shifts to work
     def schedulePossible(self):
-
+        return True
          
         placeHours = timedelta(0)
 
@@ -205,36 +205,50 @@ class Scheduler:
         sorted_shifts = sorted(zip(emptyShifts,shiftDemand, workerPointers), key=lambda x: x[1])
 
         #* - pours lists into separate ones
-        emptyShifts, shiftDemand, workerPointers = zip(*sorted_shifts)
+
+        #good way
+        emptyShifts, shiftDemand, workerPointers = map(list, zip(*sorted_shifts))
+        #wrong way
+        #emptyShifts, shiftDemand, workerPointers = zip(*sorted_shifts)
 
 
         #shifts which noone gave availability
         i = 0
         orphans = []
-        while(shiftDemand[i] == 0):
-            orphans.append(emptyShifts[i])
-            emptyShifts.pop(i)
-            shiftDemand.pop(i)
-            workerPointers.pop(i)
+        while len(shiftDemand) > 0 and shiftDemand[0] == 0:
+            orphans.append(emptyShifts[0])
+            emptyShifts.pop(0)
+            shiftDemand.pop(0)
+            workerPointers.pop(0)
 
         #every shift has at least one worker
         for index, shift in enumerate(emptyShifts):
              #chose worker with least fullfilled etat
              #worker and fraction of etat
-            sortedWorkers = [] * len(workerPointers[index])
+            sortedWorkers = []
             
             for worker in workerPointers[index]:
-                sortedWorkers.append((worker, worker.getEtat()[1]))
+                # ZMIANA: Sortujemy po ilości przepracowanego już czasu!
+                sortedWorkers.append((worker, worker.howManyHours()))
 
             sortedWorkers.sort(key=lambda pair: pair[1])
-            for worker in sortedWorkers:
-                shift.worker = worker[0]
+            found = False
+            for worker_pair in sortedWorkers:
+                real_worker = worker_pair[0]
+                shift.worker = real_worker # Przymiarka
+                
                 if self.complyWithRules(shift):
-                    worker[0].addWorkerShift(shift)
+                    print(f"✅ OK: {real_worker.name} przypisany do {shift.begin} ({shift.place.name})")
+                    real_worker.addWorkerShift(shift)
+                    found = True
+                    break
                 else:
-                    #delete worker from shift
-                    shift.worker = None   
-
+                    # To powie Ci, który pracownik został odrzucony
+                    print(f"❌ ODRZUCONO: {real_worker.name} nie spełnia reguł dla {shift.begin}")
+                    shift.worker = None
+            
+            if not found:
+                print(f"⚠️ ALARM: Nikt nie może pracować na zmianie {shift.begin} w {shift.place.name}!")
 
         self.ready = True
     

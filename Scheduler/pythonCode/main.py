@@ -29,6 +29,16 @@ from datetime import datetime, time, timedelta
 import rules
 
 from saving import Saving
+import sys
+import traceback
+
+#for errors showing
+def custom_excepthook(exc_type, exc_value, exc_traceback):
+    print("\n--- BŁĄD KRYTYCZNY PYTHON ---", file=sys.stderr)
+    traceback.print_exception(exc_type, exc_value, exc_traceback)
+    print("-----------------------------\n", file=sys.stderr)
+
+sys.excepthook = custom_excepthook
 
 class MainWindow(QObject):
 
@@ -157,7 +167,7 @@ class MainWindow(QObject):
             self.scheduler.ready = 0
             
             # Uruchamiamy algorytm dla wybranego miesiąca
-            result = self.scheduler.createPlan(selected_year, selected_month)
+            result = self.scheduler.createPlan(selected_month, selected_year)
             
             if result == -1:
                 self.ui.info_label.setText("Failed to create schedule (Check availability).")

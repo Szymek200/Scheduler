@@ -104,8 +104,8 @@ class UnorderedRule(Rule):
 
 class CyclicRule(Rule):
 
-    def __init__(self, begin, interval, name):
-        super().__init__(name)
+    def __init__(self, begin, interval, name, owner):
+        super().__init__(name, owner)
         if not (isinstance(begin, ShiftPlace)):
             raise TypeError("Parametr 'begin' musi być instancją ShiftPlace")
         
@@ -407,7 +407,7 @@ def deserialize_rule(rule_data, entity):
         worker_ref = entity if isinstance(entity, Worker) else None
         begin_shift = ShiftPlace(begin_dt, end_dt, begin_data.get("place", ""), worker_ref)
         
-        new_rule = CyclicRule(begin_shift, interval, rule_name)
+        new_rule = CyclicRule(begin_shift, interval, rule_name, Worker)
     
     elif rule_type == "EtatRule":
         try:

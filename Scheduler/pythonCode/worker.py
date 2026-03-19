@@ -5,7 +5,7 @@ from itertools import combinations
 
 
 import utils
-from rules import EtatRule
+
 from shift import ShiftPlace, Shift
 
 class Worker:
@@ -83,19 +83,31 @@ class Worker:
 
 
     #different alrguments for rules
+
+    #and for BHP rules
+    # or for whichb days to work shifts
     def compliesRules(self, shift, rule_class=None):
-        for rule in self.rules:
-            # Jeśli podaliśmy klasę bazową, sprawdzamy czy reguła po niej dziedziczy.
-            # Jeśli nie, pomijamy ją i idziemy do następnej w pętli.
-            if rule_class is not None and not isinstance(rule, rule_class):
-                continue
-            
-            # Sprawdzamy czy reguła jest spełniona
-            # (Uwaga: upewnij się, czy w danym przypadku isFulfilled wymaga 'shift' czy nie)
+        import rules
+        
+        # 1. Reguły BHP (WorkerRule np. EtatRule, BetweenShifts) - MUSZĄ być spełnione wszystkie (AND)
+        worker_rules = [r for r in self.rules if isinstance(r, rules.WorkerRule)]
+        for rule in worker_rules:
             if not rule.isFulfilled(shift):
                 return False
                 
-        return True 
+        # 2. Reguły Dostępności (Rule np. CyclicRule) - WYSTARCZY, że pasuje JEDNA (OR)
+        availability_rules = [r for r in self.rules if isinstance(r, rules.Rule)]
+        if availability_rules:
+            passed_any = False
+            for rule in availability_rules:
+                if rule.isFulfilled(shift):
+                    passed_any = True
+                    break
+            # Jeśli ma reguły dostępności, ale żadna nie pasuje do tej zmiany - odrzucamy
+            if not passed_any:
+                return False
+                
+        return True
     
 
     def compliesRulesRequest(self, shift, rule_class=None):
