@@ -6,106 +6,89 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>881</width>
-    <height>713</height>
+    <width>838</width>
+    <height>403</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="main_menu_container" native="true">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>90</y>
-      <width>681</width>
-      <height>321</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <layout class="QGridLayout" name="main_menu_layout">
-       <item row="2" column="1">
-        <widget class="QPushButton" name="workplace_availability">
-         <property name="text">
-          <string>Workplace requirements</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QPushButton" name="view_workplace">
-         <property name="text">
-          <string>View workplace</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QPushButton" name="add_worker">
-         <property name="text">
-          <string>Add worker</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="add_workplace">
-         <property name="text">
-          <string>Add workplace</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QPushButton" name="worker_availability">
-         <property name="text">
-          <string>Worker avability</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="view_worker">
-         <property name="text">
-          <string>View workers</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QPushButton" name="create_schedule">
-         <property name="text">
-          <string>Create schedule</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QPushButton" name="worker_schedule">
-         <property name="text">
-          <string>Worker schedule</string>
-         </property>
-        </widget>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QWidget" name="main_menu_container" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QGridLayout" name="main_menu_layout">
+         <item row="2" column="1">
+          <widget class="QPushButton" name="workplace_availability">
+           <property name="text">
+            <string>Workplace requirements</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="view_workplace">
+           <property name="text">
+            <string>View workplace</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QPushButton" name="add_worker">
+           <property name="text">
+            <string>Add worker</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="add_workplace">
+           <property name="text">
+            <string>Add workplace</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="worker_availability">
+           <property name="text">
+            <string>Worker avability</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="view_worker">
+           <property name="text">
+            <string>View workers</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QPushButton" name="create_schedule">
+           <property name="text">
+            <string>Create schedule</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QPushButton" name="worker_schedule">
+           <property name="text">
+            <string>Worker schedule</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QLabel" name="info_label">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>440</y>
-      <width>271</width>
-      <height>131</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TextLabel</string>
-    </property>
-   </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>881</width>
+     <width>838</width>
      <height>30</height>
     </rect>
    </property>

@@ -1,6 +1,6 @@
 import sys
 import os
-from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QTableWidgetItem
+from PySide6.QtWidgets import QApplication, QHeaderView, QMainWindow, QPushButton, QTableWidgetItem, QMessageBox
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile
 #for creating rule form
@@ -95,9 +95,10 @@ class MainWindow(QObject):
         self.ui = loader.load(ui_file)
         ui_file.close()
 
+
         #our own method for closing window
         self.ui.closeEvent = self.closeEvent
-        self.ui.info_label.setText(f"")
+       
 
         #activating button
         self.ui.add_worker.clicked.connect(self.add_worker)
@@ -170,9 +171,11 @@ class MainWindow(QObject):
             result = self.scheduler.createPlan(selected_month, selected_year)
             
             if result == -1:
-                self.ui.info_label.setText("Failed to create schedule (Check availability).")
+                #self.ui.info_label.setText("Failed to create schedule (Check availability).")
+                QMessageBox.information(None, "Failed to create schedule", "Check availability).")
             else:
-                self.ui.info_label.setText(f"Schedule created for {months[selected_month-1]} {selected_year}")
+                #self.ui.info_label.setText(f"Schedule created for {months[selected_month-1]} {selected_year}")
+                QMessageBox.information(None, "Success", f"Schedule created for {months[selected_month-1]} {selected_year}")
 
 
         
@@ -271,6 +274,9 @@ class MainWindow(QObject):
         ui_file.close()
 
         self.place_view.return_to_main.clicked.connect(self.return_to_main)
+
+        header = self.place_view.workplace_list.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Stretch)
         
 
         for i in range(len(self.place_list)):
@@ -315,6 +321,9 @@ class MainWindow(QObject):
         ui_file.close()
 
         self.workers_view.return_to_main.clicked.connect(self.return_to_main)
+
+        header = self.workers_view.workers_list.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Stretch)
 
         for i in range(len(self.workers_list)):
             #create new row

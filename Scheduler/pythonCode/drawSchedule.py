@@ -157,7 +157,7 @@ class MainWindow(QObject):
 
         if self.window_type == 'request_worker':
             worker = self.workers_list[index]
-            self.ui.schedule_label.setText(f"REQUESTED AVAILABILITY: {worker.name} {worker.surname}")
+            self.ui.schedule_label.setText(f"REQUESTED AVAILABILITY")
             # Generujemy i bierzemy rqSchedule
             self.scheduler.defaultSchedule(worker, year, selected_month)
             shifts_to_draw = worker.rqSchedule
@@ -165,7 +165,7 @@ class MainWindow(QObject):
         elif self.window_type == 'worker':
             if self.scheduler.ready == 1:
                 worker = self.workers_list[index]
-                self.ui.schedule_label.setText(f"FINAL SCHEDULE: {worker.name} {worker.surname}")
+                self.ui.schedule_label.setText(f"FINAL SCHEDULE")
                 shifts_to_draw = worker.acquiredSchedule
             else:
                 # Jeśli scheduler.ready != 1, blokujemy widok
@@ -178,7 +178,7 @@ class MainWindow(QObject):
 
         elif self.window_type == 'place':
             place = self.place_list[index]
-            self.ui.schedule_label.setText(f"PLACE OCCUPANCY: {place.name}")
+            self.ui.schedule_label.setText(f"PLACE OCCUPANCY")
             #we create default schedule only ifit isn't created
             if self.scheduler.ready != 1:
                 self.scheduler.defaultPlaceSchedule(year, selected_month)
