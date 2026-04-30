@@ -47,34 +47,27 @@ class Scheduler:
         
     #sort workers on how many shifts they can take in relation to his demands(hours he needs to work)    
     def availability(self):
-
-        #every place multiplies availability
-        #we count hours not shifts!?!?!?
-
-        #everything is a reference
-
-        #number of workers
         size = len(self.workers)
 
-    
-
         for i in range(size):
+            worker = self.workers[i]
+            total_available_time = timedelta(0)
 
-            #if with shifts worker gave he can do required hours per month
-            #we take sum of shifts which do not overlap
-
-            #NEED TO CHECK RULES FOR THESE SHIFTS!!!!!
-            enoughHours = 0
-
-            #availability = all hours, even if shifts overlap
-
-            for shift in self.workers[i].rqSchedule:
-                
-                
-                for place in shift.places:
-                    self.availability[i] += shift.duration()
+        
+            #sum of hours from every shift
+            for shift in worker.rqSchedule:
+                # ShiftPlace has one place
+                total_available_time += shift.duration()
             
-            self.availability[i] /= self.workers[i].etat
+          
+            etat_rule = worker.getEtatRule()
+            
+            if etat_rule and etat_rule.value.total_seconds() > 0:
+                # convert values to seconds
+                self.availability[i] = total_available_time.total_seconds() / etat_rule.value.total_seconds()
+            else:
+                # if worker doesn't have etat - works errands = 0
+                self.availability[i] = 0.0
 
     #for every shift we check
     #place and worker rules

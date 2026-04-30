@@ -199,10 +199,13 @@ class EtatRule(WorkerRule):
     def __init__(self, worker, name, value, deviation):
         super().__init__(worker, name)
       
+        if not isinstance(value, timedelta) or not isinstance(deviation, timedelta):
+            raise TypeError("Parametry 'value' oraz 'deviation' muszą być obiektami typu timedelta")
+    
         self.type_name = "etat"
         self.name = "EtatRule"
-        self.value = value
-        self.deviation = deviation
+        self.value = value #expected timedelta
+        self.deviation = deviation #expected timedelta
 
     #checks only if there isn't too much work
 

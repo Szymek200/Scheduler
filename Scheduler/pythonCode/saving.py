@@ -52,7 +52,7 @@ class Saving():
                 
                 for item in workers_data:
                     if item.get("__type__") == "Worker":
-                        worker = Worker(item["name"], item["surname"], item["pesel"], item.get("etat", 0))
+                        worker = Worker(item["name"], item["surname"], item["pesel"])
                         worker.id = item["id"] 
                         
                         

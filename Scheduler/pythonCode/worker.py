@@ -1,5 +1,5 @@
 
-from calendar import Calendar
+
 from datetime import datetime, time, timedelta
 from itertools import combinations
 
@@ -15,7 +15,7 @@ class Worker:
     availableId = 1
 
 
-    def __init__(self, name, surname, pesel, etat):
+    def __init__(self, name, surname, pesel):
         self.name = name
         self.surname = surname
         self.pesel = pesel
@@ -24,7 +24,7 @@ class Worker:
         Worker.availableId += 1
 
         self.notEnoughHours = False
-        self.etat = etat
+    
 
         #schedule that worker will actually work
         self.acquiredSchedule = []
@@ -46,7 +46,6 @@ class Worker:
             "acquiredSchedule": [shift.serializer() for shift in self.acquiredSchedule],
             #serializer for every rule
             "rules":[rule.serializer() for rule in self.rules],
-            "etat": self.etat,
             "rqSchedule":[shift.serializer() for shift in self.rqSchedule]
             
         }
@@ -65,7 +64,10 @@ class Worker:
     def addRequestedSchedule(self, rqSchedule):
 
             #check if all shifts of worker calendar are ShiftPlace
-        if isinstance(rqSchedule, Calendar) and all(isinstance(s, ShiftPlace) for s in rqSchedule.shiftList):
+        # if isinstance(rqSchedule, Calendar) and all(isinstance(s, ShiftPlace) for s in rqSchedule.shiftList):
+         
+
+        if isinstance(rqSchedule, list) and all(isinstance(s, ShiftPlace) for s in rqSchedule):
             self.rqSchedule = rqSchedule
 
     def worksToday(self, date):

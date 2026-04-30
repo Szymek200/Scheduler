@@ -1,4 +1,4 @@
-from calendar import Calendar
+
 import json
 
 class Place:
@@ -32,7 +32,7 @@ class Place:
 
     def addRequestedSchedule(self, rqSchedule):
 
-        if isinstance(rqSchedule, Calendar):
+        if isinstance(rqSchedule, list):
             self.schedule = rqSchedule
     
     def compliesRules(self, shift, worker=None):
