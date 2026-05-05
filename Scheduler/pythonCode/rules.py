@@ -304,33 +304,6 @@ class FreeWeekend(WorkerRule):
             "worker": self.worker.id if hasattr(self, 'worker') else None, #when this rule is used for place
             "name": self.name
         }
-
-
-class BetweenShifts(WorkerRule):
-    def __init__(self, worker, name):
-        super().__init__(worker, name)
-     
-        self.type_name = "between shifts"
-
-    def isFulfilled(self, shift):
-        shiftcopy = deepcopy(self.worker.acquiredSchedule)
-        shiftcopy.append(shift)
-        shiftcopy.sort(key= lambda shift: shift.begin)
-        for i in range(1, len(shiftcopy)):
-            if self.worker.acquiredSchedule[i].begin - self.worker.acquiredSchedule[i-1].end < timedelta(hours = 11):
-                return False
-        return True
-    
-    def serializer(self):
-        return{
-            "__type__": "BetweenShifts",
-            "id": self.id,
-            "worker": self.worker.id if hasattr(self, 'worker') else None,
-            "name": self.name
-        }
-            
-
-        
         
 
 class PlaceRule(ABC):
@@ -355,7 +328,36 @@ class PlaceRule(ABC):
     def serializer(self):
         pass
 
+class BetweenShifts(PlaceRule):
+    def __init__(self, place, name):
+        # Initialize using the PlaceRule constructor
+        super().__init__(place, name)
+        self.type_name = "between shifts"
 
+    def isFulfilled(self, shift):
+        # Since we are in a PlaceRule, we check the rest requirements 
+        # for the worker assigned to the shift currently being validated.
+        if not hasattr(shift, 'worker') or not shift.worker:
+            return True
+            
+        # Create a copy and add the new shift to check for conflicts
+        shiftcopy = deepcopy(shift.worker.acquiredSchedule)
+        shiftcopy.append(shift)
+        shiftcopy.sort(key=lambda s: s.begin)
+        
+        for i in range(1, len(shiftcopy)):
+            # Using shiftcopy[i] ensures we check the sorted chronological order
+            if shiftcopy[i].begin - shiftcopy[i-1].end < timedelta(hours=11):
+                return False
+        return True
+    
+    def serializer(self):
+        return {
+            "__type__": "BetweenShifts",
+            "id": self.id,
+            "place": getattr(self.place, 'id', self.place),
+            "name": self.name
+        }
 
 
 # Dodaj na samym końcu pliku rules.py
