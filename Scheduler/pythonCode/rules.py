@@ -2,30 +2,31 @@
 #cyclic = every: day, month, year
 
 from abc import ABC, abstractmethod
-from shift import Shift, ShiftPlace
+from shift import ShiftPlace
 
-from datetime import datetime, time, timedelta, date
+from datetime import datetime, timedelta
 from worker import Worker
 from place import Place
 from copy import deepcopy
 
 #there are different types of rules
-#rules of days worker is available - worker rules
+#rules of days worker is available - only one rule needs to be fulfilled in order to accept this shift
 
 #rules deciding quality of work - break between work and so on
 
 #RULES FOR availability
-class Rule(ABC):
+class AvalRule(ABC):
 
     idBase = 0
 
-    def __init__(self, name, owner):
-        self.id = Rule.idBase
-        Rule.idBase+=1
+    def __init__(self, name):
+        self.id = AvalRule.idBase
+        AvalRule.idBase+=1
         self.type_name = "basic"
         self.name = name
-        self.owner = owner
+
     
+    #returns ture or false
     @abstractmethod
     def isFulfilled(self, shift):
         if not (isinstance(shift, ShiftPlace)):
@@ -33,9 +34,8 @@ class Rule(ABC):
         else:
             True
     
-    #to do -> implement it to all rules!!!!
-    #returns shifts which cause conflict
 
+    #returns shifts which cause conflict with the rule
     @abstractmethod
     def uncompliedShifts(self, shift):
         pass
@@ -52,16 +52,18 @@ class Rule(ABC):
 
 #RULE - can worker or place is available
 #only for schedule purpose
-class UnorderedRule(Rule):
+class UnorderedRule(AvalRule):
     def __init__(self, shiftList, name):
         super().__init__(name)
-        self.type_name = "unordered"
+
+        #is it necessary? - type_name_unrodered
+       # self.type_name = "unordered"
         if not(isinstance(shiftList, list) and all(isinstance(item, ShiftPlace) for item in shiftList)):
             return None #is there exception
 
         self.shiftList = shiftList
         
-    
+    #if this shift is in a day, which is as the list
     def isFulfilled(self, shift):
         for item in self.shiftList:
             if (item == shift):
@@ -86,7 +88,7 @@ class UnorderedRule(Rule):
                     if (item != shift):
                         #this shift does not comply with the rule
                         return shift
-                return #when this shift is complies with rules
+                return None #when this shift is complies with rules
            
            if isinstance(shift, list ) and all(isinstance(item, ShiftPlace) for item in shift):
                 issue_shifts = []
@@ -96,20 +98,14 @@ class UnorderedRule(Rule):
                             issue_shifts.append(elem)
                 return issue_shifts #when this shift is complies with rules
 
-        
-    
+class CyclicRule(AvalRule):
 
-
-
-
-class CyclicRule(Rule):
-
-    def __init__(self, begin, interval, name, owner):
-        super().__init__(name, owner)
+    def __init__(self, begin, interval, name):
+        super().__init__(name)
         if not (isinstance(begin, ShiftPlace)):
             raise TypeError("Parametr 'begin' musi być instancją ShiftPlace")
         
-        self.type_name = "cyclic"
+        #self.type_name = "cyclic"
         self.begin = begin
         self.interval = interval
         self.name = name
@@ -130,10 +126,10 @@ class CyclicRule(Rule):
         if delta.days % self.interval == 0 and delta.seconds == 0:
             
             #check place
-            miejsce_badane = getattr(shift.place, 'name', shift.place)
-            miejsce_cyklu = getattr(self.begin.place, 'name', self.begin.place)
+           # tested_place = getattr(shift.place, 'name', shift.place)
+            #cyclic_place = getattr(self.begin.place, 'name', self.begin.place)
             
-            if miejsce_badane == miejsce_cyklu:
+            if shift.place == self.begin.place:
                 return True
                     
         return False
@@ -169,19 +165,18 @@ class CyclicRule(Rule):
 
 #WORKER RULE
 #for worker and place rights
-class WorkerRule(ABC):
+class RightRule(ABC):
     idBase = 0
 
-    def __init__(self, worker, name):
+    def __init__(self, owner, name):
         
-        self.id = WorkerRule.idBase
-        WorkerRule.idBase+=1
-
-        if not (isinstance(worker, Worker)):
-            return
+        self.id = RightRule.idBase
+        RightRule.idBase+=1
         
         self.type_name = "basic worker"
-        self.worker = worker
+
+        #worker or place which has this rule
+        self.owner = owner
         self.name = name
     
     @abstractmethod
@@ -194,18 +189,18 @@ class WorkerRule(ABC):
 
 
 #how many hours max he can work
-class EtatRule(WorkerRule):
+class EtatRule(RightRule):
     #name not available for user to change
-    def __init__(self, worker, name, value, deviation):
-        super().__init__(worker, name)
+    def __init__(self, owner, name, value, deviation):
+        super().__init__(owner, name)
       
         if not isinstance(value, timedelta) or not isinstance(deviation, timedelta):
             raise TypeError("Parametry 'value' oraz 'deviation' muszą być obiektami typu timedelta")
     
-        self.type_name = "etat"
-        self.name = "EtatRule"
-        self.value = value #expected timedelta
-        self.deviation = deviation #expected timedelta
+        #self.type_name = "etat"
+        self.name = name
+        self.value = value
+        self.deviation = deviation 
 
     #checks only if there isn't too much work
 
@@ -214,26 +209,31 @@ class EtatRule(WorkerRule):
 
         hoursWorked = timedelta(0)
 
-        for shift in self.worker.acquiredSchedule:
+        for shift in self.owner.acquiredSchedule:
             hoursWorked += shift.duration()
 
         hoursWorked += shift.duration()
 
-       # if hoursWorked >= (self.value - self.deviation) and  hoursWorked <= (self.value + self.deviation):
-        #    return (True, self.value - hoursWorked)
-        #return (False, self.value - hoursWorked)
+        if hoursWorked >= (self.value - self.deviation) and  hoursWorked <= (self.value + self.deviation):
+            return (True, self.value - hoursWorked)
+        
+        return (False, self.value - hoursWorked)
 
+        #old version without checking minimum hours
+        
         if hoursWorked <= self.value + self.deviation:
             #return (True, self.value - hoursWorked)
             return True
         #return (False, self.value - hoursWorked)  
         return False  
     
+    """
+    #useless function - fulfill does everything
     #if minimum hours he got
     def isComplete(self):
         hoursWorked = timedelta(0)
 
-        for shift in self.worker.acquiredSchedule:
+        for shift in self.owner.acquiredSchedule:
             hoursWorked += shift.duration()
 
         hoursWorked += shift.duration()
@@ -248,7 +248,7 @@ class EtatRule(WorkerRule):
      
         return False  
     
-    
+    """
 
     
     
@@ -256,7 +256,7 @@ class EtatRule(WorkerRule):
         return{
             "__type__": "Etat Rule",
             "id": self.id,
-            "worker": self.worker.id if hasattr(self, 'worker') else None, #when this rule is used for place
+            "owner": self.owner.id if hasattr(self, 'owner') else None, #when this rule is used for place
             "name": self.name,
             "value": self.value,
             "deviation": self.deviation
@@ -264,26 +264,29 @@ class EtatRule(WorkerRule):
         }
 
 #doesn't check weekends on the edge of months
-class FreeWeekend(WorkerRule):
+class FreeWeekend(RightRule):
 
-    def __init__(self, worker, name):
-        super().__init__(worker, name)
+    def __init__(self, owner, name, quantity = 2):
+        super().__init__(owner, name)
       
-        self.type_name = "free weekends"
+        #self.type_name = "free weekends"
         self.name = name
+        self.quantity = quantity
 
-    def isFulfilled(self, _):
+    def isFulfilled(self, _, checkedMonth):
 
         emptyWeekend = 0
         #we check iof whole weekend is empty
 
-        checkedMonth = self.shiftList.first.begin.month
-        
+        if not isinstance(checkedMonth, int) or 1 <= checkedMonth <= 12:
+            raise ValueError("Parametr 'checkedMonth' musi być liczbą całkowitą z zakresu 1-12")
+
         #we check every weekend in the month
 
-        #can be just date
-        pointer = datetime.today
-        pointer.month = checkedMonth
+        pointer = datetime.today() 
+
+        # 2. Use .replace() to create a new object with the desired month and day=1
+        pointer = pointer.replace(month=checkedMonth, day=1)
 
         while(pointer.strftime("%A") != "Saturday"):
             pointer += timedelta(days=1)
@@ -294,8 +297,12 @@ class FreeWeekend(WorkerRule):
                 pointer += timedelta(days=1)
                 if pointer.strftime("%A") != "Sunday":
                     emptyWeekend+=1
+
+
+        if emptyWeekend >= self.quantity:
+            return True
         
-        return emptyWeekend
+        return False
     
     def serializer(self):
         return{
@@ -306,50 +313,17 @@ class FreeWeekend(WorkerRule):
         }
         
 
-class PlaceRule(ABC):
-    idBase = 0
 
+
+class BetweenShifts(RightRule):
     def __init__(self, place, name):
-        self.id = PlaceRule.idBase
-        self.name = name
-        PlaceRule.idBase+=1
-
-        if not (isinstance(place, Place)):
-            return None
-        
-        self.type_name = "basic place"
-        self.place = place
-    
-    @abstractmethod
-    def isFulfilled(self, _):
-        pass
-
-    @abstractmethod
-    def serializer(self):
-        pass
-
-class BetweenShifts(PlaceRule):
-    def __init__(self, place, name):
-        # Initialize using the PlaceRule constructor
+       
         super().__init__(place, name)
-        self.type_name = "between shifts"
+        #self.type_name = "between shifts"
 
+    #to do 
     def isFulfilled(self, shift):
-        # Since we are in a PlaceRule, we check the rest requirements 
-        # for the worker assigned to the shift currently being validated.
-        if not hasattr(shift, 'worker') or not shift.worker:
-            return True
-            
-        # Create a copy and add the new shift to check for conflicts
-        shiftcopy = deepcopy(shift.worker.acquiredSchedule)
-        shiftcopy.append(shift)
-        shiftcopy.sort(key=lambda s: s.begin)
-        
-        for i in range(1, len(shiftcopy)):
-            # Using shiftcopy[i] ensures we check the sorted chronological order
-            if shiftcopy[i].begin - shiftcopy[i-1].end < timedelta(hours=11):
-                return False
-        return True
+        pass     
     
     def serializer(self):
         return {

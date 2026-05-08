@@ -1,9 +1,9 @@
 
 
-from datetime import datetime, time, timedelta
+from datetime import timedelta
 from itertools import combinations
 
-
+from rules import EtatRule
 import utils
 
 from shift import ShiftPlace, Shift
@@ -23,13 +23,14 @@ class Worker:
         self.id = self.availableId
         Worker.availableId += 1
 
-        self.notEnoughHours = False
-    
+
+        #is it necessary?
+        #self.notEnoughHours = False
 
         #schedule that worker will actually work
-        self.acquiredSchedule = []
+        self.schedule = []
 
-        #requested schedule
+        #requested schedule - created by AvalRules
         self.rqSchedule = [] #
 
         self.rules = []
@@ -37,117 +38,78 @@ class Worker:
         
 
     def serializer(self):
+
+        #we don't need to save schedules, just rules
+
         return{
             "__type__": "Worker",
             "name": self.name,
             "surname": self.surname,
             "pesel":self.pesel,
             "id":self.id,
-            "acquiredSchedule": [shift.serializer() for shift in self.acquiredSchedule],
+            #"schedule": [shift.serializer() for shift in self.schedule],
             #serializer for every rule
             "rules":[rule.serializer() for rule in self.rules],
-            "rqSchedule":[shift.serializer() for shift in self.rqSchedule]
+            #"rqSchedule":[shift.serializer() for shift in self.rqSchedule]
             
         }
 
-    """ 
-    def getEtat(self,):
-        for rule in self.rules:
-            if rule.type_name == "etat":
-                return rule.isFulfilled()
-    
-        #is work time is unlimited 
-        return (True, 0)
-
-        """
 
     def addRequestedSchedule(self, rqSchedule):
 
-            #check if all shifts of worker calendar are ShiftPlace
-        # if isinstance(rqSchedule, Calendar) and all(isinstance(s, ShiftPlace) for s in rqSchedule.shiftList):
-         
+        #check if all shifts of worker calendar are ShiftPlace   
 
         if isinstance(rqSchedule, list) and all(isinstance(s, ShiftPlace) for s in rqSchedule):
             self.rqSchedule = rqSchedule
 
-    def worksToday(self, date):
+    def availableToday(self, date):
         for shift in self.rqSchedule:
-             if shift.begin.date == date or shift.end.date:
+             if shift.begin.date() >= date and shift.end.date() <= date:
                     return True
         return False
 
-    def availableToday(self, shift):
-        if isinstance(shift, Shift) or isinstance(shift, ShiftPlace):
-            for elem in self.rqSchedule:
-                if shift == elem:
-                    return True
-        return False
-
-
-    #different alrguments for rules
-
-    #and for BHP rules
-    # or for whichb days to work shifts
+    #checks every rule or rules of given class
     def compliesRules(self, shift, rule_class=None):
         import rules
         
-        # 1. Reguły BHP (WorkerRule np. EtatRule, BetweenShifts) - MUSZĄ być spełnione wszystkie (AND)
-        worker_rules = [r for r in self.rules if isinstance(r, rules.WorkerRule)]
+        #RightRules - every one of them needs to be fulfilled at the same time
+        worker_rules = [r for r in self.rules if isinstance(r, rules.RightRule)]
         for rule in worker_rules:
             if not rule.isFulfilled(shift):
                 return False
                 
-        # 2. Reguły Dostępności (Rule np. CyclicRule) - WYSTARCZY, że pasuje JEDNA (OR)
-        availability_rules = [r for r in self.rules if isinstance(r, rules.Rule)]
+       #availability rules - at least one of them needs to be fulfilled
+        availability_rules = [r for r in self.rules if isinstance(r, rules.AvalRule)]
         if availability_rules:
             passed_any = False
             for rule in availability_rules:
                 if rule.isFulfilled(shift):
                     passed_any = True
                     break
-            # Jeśli ma reguły dostępności, ale żadna nie pasuje do tej zmiany - odrzucamy
+            
             if not passed_any:
                 return False
                 
         return True
     
-
-    def compliesRulesRequest(self, shift, rule_class=None):
-        import rules # Import wewnątrz, żeby uniknąć problemów
-        
-        # Zbieramy reguły do sprawdzenia
-        rules_to_check = [r for r in self.rules if rule_class is None or isinstance(r, rule_class)]
-        
-        # Jeśli pracownik nie ma żadnych reguł, zależy to od Twojej logiki biznesowej.
-        # Obecnie zakładamy, że jeśli nie ma reguł, to nie ma zdefiniowanej dostępności.
-        if not rules_to_check:
-            return False
-            
-        # 1. Logika dla reguł dostępności (CyclicRule, UnorderedRule)
-        # Zmiana musi pasować do PRZYNAJMNIEJ JEDNEJ reguły (logika OR)
-        if rule_class == rules.Rule:
-            for rule in rules_to_check:
-                if rule.isFulfilled(shift):
-                    return True # Wystarczy jedna pasująca reguła!
-            return False
-            
-        # 2. Logika dla innych reguł (np. odpoczynek - WorkerRule)
-        # Zmiana musi spełniać WSZYSTKIE reguły tego typu (logika AND)
-        for rule in rules_to_check:
-            if not rule.isFulfilled(shift):
-                return False
-                
-        return True
-    
-    def addWorkerShift(self, shift):
+    def addAcqShift(self, shift):
         self.acquiredSchedule.append(shift)
 
     def addRule(self, rule):
         self.rules.append(rule)
 
+
+    def removeRule(self, ruleId):
+        for rule in self.rules:
+            if rule.id == ruleId:
+                self.rules.remove(rule)
+                return True
+        return False
+
+    #return first etat rule or None if there is no such rule
     def getEtatRule(self):
         for rule in self.rules:
-            if rule.rule_type == 'EtatRule':
+            if isinstance(rule, EtatRule):
                 return rule
         
 
@@ -158,6 +120,10 @@ class Worker:
             workingTime += shift.duration()
         return workingTime
         
+
+
+    """
+    #don't see point of this method    
     #how many hours maximum with rules it could work    
     def availability(self):
 
@@ -182,6 +148,6 @@ class Worker:
                     maxHours = utils.hoursSum(shiftCombinations)
 
         return maxHours
-
+    """
 
 

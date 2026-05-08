@@ -1,6 +1,8 @@
 
 import json
 
+import rules
+
 class Place:
 
     #class variable
@@ -39,14 +41,14 @@ class Place:
             import rules
        
             #rules specyfic for this particular place - RulePlace - all at once need to be fullfilled
-            place_rules = [r for r in self.rules if isinstance(r, rules.PlaceRule)]
+            place_rules = [r for r in self.rules if isinstance(r, rules.RightRule)]
             for rule in place_rules:
                 if not rule.isFulfilled(shift):
                     return False
                     
          
             #availability rules - for example Cyclic rule - OR
-            availability_rules = [r for r in self.rules if isinstance(r, rules.Rule)]
+            availability_rules = [r for r in self.rules if isinstance(r, rules.RightRule)]
             if availability_rules:
                 passed_any = False
                 for rule in availability_rules:
@@ -61,7 +63,8 @@ class Place:
             return True
     
     def addRule(self, rule):
-        self.rules.append(rule)
+        if isinstance(rule, rules.Rule):
+            self.rules.append(rule)
 
     def availableShift(self, argShift):
         for shift in self.schedule:
@@ -71,7 +74,9 @@ class Place:
             return False
 
     #we add worker to the shift
-    def addWorkerShift(self, argShift):
+
+    #is there better way to do it?
+    def addWorkerToShift(self, argShift):
         for shift in self.schedule:
             #we need cast because generally there is worker 
             if shift.sameShift(argShift):

@@ -8,11 +8,19 @@ class Shift:
     #datetime - specific date
     #or just time 
     def __init__(self, begin, end):
-        self.begin = begin
-        self.end = end
-        
-        #available places he wants to work
 
+        if isinstance(begin, datetime) and isinstance(end, datetime):
+            if begin >= end:
+                raise ValueError("Begin time must be before end time.")
+        elif isinstance(begin, time) and isinstance(end, time):
+            if begin >= end:
+                raise ValueError("Begin time must be before end time.")
+        else:
+
+            self.begin = begin
+            self.end = end
+        
+        
     def duration(self):
         return self.end - self.begin
     
@@ -85,6 +93,7 @@ class ShiftPlace(Shift):
                     return True 
         return False
 
+    #checks houurs and place
     def sameShift(self, shift):
         if isinstance(shift, ShiftPlace):
             if self.begin == shift.begin and self.end == shift.end:

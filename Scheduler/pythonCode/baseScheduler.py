@@ -86,7 +86,7 @@ class BaseScheduler(ABC):
          #REQUESTED SCHEDULE FOR PLACES
 
         #request schedule which is designed only based on rules for worker
-    def defaultSchedule(self, worker, year, month):
+    def defaultRequestedSchedule(self, worker, year, month):
         worker.rqSchedule.clear()
 
         #defaultPlaceSchedule required first
