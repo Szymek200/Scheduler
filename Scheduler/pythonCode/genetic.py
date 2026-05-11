@@ -6,6 +6,9 @@ from pythonCode import worker
 from pythonCode.baseScheduler import BaseScheduler
 from rules import RightRule, AvalRule
 
+HARD_PENALTY = 1000
+SOFT_PENALTY = 1
+
 class ScheduleValidator(BaseScheduler):
 
     def __init__(self, workers, places, month, year):
@@ -15,6 +18,7 @@ class ScheduleValidator(BaseScheduler):
         self.year = year
 
 
+    #errros checked by not hours outside requested schedule
     def check_aval_rules(self):
 
         #generating requested schedule for every worker based on his rules
@@ -29,18 +33,18 @@ class ScheduleValidator(BaseScheduler):
 
             for assigned_shift in worker.schedule:
 
-                conflict_count = 0
+                conflict_count_hours = 0
                 # Sprawdzamy, czy przypisana zmiana istnieje w rqSchedule
                 # Używamy any() i metody sameShift() dla pewności porównania danych, a nie instancji
                 is_available = any(assigned_shift.sameShift(rq_shift) for rq_shift in worker.rqSchedule)
             
                 if not is_available:
-                    conflict_count += 1
+                    conflict_count_hours += assigned_shift.duration_hours()  
         
             # Zapisujemy wynik dla konkretnego ID pracownika
-            violations[worker.id] = conflict_count
+            violations[worker.id] = conflict_count_hours
 
-        return violations;
+        return violations * SOFT_PENALTY;
 
         
   
@@ -65,38 +69,18 @@ class ScheduleValidator(BaseScheduler):
                 if shift.worker:
                     worker_map.get(shift.worker.id).schedule.append(shift)
 
-        soft_rules_broken = 0
+   
 
-        violations = self.check_aval_rules()
-
-        for worker in violations:
-            soft_rules_broken += violations[worker]
+        penalty= self.check_aval_rules()
+  
+    #to do. - place roles go to workers or place rules are useless unless po rqschedule
+        for worker in self.workers:
             
+            w_rules = [rule for rule in worker.rules if isinstance(rule, RightRule)]
 
-        #verifying schedule
-        hard_rules_broken = 0
-    
-
-        # 3. Validate Rules for every shift/worker
-        for place in self.places:
-             
-            p_rules = [rule for rule in place.rules if isinstance(rule, RightRule)]
-
-            for rule in p_rules:
-                    if not rule.isFulfilled(shift):
-
+            for rule in w_rules:
                         if isinstance(rule, RightRule):
-                            hard_rules_broken += 1
-
-            for worker in self.workers:
-             
-                w_rules = [rule for rule in worker.rules if isinstance(rule, RightRule)]
-
-                for rule in w_rules:
-                        if not rule.isFulfilled(shift):
-
-                            if isinstance(rule, RightRule):
-                                hard_rules_broken += 1
+                            penalty += rule.completion(worker)
 
         # 4. Calculate Final Fitness Score
         # We want to maximize this value. 
@@ -105,5 +89,5 @@ class ScheduleValidator(BaseScheduler):
         # Adding 0.000001 prevents division by zero.
 
 
-        fitness = 1.0 / (1.0 + (hard_rules_broken * 1000) + soft_rules_broken)
+        fitness = 1.0 / penalty
         return fitness

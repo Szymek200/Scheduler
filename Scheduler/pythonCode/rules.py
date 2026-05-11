@@ -9,6 +9,8 @@ from worker import Worker
 from place import Place
 from copy import deepcopy
 
+from genetic import HARDPENALTY, SOFTPENALTY
+
 #there are different types of rules
 #rules of days worker is available - only one rule needs to be fulfilled in order to accept this shift
 
@@ -183,6 +185,11 @@ class RightRule(ABC):
     def isFulfilled(self, shift):
         pass
 
+    #plus value is wrong - penalty for genetic alg
+    @abstractmethod
+    def completion(self, worker):
+        pass
+
     @abstractmethod
     def serializer(self):
         pass
@@ -209,7 +216,7 @@ class EtatRule(RightRule):
 
         hoursWorked = timedelta(0)
 
-        for shift in self.owner.acquiredSchedule:
+        for shift in self.owner.schedule:
             hoursWorked += shift.duration()
 
         hoursWorked += shift.duration()
@@ -219,36 +226,29 @@ class EtatRule(RightRule):
         
         return (False, self.value - hoursWorked)
 
-        #old version without checking minimum hours
-        
-        if hoursWorked <= self.value + self.deviation:
-            #return (True, self.value - hoursWorked)
-            return True
-        #return (False, self.value - hoursWorked)  
-        return False  
-    
-    """
-    #useless function - fulfill does everything
-    #if minimum hours he got
-    def isComplete(self):
+      
+    def completion(self, worker):
+
         hoursWorked = timedelta(0)
 
-        for shift in self.owner.acquiredSchedule:
+        for shift in self.owner.schedule:
             hoursWorked += shift.duration()
 
         hoursWorked += shift.duration()
+       
+        if hoursWorked >= (self.value - self.deviation) and  hoursWorked <= (self.value + self.deviation):
+            #return (True, self.value - hoursWorked)
 
-       # if hoursWorked >= (self.value - self.deviation) and  hoursWorked <= (self.value + self.deviation):
-        #    return (True, self.value - hoursWorked)
-        #return (False, self.value - hoursWorked)
+            #not enough work
+            if self.value - hoursWorked > 0:
+              return (self.value - self.deviation - hoursWorked)* SOFTPENALTY
+            else:
+                return (self.value + self.deviation - hoursWorked)* SOFTPENALTY
+        
+       # return (False, self.value - hoursWorked)
 
-        if hoursWorked >= self.value - self.deviation:
-          
-            return True
-     
-        return False  
-    
-    """
+        return (self.value - hoursWorked) * HARDPENALTY
+
 
     
     
@@ -304,6 +304,65 @@ class FreeWeekend(RightRule):
         
         return False
     
+    #returns how many working hours has worker in the month
+    def completion(self, worker):
+
+        emptyWeekend = 0
+
+        weekendWorkingHours = timedelta(0)
+        #we check if whole weekend is empty
+
+        #we check every weekend in the month
+
+        if not worker.schedule[0]:
+            return 0    #zero working hours in the weekend
+            
+        #what if first shift is in before month? - be take ending of the shift
+        pointer = worker.schedule[0].begin
+
+        pointer = pointer.replace(day=1)
+
+        current_month = pointer.month
+
+        #month starts with sunday
+        if pointer.weekday() == 6:
+            response =worker.worksToday(pointer)
+            if response:
+                for shift in response:
+                    weekendWorkingHours += shift.duration()
+            else:
+                emptyWeekend+=1
+
+        while pointer.month == current_month:
+        # 5 Sobota, 6 Niedziela
+            if pointer.weekday() == 5:
+                 saturday =worker.worksToday(pointer)
+                
+
+                 pointer += timedelta(days=1)
+                 if(pointer.month == current_month):
+                    sunday =worker.worksToday(pointer)
+
+                 if saturday or sunday:
+                    for shift in saturday, sunday:
+                        weekendWorkingHours += shift.duration()
+                 else:
+                     emptyWeekend+=1;
+     
+            pointer += timedelta(days=5)  # Przejdź do następnej soboty
+
+        #how many weekends occupied - minus - wrong, zero and plus - good
+        #whole weekend working hours - can't determine which weekend is ok and which is not
+
+        #return (self.quantity - emptyWeekend, weekendWorkingHours)
+
+        if self.quantity <= emptyWeekend:
+            return 0
+        else:
+            return weekendWorkingHours * HARDPENALTY
+
+
+    
     def serializer(self):
         return{
             "__type__": "FreeWeekend",
@@ -316,14 +375,42 @@ class FreeWeekend(RightRule):
 
 
 class BetweenShifts(RightRule):
-    def __init__(self, place, name):
+    def __init__(self, place, name, value):
        
         super().__init__(place, name)
+        self.value = value
         #self.type_name = "between shifts"
 
     #to do 
-    def isFulfilled(self, shift):
-        pass     
+    def isFulfilled(self, worker):
+
+
+        for i in range(len(worker.shedule)): 
+
+            if i == 0:
+                continue
+            if worker.shedule[i].begin - worker.shedule[i-1].end < self.value:
+                return False
+
+
+    def completion(self, worker):
+
+        #value - timedelta between shifts
+        overlapHours = timedelta(0)
+
+        for i in range(len(worker.shedule)): 
+
+            if i == 0:
+                continue
+
+            delta = worker.shedule[i].begin - worker.shedule[i-1].end < self.value
+            delta -= self.value
+            if delta > 0:
+                overlapHours += delta
+
+        return delta * HARDPENALTY
+                
+        
     
     def serializer(self):
         return {

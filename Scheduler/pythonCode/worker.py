@@ -93,7 +93,7 @@ class Worker:
         return True
     
     def addAcqShift(self, shift):
-        self.acquiredSchedule.append(shift)
+        self.schedule.append(shift)
 
     def addRule(self, rule):
         self.rules.append(rule)
@@ -116,10 +116,18 @@ class Worker:
     def howManyHours(self):
 
         workingTime = timedelta(0)
-        for shift in self.acquiredSchedule:
+        for shift in self.schedule:
             workingTime += shift.duration()
         return workingTime
         
+    #retuns shifts he haas during this day
+    def worksToday(self, date):
+        shiftsToday = []
+        for shift in self.schedule:
+            if shift.begin.date() == date or shift.end.date() == date:
+                shiftsToday.append(shift)
+        return shiftsToday
+
 
 
     """
