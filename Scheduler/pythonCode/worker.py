@@ -1,21 +1,23 @@
 
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 from itertools import combinations
 
-from rules import EtatRule
-import utils
 
-from shift import ShiftPlace, Shift
+from typing import Any, Optional, Self, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from rules import Rule, AvalRule, EtatRule
+    from shift import ShiftPlace
 
 class Worker:
 
     #class variable
 
-    availableId = 1
+    availableId: int = 1
 
 
-    def __init__(self, name, surname, pesel):
+    def __init__(self, name: str, surname: str, pesel: str):
         self.name = name
         self.surname = surname
         self.pesel = pesel
@@ -28,16 +30,18 @@ class Worker:
         #self.notEnoughHours = False
 
         #schedule that worker will actually work
-        self.schedule = []
+        self.schedule: list[ShiftPlace] = []
 
         #requested schedule - created by AvalRules
-        self.rqSchedule = [] #
+        self.rqSchedule: list[ShiftPlace] = [] #
 
-        self.rules = []
+
+
+        self.rules: list[Rule] = []
 
         
 
-    def serializer(self):
+    def serializer(self) -> dict[str, Any]:
 
         #we don't need to save schedules, just rules
 
@@ -55,21 +59,21 @@ class Worker:
         }
 
 
-    def addRequestedSchedule(self, rqSchedule):
+    def addRequestedSchedule(self, rqSchedule: list[ShiftPlace]) -> None:
 
         #check if all shifts of worker calendar are ShiftPlace   
 
         if isinstance(rqSchedule, list) and all(isinstance(s, ShiftPlace) for s in rqSchedule):
             self.rqSchedule = rqSchedule
 
-    def availableToday(self, date):
+    def availableToday(self, date: datetime) -> bool:
         for shift in self.rqSchedule:
              if shift.begin.date() >= date and shift.end.date() <= date:
                     return True
         return False
 
     #checks every rule or rules of given class
-    def compliesRules(self, shift, rule_class=None):
+    def compliesRules(self, shift: ShiftPlace, rule_class=None) -> bool:
         import rules
         
         #RightRules - every one of them needs to be fulfilled at the same time
@@ -79,27 +83,27 @@ class Worker:
                 return False
                 
        #availability rules - at least one of them needs to be fulfilled
-        availability_rules = [r for r in self.rules if isinstance(r, rules.AvalRule)]
-        if availability_rules:
-            passed_any = False
-            for rule in availability_rules:
-                if rule.isFulfilled(shift):
-                    passed_any = True
-                    break
-            
-            if not passed_any:
-                return False
+        availability_rules: list[AvalRule] = [r for r in self.rules if isinstance(r, rules.AvalRule)]
+      
+        passed_any = False
+        for rule in availability_rules:
+            if rule.isFulfilled(shift):
+                passed_any = True
+                break
+        
+        if not passed_any:
+            return False
                 
         return True
     
-    def addAcqShift(self, shift):
+    def addAcqShift(self, shift: ShiftPlace) -> None:
         self.schedule.append(shift)
 
-    def addRule(self, rule):
+    def addRule(self, rule) -> None:
         self.rules.append(rule)
 
 
-    def removeRule(self, ruleId):
+    def removeRule(self, ruleId: int) -> bool:
         for rule in self.rules:
             if rule.id == ruleId:
                 self.rules.remove(rule)
@@ -107,13 +111,15 @@ class Worker:
         return False
 
     #return first etat rule or None if there is no such rule
-    def getEtatRule(self):
+    def getEtatRule(self) -> Optional[EtatRule]:
+        import rules
         for rule in self.rules:
             if isinstance(rule, EtatRule):
                 return rule
+        return None
         
 
-    def howManyHours(self):
+    def howManyHours(self)-> timedelta:
 
         workingTime = timedelta(0)
         for shift in self.schedule:
@@ -121,7 +127,7 @@ class Worker:
         return workingTime
         
     #retuns shifts he haas during this day
-    def worksToday(self, date):
+    def worksToday(self, date: datetime) -> list[ShiftPlace]: 
         shiftsToday = []
         for shift in self.schedule:
             if shift.begin.date() == date or shift.end.date() == date:

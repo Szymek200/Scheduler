@@ -1,29 +1,25 @@
 
+from __future__ import annotations
 from abc import ABC, abstractmethod
 
-from worker import Worker
-from place import Place
-from shift import ShiftPlace
+
 from itertools import product
 from datetime import datetime, time, timedelta
 from itertools import combinations
 from dataclasses import dataclass, field
 import copy
-import utils
+from typing import TYPE_CHECKING
 
-from rules import *
+if TYPE_CHECKING:
+    from worker import Worker
+    from place import Place
+    from shift import ShiftPlace
 
 
 class BaseScheduler(ABC):
-    def __init__(self, workers, places):
+    def __init__(self, workers: list[Worker], places: list [Place]):
         #workers have requested schedule and its requirements
-        #places have required shifts to fill
-        
-        if not (isinstance(workers, list) and all(isinstance(item, Worker) for item in workers)):
-            return -1
-
-        if not (isinstance(places, list) and all(isinstance(item, Place) for item in places)):
-            return -1
+        #places have required shifts to fill  
         
         
         self.placeSchedule = False

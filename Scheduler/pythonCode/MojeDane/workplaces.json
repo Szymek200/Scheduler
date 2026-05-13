@@ -57,7 +57,8 @@
                 },
                 "interval": 1
             }
-        ]
+        ],
+        "schedule": []
     },
     {
         "__type__": "Place",
@@ -117,6 +118,7 @@
                 },
                 "interval": 1
             }
-        ]
+        ],
+        "schedule": []
     }
 ]

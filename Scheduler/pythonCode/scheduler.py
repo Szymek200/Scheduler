@@ -1,13 +1,23 @@
-from pythonCode.baseScheduler import BaseScheduler
-from worker import Worker
-from place import Place
-from shift import ShiftPlace
+
 from itertools import product
 from datetime import datetime, time, timedelta
 from itertools import combinations
 from dataclasses import dataclass, field
 import copy
-import utils
+
+from baseScheduler import BaseScheduler
+from worker import Worker
+from place import Place
+from shift import ShiftPlace
+
+from typing import TYPE_CHECKING
+
+
+
+
+
+
+
 
 from rules import *
 
@@ -21,22 +31,19 @@ class WorkerData:
     list: list = field(default_factory=list) # List of ShiftPlace objects
 
 class Scheduler(BaseScheduler):
-    def __init__(self, workers, places):
+    def __init__(self, workers: list[Worker], places:list[Place]):
         super().__init__(workers, places)
 
         #default value - 0
         #returns availability
-        self.availability = [0] * len(workers)
-        self.availabilityrequiredHours = [0] * len(workers)
+        self.availability: list[timedelta] = [0] * len(workers)
 
-
-        #zip arrays together
-        #workers, self.availability, self.requiredHours
-
+        #useless
+        #self.availabilityrequiredHours: list = [0] * len(workers)
         
     #sort workers on how many shifts they can take in relation to his demands(hours he needs to work)    
-    def availability(self):
-        size = len(self.workers)
+    def availability(self) -> None:
+        size: int = len(self.workers)
 
         for i in range(size):
             worker = self.workers[i]
@@ -61,7 +68,7 @@ class Scheduler(BaseScheduler):
 
     #substitude comply with rules
 
-    def substitudeCompliance(self, shiftOne, rulesTypes):
+    def substitudeCompliance(self, shiftOne: ShiftPlace, rulesTypes) -> bool:
 
         #we check 2 shifts
         #first shift is for substitution guy - only rulesTypes
@@ -85,14 +92,14 @@ class Scheduler(BaseScheduler):
     #we add shift without worker and automatically ads and deletes if unsucessfull
 
     #container for comply with rules
-    def checkCompliance(self, shift, worker):
+    def checkCompliance(self, shift: ShiftPlace, worker: Worker) -> bool:
             
 
-            oldWorker = shift.worker
+            oldWorker: Worker = shift.worker
 
             shift.worker = worker
 
-            is_compliant = self.complyWithRules(shift)
+            is_compliant: bool = self.complyWithRules(shift)
 
             shift.worker = oldWorker
 
@@ -113,7 +120,7 @@ class Scheduler(BaseScheduler):
 
     #check requirements
     #if there is enough workers and shifts to work
-    def schedulePossible(self):
+    def schedulePossible(self) -> bool:
         return True
          
         placeHours = timedelta(0)
@@ -144,7 +151,7 @@ class Scheduler(BaseScheduler):
 
         return False 
     
-    def createPlan(self, month, year):
+    def createPlan(self, month:int, year:int):
         self.ready = False
         if self.schedulePossible() == False:
             return 
@@ -231,7 +238,7 @@ class Scheduler(BaseScheduler):
     #returns list of people who could have work this shift
     #but currently can't because of other shifts
     #and how many shifts we would delete by switching worker to it
-    def whoCanWorkToday(self, argShift):
+    def whoCanWorkToday(self, argShift: ShiftPlace):
 
         result = []
 
@@ -260,7 +267,7 @@ class Scheduler(BaseScheduler):
         return result
 
     #returns guy who could substiute this shift with all rules applied
-    def findSubstitution(self, shift):
+    def findSubstitution(self, shift: ShiftPlace) -> Worker:
         for worker in self.workers:
 
             #rqShift - zmiana u innego pracownika, ktory teoretycznie moze wtedy pracowac
@@ -278,7 +285,7 @@ class Scheduler(BaseScheduler):
   
 
     #priority for rotations
-    def workerPriority(self, worker):
+    def workerPriority(self, worker: Worker) -> int:
         rule = worker.getEtatRule()
 
         if rule:
@@ -290,7 +297,7 @@ class Scheduler(BaseScheduler):
             return 1
 
     #move shifts because at first round we weren't able to fill all shifts
-    def rotations(self):
+    def rotations(self) -> None:
 
         #repetition from createPlan
 
@@ -426,7 +433,7 @@ class Scheduler(BaseScheduler):
                            
     
 
-    def ErrandWorkers(self):
+    def ErrandWorkers(self) -> int:
 
         errandWorkers = []
         for worker in self.workers:

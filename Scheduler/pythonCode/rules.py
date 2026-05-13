@@ -1,49 +1,62 @@
 
 #cyclic = every: day, month, year
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from shift import ShiftPlace
-
 from datetime import datetime, timedelta
-from worker import Worker
-from place import Place
 from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
-from genetic import HARDPENALTY, SOFTPENALTY
+if TYPE_CHECKING:
+    from shift import ShiftPlace
+    from worker import Worker
+    from place import Place
+
+from constans import HARD_PENALTY, SOFT_PENALTY
 
 #there are different types of rules
 #rules of days worker is available - only one rule needs to be fulfilled in order to accept this shift
 
 #rules deciding quality of work - break between work and so on
 
-#RULES FOR availability
-class AvalRule(ABC):
+class Rule(ABC):
+    idBase: int = 0
 
-    idBase = 0
+    def __init__(self, name: str):
+        self.id = Rule.idBase
+        Rule.idBase+=1
+        self.name = name
+     
+    @abstractmethod
+    def serializer(self) -> dict[str, Any]:
+        pass
+
+
+#RULES FOR availability
+class AvalRule(Rule):
+
+
 
     def __init__(self, name):
-        self.id = AvalRule.idBase
-        AvalRule.idBase+=1
-        self.type_name = "basic"
-        self.name = name
-
-    
+        super().__init__(name)
+      
     #returns ture or false
     @abstractmethod
-    def isFulfilled(self, shift):
+    def isFulfilled(self, shift:ShiftPlace) -> bool:
         if not (isinstance(shift, ShiftPlace)):
             return False
         else:
-            True
+            return True
     
 
     #returns shifts which cause conflict with the rule
     @abstractmethod
-    def uncompliedShifts(self, shift):
+    def uncompliedShifts(self, shift: ShiftPlace) -> list[ShiftPlace]:
         pass
 
     @abstractmethod
-    def serializer(self):
+    def serializer(self) -> dict[str, Any]:
         pass
 
     #returns required form options to create this rule
@@ -55,7 +68,7 @@ class AvalRule(ABC):
 #RULE - can worker or place is available
 #only for schedule purpose
 class UnorderedRule(AvalRule):
-    def __init__(self, shiftList, name):
+    def __init__(self, shiftList:  list[ShiftPlace], name: str):
         super().__init__(name)
 
         #is it necessary? - type_name_unrodered
@@ -66,14 +79,14 @@ class UnorderedRule(AvalRule):
         self.shiftList = shiftList
         
     #if this shift is in a day, which is as the list
-    def isFulfilled(self, shift):
+    def isFulfilled(self, shift:ShiftPlace) -> bool:
         for item in self.shiftList:
             if (item == shift):
                 return True
 
         return False
     
-    def serializer(self):
+    def serializer(self) -> dict[str, Any]:
         return{
             "__type__": "UnorderedRule",
             "id": self.id,
@@ -82,18 +95,18 @@ class UnorderedRule(AvalRule):
         }
     
     #shifts which cause conflict
-    def uncompliedShifts(self, shift):
+    def uncompliedShifts(self, shift: ShiftPlace) -> list[ShiftPlace]:
            
          
            if isinstance(shift, ShiftPlace):
                 for item in self.shiftList:
                     if (item != shift):
                         #this shift does not comply with the rule
-                        return shift
-                return None #when this shift is complies with rules
+                        return [shift] #one element list
+                return [] #when this shift is complies with rules
            
            if isinstance(shift, list ) and all(isinstance(item, ShiftPlace) for item in shift):
-                issue_shifts = []
+                issue_shifts: list[ShiftPlace] = []
                 for elem in shift:
                     for item in self.shiftList:
                         if (item != shift):
@@ -102,17 +115,18 @@ class UnorderedRule(AvalRule):
 
 class CyclicRule(AvalRule):
 
-    def __init__(self, begin, interval, name):
+    def __init__(self, begin: datetime, interval: timedelta, name: str):
+        from shift import ShiftPlace
         super().__init__(name)
         if not (isinstance(begin, ShiftPlace)):
             raise TypeError("Parametr 'begin' musi być instancją ShiftPlace")
         
-        #self.type_name = "cyclic"
+   
         self.begin = begin
         self.interval = interval
         self.name = name
 
-    def isFulfilled(self, shift):
+    def isFulfilled(self, shift: ShiftPlace) -> bool:
        
         if not isinstance(shift, ShiftPlace):
             return False
@@ -125,18 +139,13 @@ class CyclicRule(AvalRule):
         delta = shift.begin - self.begin.begin
         
        
-        if delta.days % self.interval == 0 and delta.seconds == 0:
-            
-            #check place
-           # tested_place = getattr(shift.place, 'name', shift.place)
-            #cyclic_place = getattr(self.begin.place, 'name', self.begin.place)
-            
+        if delta.days % self.interval.days == 0 and delta.seconds == 0:
             if shift.place == self.begin.place:
                 return True
                     
         return False
     
-    def serializer(self):
+    def serializer(self) -> dict[str, Any]:
         return{
             "__type__": "CyclicRule",
             "id": self.id,
@@ -146,12 +155,12 @@ class CyclicRule(AvalRule):
         }
     
     #check which shifts cause conflicts
-    def uncompliedShifts(self, shift):
+    def uncompliedShifts(self, shift: ShiftPlace) -> list[ShiftPlace]:
        
         if isinstance(shift, ShiftPlace):
             if not self.isFulfilled(shift):
-                return shift  
-            return None      
+                return [shift]  
+            return []    
             
         # Jeśli przekazano LISTĘ zmian
         elif isinstance(shift, list) and all(isinstance(item, ShiftPlace) for item in shift):
@@ -161,33 +170,28 @@ class CyclicRule(AvalRule):
                     issue_shifts.append(item)
             return issue_shifts #returns shifts which cause conflict
             
-        return None
+        return []
 
     
 
 #WORKER RULE
 #for worker and place rights
-class RightRule(ABC):
-    idBase = 0
+class RightRule(Rule):
+  
 
-    def __init__(self, owner, name):
-        
-        self.id = RightRule.idBase
-        RightRule.idBase+=1
-        
-        self.type_name = "basic worker"
-
+    def __init__(self, owner, name: str):
+        super(name)
         #worker or place which has this rule
         self.owner = owner
-        self.name = name
+      
     
     @abstractmethod
-    def isFulfilled(self, shift):
+    def isFulfilled(self, shift: ShiftPlace):
         pass
 
     #plus value is wrong - penalty for genetic alg
     @abstractmethod
-    def completion(self, worker):
+    def completion(self, worker: Worker):
         pass
 
     @abstractmethod
@@ -241,13 +245,13 @@ class EtatRule(RightRule):
 
             #not enough work
             if self.value - hoursWorked > 0:
-              return (self.value - self.deviation - hoursWorked)* SOFTPENALTY
+              return (self.value - self.deviation - hoursWorked)* SOFT_PENALTY
             else:
-                return (self.value + self.deviation - hoursWorked)* SOFTPENALTY
+                return (self.value + self.deviation - hoursWorked)* SOFT_PENALTY
         
        # return (False, self.value - hoursWorked)
 
-        return (self.value - hoursWorked) * HARDPENALTY
+        return (self.value - hoursWorked).total_seconds // 3600  * HARD_PENALTY
 
 
     
@@ -359,7 +363,7 @@ class FreeWeekend(RightRule):
         if self.quantity <= emptyWeekend:
             return 0
         else:
-            return weekendWorkingHours * HARDPENALTY
+            return weekendWorkingHours.total_seconds //3600 * HARD_PENALTY
 
 
     
@@ -408,7 +412,7 @@ class BetweenShifts(RightRule):
             if delta > 0:
                 overlapHours += delta
 
-        return delta * HARDPENALTY
+        return delta.total_seconds //3600 * HARD_PENALTY
                 
         
     
@@ -427,6 +431,10 @@ def deserialize_rule(rule_data, entity):
     """
     Deserialization for every rule
     """
+
+    from worker import Worker
+    from shift import ShiftPlace
+
     rule_type = rule_data.get("__type__")
     rule_name = rule_data.get("name", "")
     rule_id = rule_data.get("id")
@@ -473,7 +481,7 @@ def deserialize_rule(rule_data, entity):
         worker_ref = entity if isinstance(entity, Worker) else None
         begin_shift = ShiftPlace(begin_dt, end_dt, begin_data.get("place", ""), worker_ref)
         
-        new_rule = CyclicRule(begin_shift, interval, rule_name, Worker)
+        new_rule = CyclicRule(begin_shift, interval, rule_name)
     
     elif rule_type == "EtatRule":
         try:
