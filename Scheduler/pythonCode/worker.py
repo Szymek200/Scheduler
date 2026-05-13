@@ -1,4 +1,4 @@
-
+from __future__ import annotations
 
 from datetime import timedelta, datetime
 from itertools import combinations
@@ -76,23 +76,42 @@ class Worker:
     def compliesRules(self, shift: ShiftPlace, rule_class=None) -> bool:
         import rules
         
-        #RightRules - every one of them needs to be fulfilled at the same time
-        worker_rules = [r for r in self.rules if isinstance(r, rules.RightRule)]
-        for rule in worker_rules:
-            if not rule.isFulfilled(shift):
-                return False
+        # Jesli nie podano konkretnej klasy, sprawdzamy wszystkie reguly (rules.Rule)
+        if rule_class is None:
+            rule_class = rules.Rule
+
+        # Filtrujemy reguly pracownika - bierzemy tylko te, ktore naleza do szukanej klasy
+        # Dzieki temu mozemy sprawdzic np. tylko dostepnosc (AvalRule)
+        applicable_rules = [r for r in self.rules if isinstance(r, rule_class)]
+
+        # Rozdzielamy przefiltrowane reguly na twarde (Right) i dostepnosci (Aval)
+        right_rules = [r for r in applicable_rules if isinstance(r, rules.RightRule)]
+        aval_rules = [r for r in applicable_rules if isinstance(r, rules.AvalRule)]
+
+        # LOGIKA 1: Reguly twarde (np. przerwy miedzy zmianami) 
+        # Wszystkie musza byc spelnione jednoczesnie.
+        for rule in right_rules:
+            # Niektore reguly RightRule wymagaja dodatkowych argumentow, 
+            # sprawdzamy czy isFulfilled zadziala z samym shift
+            try:
+                if not rule.isFulfilled(shift):
+                    return False
+            except TypeError:
+                # Jesli regula wymaga wiecej danych (np. miesiaca), 
+                # na tym etapie ja pomijamy
+                continue
                 
-       #availability rules - at least one of them needs to be fulfilled
-        availability_rules: list[AvalRule] = [r for r in self.rules if isinstance(r, rules.AvalRule)]
-      
-        passed_any = False
-        for rule in availability_rules:
-            if rule.isFulfilled(shift):
-                passed_any = True
-                break
-        
-        if not passed_any:
-            return False
+        # LOGIKA 2: Reguly dostepnosci (np. CyclicRule - "pracuje w poniedzialki")
+        # Przynajmniej jedna z nich musi byc spelniona, abysmy uznali, ze pracownik jest dostepny.
+        if aval_rules:
+            passed_any = False
+            for rule in aval_rules:
+                if rule.isFulfilled(shift):
+                    passed_any = True
+                    break
+            
+            if not passed_any:
+                return False
                 
         return True
     

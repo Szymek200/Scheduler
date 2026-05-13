@@ -1,0 +1,91 @@
+from __future__ import annotations
+import pygad
+import numpy as np
+from datetime import datetime, timedelta
+
+from baseScheduler import BaseScheduler
+from rules import RightRule
+from worker import Worker
+from place import Place
+from shift import ShiftPlace
+from ga_converter import GAConverter # Musisz mieæ ten plik, który przygotowa³em wczeœniej
+
+class GeneticScheduler(BaseScheduler):
+    def __init__(self, workers: list[Worker], places: list[Place], month: int, year: int):
+        super().__init__(workers, places)
+        self.month = month
+        self.year = year
+        
+        # Converter zajmie siê mapowaniem "tablica GA <-> obiekty"
+        self.converter = GAConverter(workers, places)
+        
+        # Przygotowujemy listê zmian do obsadzenia i pobieramy ich liczbê (iloœæ genów)
+        self.num_genes = self.converter.prepare_slots(month, year)
+        
+        # Generujemy requestedSchedule dla ka¿dego pracownika (Twoja logika z BaseScheduler)
+        for worker in self.workers:
+            self.defaultRequestedSchedule(worker, self.year, self.month)
+
+    def check_aval_rules(self) -> int:
+        """Twoja logika sprawdzania konfliktów z rqSchedule (godziny poza dostêpnoœci¹)"""
+        for worker in self.workers:
+            self.defaultRequestedSchedule(worker, self.year, self.month)
+        total_penalty_hours = 0
+
+        for worker in self.workers:
+            for assigned_shift in worker.schedule:
+                # Sprawdzamy, czy przypisana zmiana istnieje w rqSchedule
+                is_available = any(assigned_shift.sameShift(rq_shift) for rq_shift in worker.rqSchedule)
+            
+                if not is_available:
+                    # Jeœli nie ma jej w dostêpnoœciach, dodajemy d³ugoœæ zmiany do kary
+                    total_penalty_hours += int(assigned_shift.duration().total_seconds() // 3600)
+        
+        return total_penalty_hours
+
+    def fitness_func(self, ga_instance, solution, solution_idx):
+        """Funkcja oceny - wywo³ywana przez PyGAD dla ka¿dego osobnika"""
+        
+        # 1. Przenieœ dane z tablicy GA na obiekty (Worker.schedule i ShiftPlace.worker)
+        self.converter.update_objects_from_vector(solution)
+        
+        penalty = 0
+
+        # 2. Kara za puste zmiany (Hard Penalty)
+        penalty += self.converter.get_invalid_slots_count() * 1000
+
+        # 3. Twoja logika: Kara za pracê poza zadeklarowan¹ dostêpnoœci¹
+        penalty += self.check_aval_rules() * 100 # Kara za ka¿d¹ godzinê "niechcian¹"
+
+        # 4. Twoja logika: Sprawdzanie RightRules (np. Etat, przerwy miêdzy zmianami)
+        for worker in self.workers:
+            w_rules = [rule for rule in worker.rules if isinstance(rule, RightRule)]
+            for rule in w_rules:
+                # Metoda completion z Twojego rules.py zwraca wartoœæ kary
+                penalty += rule.completion(worker)
+
+        # Fitness: im mniejsza kara, tym wiêkszy wynik
+        return 1.0 / (penalty + 0.001)
+
+    def createPlan(self, month: int, year: int): # Zmiana nazwy i dodanie argumentów
+        """Uruchomienie algorytmu"""
+        
+        ga_instance = pygad.GA(
+            num_generations=50,
+            num_parents_mating=10,
+            fitness_func=self.fitness_func,
+            sol_per_pop=50,
+            num_genes=self.num_genes,
+            gene_space=self.converter.worker_ids,
+            mutation_percent_genes=5,
+            save_best_solutions=True
+        )
+        
+        print(f"Uruchamiam algorytm genetyczny dla {month}/{year}...")
+        ga_instance.run()
+        
+        solution, fitness, idx = ga_instance.best_solution()
+        self.converter.update_objects_from_vector(solution)
+        
+        print(f"Zakoñczono! Najlepszy fitness: {fitness}")
+        return solution

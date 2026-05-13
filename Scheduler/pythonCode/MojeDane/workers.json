@@ -1,1 +1,142 @@
-[]
+[
+    {
+        "__type__": "Worker",
+        "name": "Bartek",
+        "surname": "Nowak",
+        "pesel": "32687148172",
+        "id": 1,
+        "rules": [
+            {
+                "__type__": "CyclicRule",
+                "id": 0,
+                "name": "jeden",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T06:00:00",
+                    "end": "2026-03-04T14:00:00",
+                    "place": "Burowiec",
+                    "worker": 1
+                },
+                "interval": 7
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 1,
+                "name": "dwa",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-05T06:00:00",
+                    "end": "2026-03-05T14:00:00",
+                    "place": "Burowiec",
+                    "worker": 1
+                },
+                "interval": 7
+            }
+        ]
+    },
+    {
+        "__type__": "Worker",
+        "name": "Zosia",
+        "surname": "Samosia",
+        "pesel": "23719823792",
+        "id": 2,
+        "rules": [
+            {
+                "__type__": "CyclicRule",
+                "id": 2,
+                "name": "codzienie",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T14:00:00",
+                    "end": "2026-03-04T22:00:00",
+                    "place": "Burowiec",
+                    "worker": 2
+                },
+                "interval": 1
+            }
+        ]
+    },
+    {
+        "__type__": "Worker",
+        "name": "Artur",
+        "surname": "Niedzielski",
+        "pesel": "48127984231",
+        "id": 3,
+        "rules": [
+            {
+                "__type__": "CyclicRule",
+                "id": 3,
+                "name": "jeden przerwa",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T14:00:00",
+                    "end": "2026-03-04T22:00:00",
+                    "place": "Burowiec",
+                    "worker": 3
+                },
+                "interval": 3
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 4,
+                "name": "jeden przerwy",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T06:00:00",
+                    "end": "2026-03-04T14:00:00",
+                    "place": "Zadole",
+                    "worker": 3
+                },
+                "interval": 3
+            }
+        ]
+    },
+    {
+        "__type__": "Worker",
+        "name": "Basia",
+        "surname": "Pawlowska",
+        "pesel": "23147812374",
+        "id": 4,
+        "rules": [
+            {
+                "__type__": "CyclicRule",
+                "id": 5,
+                "name": "codziennie",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T06:00:00",
+                    "end": "2026-03-04T14:00:00",
+                    "place": "Burowiec",
+                    "worker": 4
+                },
+                "interval": 1
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 6,
+                "name": "codziennie zadole",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T06:00:00",
+                    "end": "2026-03-04T01:04:00",
+                    "place": "Zadole",
+                    "worker": 4
+                },
+                "interval": 1
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 7,
+                "name": "popo",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T14:00:00",
+                    "end": "2026-03-04T22:00:00",
+                    "place": "Zadole",
+                    "worker": 4
+                },
+                "interval": 1
+            }
+        ]
+    }
+]

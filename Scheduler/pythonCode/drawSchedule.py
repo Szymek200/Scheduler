@@ -159,14 +159,14 @@ class MainWindow(QObject):
             worker = self.workers_list[index]
             self.ui.schedule_label.setText(f"REQUESTED AVAILABILITY")
             # Generujemy i bierzemy rqSchedule
-            self.scheduler.defaultSchedule(worker, year, selected_month)
+            self.scheduler.defaultRequestedSchedule(worker, year, selected_month)
             shifts_to_draw = worker.rqSchedule
 
         elif self.window_type == 'worker':
             if self.scheduler.ready == 1:
                 worker = self.workers_list[index]
                 self.ui.schedule_label.setText(f"FINAL SCHEDULE")
-                shifts_to_draw = worker.acquiredSchedule
+                shifts_to_draw = worker.schedule
             else:
                 # Jeśli scheduler.ready != 1, blokujemy widok
                 self.ui.schedule_label.setText("SCHEDULE NOT READY")

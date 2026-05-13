@@ -1,4 +1,4 @@
-
+from __future__ import annotations
 from itertools import product
 from datetime import datetime, time, timedelta
 from itertools import combinations
@@ -11,13 +11,6 @@ from place import Place
 from shift import ShiftPlace
 
 from typing import TYPE_CHECKING
-
-
-
-
-
-
-
 
 from rules import *
 
@@ -231,10 +224,6 @@ class Scheduler(BaseScheduler):
 
         self.ready = True
     
-
-
-
-    
     #returns list of people who could have work this shift
     #but currently can't because of other shifts
     #and how many shifts we would delete by switching worker to it
@@ -367,11 +356,6 @@ class Scheduler(BaseScheduler):
                             noEtat.append(worker)
 
                     lessEtat = lackEtat + noEtat
-                    
-                        
-
-
-                        
 
                     #find new guy for other import worker shift
 
@@ -419,12 +403,6 @@ class Scheduler(BaseScheduler):
                                         shift.worker = importWorker #odl worker, which was before
                                         importWorker.addWorkerShift(shift)
 
-
-                                        
-                                       
-
-                                        
-                            
                             if(newGuyFound):
                                 break
 
@@ -475,14 +453,3 @@ class Scheduler(BaseScheduler):
                      emptyShifts[i].worker = varation[i]
                  return 0
         return -1
-                    
-    
-
-
-
-
-
-
-
-
-

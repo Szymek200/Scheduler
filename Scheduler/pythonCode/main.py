@@ -23,6 +23,7 @@ from worker import Worker
 from place import Place
 from shift import ShiftPlace
 from scheduler import Scheduler
+from genetic import GeneticScheduler
 
 from drawSchedule import MainWindow as ScheduleWindow
 from datetime import datetime, time, timedelta
@@ -117,13 +118,10 @@ class MainWindow(QObject):
         self.ui.worker_availability.clicked.connect(self.open_schedule_view)
 
     def closeEvent(self, event: QCloseEvent):
-        # This triggers right before the window closes
-       
-        
-        saver = Saving(self.workers_list, self.place_list, "MojeDane")
-        saver.saving()
-        
-        event.accept() #allow to close the window
+        if len(self.workers_list) > 0 or len(self.place_list) > 0:
+            saver = Saving(self.workers_list, self.place_list, "MojeDane")
+            saver.saving()
+        event.accept()#allow to close the window
 
     def view_workplace_aval(self):
         self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'place', self.ui)
@@ -163,19 +161,42 @@ class MainWindow(QObject):
         if dialog.exec() == QDialog.Accepted:
             selected_year = year_spin.value()
             selected_month = month_combo.currentIndex() + 1
+
+            self.scheduler.places = self.place_list 
+            self.scheduler.workers = self.workers_list
+
+            # Generujemy puste zmiany w obiektach Place (to wypelni place.schedule)
+            self.scheduler.defaultPlaceSchedule(selected_year, selected_month)
             
-            # Resetujemy flagę gotowości przed nowym generowaniem
-            self.scheduler.ready = 0
+            # Teraz sprawdzamy, czy cokolwiek zostalo wygenerowane
+            total_slots = sum(len(p.schedule) for p in self.place_list)
+            if total_slots == 0:
+                QMessageBox.warning(None, "No shifts", f"Nie znaleziono zadnych zmian do obsadzenia w {selected_month}/{selected_year}. Sprawdz reguly w Workplace.")
+                return
             
-            # Uruchamiamy algorytm dla wybranego miesiąca
-            result = self.scheduler.createPlan(selected_month, selected_year)
-            
-            if result == -1:
-                #self.ui.info_label.setText("Failed to create schedule (Check availability).")
-                QMessageBox.information(None, "Failed to create schedule", "Check availability).")
-            else:
-                #self.ui.info_label.setText(f"Schedule created for {months[selected_month-1]} {selected_year}")
-                QMessageBox.information(None, "Success", f"Schedule created for {months[selected_month-1]} {selected_year}")
+            gen_algo = GeneticScheduler(
+                self.workers_list, 
+                self.place_list, 
+                selected_month, 
+                selected_year
+            )
+            try:
+                # 3. Uruchamiamy proces ewolucyjny
+                # To może potrwać kilka sekund – w konsoli będziesz widział postęp
+                gen_algo.createPlan(selected_month, selected_year)
+                
+                self.scheduler.ready = 1
+                QMessageBox.information(None, "Success", f"Genetic Schedule created!")
+                
+                # 4. Ustawiamy flagę gotowości, żeby widok grafiku odblokował tabelę
+                self.scheduler.ready = 1
+                
+                QMessageBox.information(None, "Success", f"Genetic Schedule created for {months[selected_month-1]} {selected_year}")
+
+            except Exception as e:
+                # Na wypadek gdyby np. nie było żadnych zmian do obsadzenia w tym miesiącu
+                print(f"Błąd podczas generowania: {e}")
+                QMessageBox.critical(None, "Error", f"Failed to create schedule: {str(e)}")
 
 
         
@@ -438,7 +459,7 @@ class MainWindow(QObject):
             self.rules_dialog.rules_list.insertRow(i)
            
             # 3. Wyciągamy typ i nazwę (zabezpieczone getattr)
-            typ = rule.type_name
+            typ = getattr(rule, 'type_name', rule.__class__.__name__)
             nazwa_reguly = getattr(rule, 'name', 'Brak nazwy')
             
             # Łączymy to w jeden czytelny tekst

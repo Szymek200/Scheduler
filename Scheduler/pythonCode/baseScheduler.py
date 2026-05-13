@@ -45,6 +45,9 @@ class BaseScheduler(ABC):
     #REQUESTED SCHEDULE FOR PLACES
 
     def defaultPlaceSchedule(self, year, month):
+        from shift import ShiftPlace 
+        print(f"\n[DEBUG] Rozpoczynam generowanie dla {month}/{year}")
+        
         start_date = datetime(year, month, 1, 0, 0, 0)
         
         # Obliczamy koniec miesiąca
@@ -53,29 +56,40 @@ class BaseScheduler(ABC):
         else:
             end_date = datetime(year, month + 1, 1, 0, 0, 0) - timedelta(seconds=1)
         
-        # 2. GENEROWANIE PUSTEGO HARMONOGRAMU DLA MIEJSC
         for place in self.places:
             place.schedule.clear()
+            print(f"[DEBUG] Miejsce: {place.name} | Reguly: {len(place.rules)}")
             
             for rule in place.rules:
-                if rule.type_name == "cyclic":
+                # Sprawdzenie czy to regula cykliczna
+                is_cyclic = getattr(rule, 'type_name', '').lower() == "cyclic" or rule.__class__.__name__ == "CyclicRule"
+                
+                if is_cyclic:
+                    print(f"[DEBUG] -> Regula: {rule.name}")
                     pointer_begin = rule.begin.begin
                     pointer_end = rule.begin.end
-                    interval = rule.interval
                     
-                    # Przewijanie do obecnego miesiąca
+                    # Obsluga interwalu (zamiana na int jesli trzeba)
+                    raw_interval = rule.interval
+                    int_interval = raw_interval.days if hasattr(raw_interval, 'days') else int(raw_interval)
+                    
+                    # Przewijanie do wybranego miesiaca
                     if pointer_begin < start_date:
                         delta_days = (start_date.date() - pointer_begin.date()).days
-                        jumps = (delta_days // interval) + (1 if delta_days % interval != 0 else 0)
-                        pointer_begin += timedelta(days=jumps * interval)
-                        pointer_end += timedelta(days=jumps * interval)
+                        jumps = (delta_days // int_interval) + (1 if delta_days % int_interval != 0 else 0)
+                        pointer_begin += timedelta(days=jumps * int_interval)
+                        pointer_end += timedelta(days=jumps * int_interval)
 
+                    count = 0
                     while pointer_begin <= end_date:
                         new_shift = ShiftPlace(pointer_begin, pointer_end, place, None)
                         place.schedule.append(new_shift)
                         
-                        pointer_begin += timedelta(days=interval)
-                        pointer_end += timedelta(days=interval)
+                        pointer_begin += timedelta(days=int_interval)
+                        pointer_end += timedelta(days=int_interval)
+                        count += 1
+                    
+                    print(f"[DEBUG]    Dodano {count} slotow")
         
         self.placeSchedule = True
 
@@ -83,6 +97,8 @@ class BaseScheduler(ABC):
 
         #request schedule which is designed only based on rules for worker
     def defaultRequestedSchedule(self, worker, year, month):
+        from shift import ShiftPlace
+        import rules 
         worker.rqSchedule.clear()
 
         #defaultPlaceSchedule required first
@@ -93,7 +109,7 @@ class BaseScheduler(ABC):
         for place in self.places:
             for shift in place.schedule:
                 # UŻYWAMY FILTRU: sprawdzamy tylko reguły dziedziczące po rules.Rule
-                if worker.compliesRulesRequest(shift, Rule):
+                if worker.compliesRules(shift, rules.Rule):
                     worker_shift = copy.deepcopy(shift)
                     worker_shift.worker = worker
                     worker.rqSchedule.append(worker_shift)
