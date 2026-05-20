@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from shift import ShiftPlace
 
 if TYPE_CHECKING:
     from shift import ShiftPlace
@@ -115,7 +116,7 @@ class UnorderedRule(AvalRule):
 
 class CyclicRule(AvalRule):
 
-    def __init__(self, begin: datetime, interval: timedelta, name: str):
+    def __init__(self, begin: ShiftPlace, interval: timedelta, name: str):
         from shift import ShiftPlace
         super().__init__(name)
         if not (isinstance(begin, ShiftPlace)):
@@ -151,7 +152,7 @@ class CyclicRule(AvalRule):
             "id": self.id,
             "name": self.name,
             "begin": self.begin.serializer(),
-            "interval": self.interval
+            "interval": self.interval.total_seconds()
         }
     
     #check which shifts cause conflicts
@@ -180,7 +181,7 @@ class RightRule(Rule):
   
 
     def __init__(self, owner, name: str):
-        super(name)
+        super().__init__(name)
         #worker or place which has this rule
         self.owner = owner
       
@@ -251,7 +252,7 @@ class EtatRule(RightRule):
         
        # return (False, self.value - hoursWorked)
 
-        return (self.value - hoursWorked).total_seconds // 3600  * HARD_PENALTY
+        return abs((self.value - hoursWorked).total_seconds() / 3600) * HARD_PENALTY
 
 
     
@@ -260,10 +261,10 @@ class EtatRule(RightRule):
         return{
             "__type__": "Etat Rule",
             "id": self.id,
-            "owner": self.owner.id if hasattr(self, 'owner') else None, #when this rule is used for place
+            "owner": self.owner.id if getattr(self, 'owner', None) is not None else None, #when this rule is used for place
             "name": self.name,
-            "value": self.value,
-            "deviation": self.deviation
+            "value": self.value.total_seconds(),
+            "deviation": self.deviation.total_seconds()
 
         }
 
@@ -273,12 +274,33 @@ class FreeWeekend(RightRule):
     def __init__(self, owner, name, quantity = 2):
         super().__init__(owner, name)
       
-        #self.type_name = "free weekends"
         self.name = name
         self.quantity = quantity
 
-    def isFulfilled(self, _, checkedMonth):
+        self._cached_weekend_days: set[int] = None
+        self._cached_period: tuple[int, int] = (0, 0) # year, month
 
+    #it calculates when there are weekend days in the month
+    def _get_weekend_days(self, month: int, year: int):
+        if self._cached_weekend_days is not None and self._cached_period == (year, month):
+            return self._cached_weekend_days
+
+        weekend_days = set()
+        pointer = datetime(year, month, 1)
+        
+        while pointer.month == month:
+            # 5 = Sobota, 6 = Niedziela (w Pythonie .weekday())
+            if pointer.weekday() in (5, 6):
+                weekend_days.add(pointer.day)
+            pointer += timedelta(days=1)
+        
+        self._cached_weekend_days = weekend_days
+        self._cached_period = (year, month)
+    
+
+    def isFulfilled(self, shift):
+
+        checkedMonth = shift.begin.month
         emptyWeekend = 0
         #we check iof whole weekend is empty
 
@@ -311,59 +333,79 @@ class FreeWeekend(RightRule):
     #returns how many working hours has worker in the month
     def completion(self, worker):
 
-        emptyWeekend = 0
+        weekend_working_hours = 0.0
 
-        weekendWorkingHours = timedelta(0)
-        #we check if whole weekend is empty
+        #he doesn't work - 0 negative points
+        if not worker.schedule:
+            return 0
 
-        #we check every weekend in the month
+        if(self._cached_weekend_days is None):
 
-        if not worker.schedule[0]:
-            return 0    #zero working hours in the weekend
+            month = worker.schedule[0].begin.month
+            year = worker.schedule[0].begin.year
+            self._get_weekend_days(month, year)
+
+        
+
+        #numbers of days when worker is working (only weekends)
+        worked_weekend_days = set()
+
+
+        for shift in worker.schedule:
             
-        #what if first shift is in before month? - be take ending of the shift
-        pointer = worker.schedule[0].begin
-
-        pointer = pointer.replace(day=1)
-
-        current_month = pointer.month
-
-        #month starts with sunday
-        if pointer.weekday() == 6:
-            response =worker.worksToday(pointer)
-            if response:
-                for shift in response:
-                    weekendWorkingHours += shift.duration()
-            else:
-                emptyWeekend+=1
-
-        while pointer.month == current_month:
-        # 5 Sobota, 6 Niedziela
-            if pointer.weekday() == 5:
-                 saturday =worker.worksToday(pointer)
+            if shift.begin.day in self._cached_weekend_days or shift.end.day in self._cached_weekend_days:
                 
+                # we add only number of days, not whole object
+                #it is a set so we won't have double days
+                if shift.begin.day in self._cached_weekend_days:
+                    worked_weekend_days.add(shift.begin.day)
+                if shift.end.day in self._cached_weekend_days:
+                    worked_weekend_days.add(shift.end.day)
+               
+                weekend_working_hours += shift.duration().total_seconds() / 3600
 
-                 pointer += timedelta(days=1)
-                 if(pointer.month == current_month):
-                    sunday =worker.worksToday(pointer)
+       
+        total_weekends = len(self._cached_weekend_days) // 2
+        occupied_weekends = 0
+        
+        # sorting weekend days
+        sorted_weekends = sorted(list(self._cached_weekend_days))
+        
+        # Używamy pętli while, bo będziemy dynamicznie przeskakiwać indeksy
+        i = 0
+        while i < len(sorted_weekends):
+            current_day = sorted_weekends[i]
+            
+            # we check if next free day is in the same week
+            if i + 1 < len(sorted_weekends) and sorted_weekends[i+1] == current_day + 1:
+                # Mamy pełny weekend (Sobota i Niedziela)
+                sat = current_day
+                sun = sorted_weekends[i+1]
+                
+                total_weekends += 1
+                if sat in worked_weekend_days or sun in worked_weekend_days:
+                    occupied_weekends += 1
+                
+                i += 2  # Przeskakujemy o 2 elementy, bo obsłużyliśmy parę
+            else:
+                # Mamy "samotny" dzień weekendowy (np. Niedziela na początku miesiąca lub Sobota na końcu)
+                single_day = current_day
+                
+                total_weekends += 1
+                if single_day in worked_weekend_days:
+                    occupied_weekends += 1
+                    
+                
+                i += 1  # Przeskakujemy tylko o 1 element
 
-                 if saturday or sunday:
-                    for shift in saturday, sunday:
-                        weekendWorkingHours += shift.duration()
-                 else:
-                     emptyWeekend+=1;
-     
-            pointer += timedelta(days=5)  # Przejdź do następnej soboty
+        free_weekends_count = total_weekends - occupied_weekends
 
-        #how many weekends occupied - minus - wrong, zero and plus - good
-        #whole weekend working hours - can't determine which weekend is ok and which is not
-
-        #return (self.quantity - emptyWeekend, weekendWorkingHours)
-
-        if self.quantity <= emptyWeekend:
+      
+        if free_weekends_count >= self.quantity:
             return 0
         else:
-            return weekendWorkingHours.total_seconds //3600 * HARD_PENALTY
+            
+            return int(weekend_working_hours) * HARD_PENALTY
 
 
     
@@ -371,30 +413,41 @@ class FreeWeekend(RightRule):
         return{
             "__type__": "FreeWeekend",
             "id": self.id,
-            "worker": self.worker.id if hasattr(self, 'worker') else None, #when this rule is used for place
-            "name": self.name
+            "owner": self.owner.id if getattr(self, 'owner', None) is not None else None,
+            "name": self.name,
+            "quantity": self.quantity
+
         }
         
 
 
 
 class BetweenShifts(RightRule):
-    def __init__(self, place, name, value):
+    def __init__(self, owner, name, value):
        
-        super().__init__(place, name)
+        super().__init__(owner, name)
         self.value = value
-        #self.type_name = "between shifts"
+    
 
     #to do 
-    def isFulfilled(self, worker):
+    def isFulfilled(self, shift: ShiftPlace):
 
+        if not self.owner or not hasattr(self.owner, 'schedule'):
+            return True
 
-        for i in range(len(worker.shedule)): 
+        # 2. Tworzymy tymczasową listę: dotychczasowy grafik pracownika + nowo sprawdzana zmiana
+        # Dzięki temu sprawdzamy, czy ta nowa zmiana nie koliduje z obecnym grafikiem
+        combined_schedule = self.owner.schedule + [shift]
 
-            if i == 0:
-                continue
-            if worker.shedule[i].begin - worker.shedule[i-1].end < self.value:
+        # 3. Sortujemy po czasie rozpoczęcia zmian
+        sorted_schedule = sorted(combined_schedule, key=lambda x: x.begin)
+
+        # 4. Sprawdzamy odstępy między wszystkimi kolejnymi zmianami
+        for i in range(1, len(sorted_schedule)):
+            if sorted_schedule[i].begin - sorted_schedule[i-1].end < self.value:
                 return False
+
+        return True
 
 
     def completion(self, worker):
@@ -402,17 +455,21 @@ class BetweenShifts(RightRule):
         #value - timedelta between shifts
         overlapHours = timedelta(0)
 
-        for i in range(len(worker.shedule)): 
+        sorted_schedule = sorted(worker.schedule, key=lambda x: x.begin)
+
+   
+
+        for i in range(len(sorted_schedule)): 
 
             if i == 0:
                 continue
 
-            delta = worker.shedule[i].begin - worker.shedule[i-1].end < self.value
-            delta -= self.value
-            if delta > 0:
+            delta = sorted_schedule[i].begin - sorted_schedule[i-1].end 
+            if delta < self.value:
+                difference = self.value - delta
                 overlapHours += delta
 
-        return delta.total_seconds //3600 * HARD_PENALTY
+        return overlapHours.total_seconds //3600 * HARD_PENALTY
                 
         
     
@@ -420,8 +477,9 @@ class BetweenShifts(RightRule):
         return {
             "__type__": "BetweenShifts",
             "id": self.id,
-            "place": getattr(self.place, 'id', self.place),
-            "name": self.name
+            "owner": getattr(self.owner, 'id', self.owner) if self.owner is not None else None,
+            "name": self.name,
+            "value": self.value.total_seconds() if hasattr(self.value, 'total_seconds') else self.value
         }
 
 
@@ -443,10 +501,12 @@ def deserialize_rule(rule_data, entity):
 
    
     if rule_type == "FreeWeekend":
-        new_rule = FreeWeekend(entity, rule_name)
+        quantity = rule_data.get("quantity")
+        new_rule = FreeWeekend(entity, rule_name, quantity)
 
     elif rule_type == "BetweenShifts":
-        new_rule = BetweenShifts(entity, rule_name)
+        value = rule_data.get("value")
+        new_rule = BetweenShifts(entity, rule_name, value)
 
     elif rule_type == "UnorderedRule":
         shifts_array = []
@@ -469,7 +529,9 @@ def deserialize_rule(rule_data, entity):
 
         #whole serialized shift
         begin_data = rule_data.get("begin", {})
-        interval = rule_data.get("interval", 1)
+        interval_seconds = rule_data.get("interval", 1)
+
+        interval = timedelta(seconds=interval_seconds)
         
         try:
             begin_dt = datetime.fromisoformat(begin_data["begin"])
@@ -485,8 +547,12 @@ def deserialize_rule(rule_data, entity):
     
     elif rule_type == "EtatRule":
         try:
-            value = timedelta.fromisoformat(rule_data.get("value"))
-            deviation = timedelta.fromisoformat(rule_data.get("deviation"))
+            value_seconds = rule_data.get("value")
+            deviation_seconds = rule_data.get("deviation")
+
+            value = timedelta(seconds=value_seconds)
+            deviation = timedelta(seconds=deviation_seconds)
+
         except (ValueError, TypeError, KeyError):
             print(f"Błąd parsowania czasu w CyclicRule: {begin_data}")
             return None

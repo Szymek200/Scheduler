@@ -243,7 +243,7 @@ class Scheduler(BaseScheduler):
         result = []
 
         for worker in self.workers:
-            for shift in worker.rqschedule:
+            for shift in worker.rqSchedule:
                 if shift.sameShift(argShift):
 
                     #how many shifts he will lose by this transfer

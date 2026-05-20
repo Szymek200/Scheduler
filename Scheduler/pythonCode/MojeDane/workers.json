@@ -1,1 +1,60 @@
-[]
+[
+    {
+        "__type__": "Worker",
+        "name": "kasia",
+        "surname": "nowak",
+        "pesel": "24342134123",
+        "id": 1,
+        "rules": [
+            {
+                "__type__": "BetweenShifts",
+                "id": 8,
+                "owner": 1,
+                "name": "pomiedzy",
+                "value": 39600.0
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 4,
+                "name": "prac_rano",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-05-20T06:00:00",
+                    "end": "2026-05-20T14:00:00",
+                    "place": "Silesia",
+                    "worker": 1
+                },
+                "interval": 86400.0
+            }
+        ]
+    },
+    {
+        "__type__": "Worker",
+        "name": "Antoni",
+        "surname": "Kowal",
+        "pesel": "1235873423",
+        "id": 2,
+        "rules": [
+            {
+                "__type__": "FreeWeekend",
+                "id": 3,
+                "owner": 2,
+                "name": "",
+                "quantity": 2
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 4,
+                "name": "rano",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-05-20T06:00:00",
+                    "end": "2026-05-20T14:00:00",
+                    "place": "Silesia",
+                    "worker": 2
+                },
+                "interval": 86400.0
+            }
+        ]
+    }
+]

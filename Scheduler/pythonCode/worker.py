@@ -76,25 +76,47 @@ class Worker:
     def compliesRules(self, shift: ShiftPlace, rule_class=None) -> bool:
         import rules
         
-        #RightRules - every one of them needs to be fulfilled at the same time
+        # Jeśli jawnie wskazaliśmy, że chcemy sprawdzić konkretną klasę reguł (np. tylko AvalRule)
+        if rule_class is not None:
+            selected_rules = [r for r in self.rules if isinstance(r, rule_class)]
+            
+            # Jeśli szukamy reguł dostępności, a pracownik ich nie ma - domyślnie jest niedostępny
+            # (lub True, jeśli wolisz, żeby domyślnie mógł pracować wszędzie)
+            if rule_class == rules.AvalRule and not selected_rules:
+                return False 
+                
+            # Dla reguł dostępności (AvalRule) - wystarczy, że JEDNA jest spełniona (logika OR)
+            if rule_class == rules.AvalRule:
+                for rule in selected_rules:
+                    if rule.isFulfilled(shift):
+                        return True
+                return False
+                
+            # Dla innych reguł (np. RightRule) - wszystkie muszą być spełnione (logika AND)
+            for rule in selected_rules:
+                if not rule.isFulfilled(shift):
+                    return False
+            return True
+
+        # --- DOMYŚLNA LOGIKA (gdy rule_class == None) ---
+        # 1. RightRules (AND)
         worker_rules = [r for r in self.rules if isinstance(r, rules.RightRule)]
         for rule in worker_rules:
             if not rule.isFulfilled(shift):
                 return False
                 
-       #availability rules - at least one of them needs to be fulfilled
-        availability_rules: list[AvalRule] = [r for r in self.rules if isinstance(r, rules.AvalRule)]
-      
+        # 2. Availability rules (OR)
+        availability_rules = [r for r in self.rules if isinstance(r, rules.AvalRule)]
+        if not availability_rules:
+            return True
+            
         passed_any = False
         for rule in availability_rules:
             if rule.isFulfilled(shift):
                 passed_any = True
                 break
-        
-        if not passed_any:
-            return False
                 
-        return True
+        return passed_any
     
     def addAcqShift(self, shift: ShiftPlace) -> None:
         self.schedule.append(shift)

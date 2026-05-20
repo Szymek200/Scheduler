@@ -12,8 +12,12 @@ from shift import ShiftPlace
 
 from constans import HARD_PENALTY, SOFT_PENALTY
 
+from ga_converter import GAConverter
+import pygad
 
-class ScheduleValidator(BaseScheduler):
+
+
+class GeneticScheduler(BaseScheduler):
 
     def __init__(self, workers: list[Worker], places: list[Place], month: int, year: int):
         self.workers = workers
@@ -21,69 +25,37 @@ class ScheduleValidator(BaseScheduler):
         self.month = month
         self.year = year
 
+        self.converter = GAConverter(workers, places);
 
-    #errros checked by not hours outside requested schedule
-    def check_aval_rules(self) -> int:
+        print(f"[GA] Przygotowuje dane dla {len(self.workers)} pracownikow...")
 
-        #generating requested schedule for every worker based on his rules
+        # Szybki słownik dostepnosci
+        #klucz - worker id
+        #wartosc - wszystkie zmiany w formacie tekstowym
+        self.availability_cache = {} 
         
-        self.defaultRequestedSchedule(self, self.year, self.month)
 
-     
-
-        total_penalty: timedelta = timedelta(0)
-
+        #creating defalut schedule for every workers
         for worker in self.workers:
+            self.defaultRequestedSchedule(worker, self.year, self.month) #empty shifts
+            # Tworzymy zestaw unikalnych kluczy (data+godzina_beg+godzina_end+miejsce) dla błyskawicznego sprawdzania
+            # zbior jest implementowany poprzez hash table
 
-            for assigned_shift in worker.schedule:
 
-                conflict_count_hours = timedelta(0)
-                # Sprawdzamy, czy przypisana zmiana istnieje w rqSchedule
-                # Używamy any() i metody sameShift() dla pewności porównania danych, a nie instancji
-                is_available = any(assigned_shift.sameShift(rq_shift) for rq_shift in worker.rqSchedule)
-            
-                if not is_available:
-                    conflict_count_hours += assigned_shift.duration()  
-        
-            # Zapisujemy wynik dla konkretnego ID pracownika
-            total_penalty += conflict_count_hours
+            #slownik z klucz - id pracownika
+            #wartosc - zbior wszystkich zmian w miesiacu
+            self.availability_cache[worker.id] = {
+                f"{s.begin.isoformat()}_{s.end.isoformat()}_{getattr(s.place, 'name', s.place)}" 
+                for s in worker.rqSchedule
+            }
+          
+      
+    def hard_rules(self) -> float:
 
-        #return violations * SOFT_PENALTY
-       
-         
-        return int(total_penalty.total_seconds() // 3600)
-
-        
-  
-    def fitness_func(self, shedule_short: dict[int, list[ShiftPlace]]) -> float:
-
-        #schedule_short - dictionary, place id, shifts
-
-        #adding schedule to place objects
-
-        for place in self.places:
-            place.schedule = shedule_short.get(place.id, [])
-        
         worker_map = {w.id: w for w in self.workers}
 
-        for worker in self.workers:
-            worker.schedule.clear()
-
-        #adding shifts to workers
-
-        for place in self.places:
-            for shift in place.schedule:
-                if shift.worker:
-                    #possible to not find worker
-                    worker = worker_map.get(shift.worker.id)
-                    if worker is not None:
-                        worker.schedule.append(shift)
-
-   
-
-        penalty= self.check_aval_rules()
-  
-    #to do. - place roles go to workers or place rules are useless unless po rqschedule
+        penalty:float = 0.0
+ 
         for worker in self.workers:
             
             w_rules = [rule for rule in worker.rules if isinstance(rule, RightRule)]
@@ -91,13 +63,48 @@ class ScheduleValidator(BaseScheduler):
             for rule in w_rules:
                         if isinstance(rule, RightRule):
                             penalty += rule.completion(worker)
+       
+        return penalty
+    
+    def fitness_func(self, ga_instance, solution, solution_idx):
+        # 1. Update obiektow (to musi byc, ale robimy to raz na osobnika)
+        self.converter.update_objects_from_vector(solution)
+        
+        penalty = 0
+        # 2. Kara za puste sloty (bardzo wysoka)
+        penalty += self.converter.get_invalid_slots_count() * 1000
+        
+        penalty += self.hard_rules()
+     
 
-        # 4. Calculate Final Fitness Score
-        # We want to maximize this value. 
-        # Hard rules are weighted heavily so any solution breaking a hard rule 
-        # is significantly worse than one only breaking soft rules.
-        # Adding 0.000001 prevents division by zero.
+        return 1.0 / (penalty + 0.001)
+    
 
+    def createPlan(self, month: int, year: int):
+        # --- TRYB TESTOWY: Male wartosci, zeby sprawdzic czy dziala ---
+        custom_gene_space = self.converter.prepare_slots(month, year, self.availability_cache)
 
-        fitness = 1.0 / (penalty + 0.001)
-        return fitness
+        num_genes:int = len(self.converter.ordered_slots)
+
+        ga_instance = pygad.GA(
+            num_generations=20,           # Tylko 20 pokolen na start
+            num_parents_mating=5,
+            fitness_func=self.fitness_func,
+            sol_per_pop=20,               # Tylko 20 osobnikow
+            num_genes=num_genes,
+            gene_space=custom_gene_space,
+            on_generation=self.on_generation, # Widzisz postep w konsoli!
+            mutation_percent_genes=5
+        )
+        
+        print(f"[GA] Start ewolucji (Slotow: {num_genes})...")
+        ga_instance.run()
+        
+        solution, fitness, idx = ga_instance.best_solution()
+        self.converter.update_all_objects_from_vector(solution)
+        print(f"[GA] Zakonczono. Wynik: {fitness:.6f}")
+        return solution
+    
+    def on_generation(ga_instance):
+        print("Generation : ", ga_instance.generations_completed)
+        print("Fitness of the best solution :", ga_instance.best_solution()[1])

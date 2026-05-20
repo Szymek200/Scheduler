@@ -177,9 +177,6 @@ class MainWindow(QObject):
                 #self.ui.info_label.setText(f"Schedule created for {months[selected_month-1]} {selected_year}")
                 QMessageBox.information(None, "Success", f"Schedule created for {months[selected_month-1]} {selected_year}")
 
-
-        
-
     def worker_schedule(self):
         self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'worker', self.ui)
   
@@ -209,9 +206,6 @@ class MainWindow(QObject):
 
         self.dialog.etat_line.setValidator(validator2)
 
-        # Zabezpieczenie przed pustym polem
-        etat_text = self.dialog.etat_line.text()
-        etat = int(etat_text) if etat_text else 0
 
         # 4. Wyświetlenie jako okno modalne
         # .exec() zatrzymuje kod w tym miejscu, aż zamkniesz okno
@@ -221,8 +215,8 @@ class MainWindow(QObject):
            name = self.dialog.name_line.text()
            surname = self.dialog.surname_line.text()
            pesel = self.dialog.pesel_line.text()
-           etat = int(self.dialog.etat_line.text())
-           worker = Worker(name, surname, pesel, etat)
+ 
+           worker = Worker(name, surname, pesel)
 
            self.workers_list.append(worker)
           
@@ -438,8 +432,9 @@ class MainWindow(QObject):
             self.rules_dialog.rules_list.insertRow(i)
            
             # 3. Wyciągamy typ i nazwę (zabezpieczone getattr)
-            typ = rule.type_name
+      
             nazwa_reguly = getattr(rule, 'name', 'Brak nazwy')
+            typ = rule.__class__.__name__
             
             # Łączymy to w jeden czytelny tekst
             wyswietlany_tekst = f" {nazwa_reguly}"
@@ -465,7 +460,15 @@ class MainWindow(QObject):
             new_rule = rules.FreeWeekend(self.current_entity, rule_name)
 
         elif rule_type == "Between Shifts":
-            new_rule = rules.BetweenShifts(self.current_entity, rule_name)
+
+            rest_widget = current_page.findChild(QSpinBox, "rest_hours_input")
+            
+            if rest_widget:
+                # 2. Pobieramy wartość int (np. 11)
+                hours_value = rest_widget.value()
+                # 3. Konwertujemy na timedelta, bo tego oczekuje klasa BetweenShifts
+                rest_timedelta = timedelta(hours=hours_value)
+            new_rule = rules.BetweenShifts(self.current_entity, rule_name, rest_timedelta) 
             
         elif rule_type == "Unordered Rule":
             shift_list_widget = current_page.findChild(QListWidget, "unordered_shift_list")
@@ -493,7 +496,7 @@ class MainWindow(QObject):
             if interval_widget and hasattr(current_page, 'selected_begin_shift') and current_page.selected_begin_shift:
                 interval = interval_widget.value()
                 begin_shift = current_page.selected_begin_shift
-                new_rule = rules.CyclicRule(begin_shift, interval, rule_name)
+                new_rule = rules.CyclicRule(begin_shift, timedelta(days=interval), rule_name)
             else:
                 # Opcjonalnie: tutaj można dodać okienko z błędem dla użytkownika (QMessageBox)
                 print("Błąd: Musisz najpierw ustawić zmianę początkową (Set Begin Shift)!")
