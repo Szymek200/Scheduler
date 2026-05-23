@@ -87,6 +87,8 @@ class GAConverter:
         for w in self.workers:
             w.schedule = []
 
+        for p in self.places:
+            p.schedule = []
 
         place_map = {p.name: p for p in self.places}
 
