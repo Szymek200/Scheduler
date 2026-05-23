@@ -66,9 +66,9 @@ class Worker:
         if isinstance(rqSchedule, list) and all(isinstance(s, ShiftPlace) for s in rqSchedule):
             self.rqSchedule = rqSchedule
 
-    def availableToday(self, date: datetime) -> bool:
+    def availableToday(self, date: ShiftPlace) -> bool:
         for shift in self.rqSchedule:
-             if shift.begin.date() >= date and shift.end.date() <= date:
+             if shift.begin >= date.begin and shift.end <= date.end:
                     return True
         return False
 

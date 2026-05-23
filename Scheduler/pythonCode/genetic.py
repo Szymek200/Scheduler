@@ -19,11 +19,9 @@ import pygad
 
 class GeneticScheduler(BaseScheduler):
 
-    def __init__(self, workers: list[Worker], places: list[Place], month: int, year: int):
-        self.workers = workers
-        self.places = places
-        self.month = month
-        self.year = year
+    def __init__(self, workers: list[Worker], places: list[Place], month, year):
+
+        super().__init__(workers, places, month, year)
 
         self.converter = GAConverter(workers, places);
 
@@ -34,20 +32,6 @@ class GeneticScheduler(BaseScheduler):
         #wartosc - wszystkie zmiany w formacie tekstowym
         self.availability_cache = {} 
         
-
-        #creating defalut schedule for every workers
-        for worker in self.workers:
-            self.defaultRequestedSchedule(worker, self.year, self.month) #empty shifts
-            # Tworzymy zestaw unikalnych kluczy (data+godzina_beg+godzina_end+miejsce) dla błyskawicznego sprawdzania
-            # zbior jest implementowany poprzez hash table
-
-
-            #slownik z klucz - id pracownika
-            #wartosc - zbior wszystkich zmian w miesiacu
-            self.availability_cache[worker.id] = {
-                f"{s.begin.isoformat()}_{s.end.isoformat()}_{getattr(s.place, 'name', s.place)}" 
-                for s in worker.rqSchedule
-            }
           
       
     def hard_rules(self) -> float:
@@ -80,9 +64,25 @@ class GeneticScheduler(BaseScheduler):
         return 1.0 / (penalty + 0.001)
     
 
-    def createPlan(self, month: int, year: int):
+    def createPlan(self):
+
+
+        self.availability_cache.clear()
+        
+        for worker in self.workers:
+            # Generujemy grafik życzeń na właściwy, wybrany w danej chwili miesiąc
+            #self.defaultRequestedSchedule(worker, self.year, self.month) 
+            
+            # Budujemy aktualny zestaw kluczy dla tego pracownika
+            self.availability_cache[worker.id] = {
+                f"{s.begin.isoformat()}_{s.end.isoformat()}_{getattr(s.place, 'name', s.place)}" 
+                for s in worker.rqSchedule
+            }
+
+
         # --- TRYB TESTOWY: Male wartosci, zeby sprawdzic czy dziala ---
-        custom_gene_space = self.converter.prepare_slots(month, year, self.availability_cache)
+
+        custom_gene_space = self.converter.prepare_slots(self.month, self.year, self.availability_cache)
 
         num_genes:int = len(self.converter.ordered_slots)
 
@@ -96,6 +96,9 @@ class GeneticScheduler(BaseScheduler):
             on_generation=self.on_generation, # Widzisz postep w konsoli!
             mutation_percent_genes=5
         )
+
+        #for ui what month schedule did we created
+        self.created_month = self.month
         
         print(f"[GA] Start ewolucji (Slotow: {num_genes})...")
         ga_instance.run()
@@ -103,8 +106,11 @@ class GeneticScheduler(BaseScheduler):
         solution, fitness, idx = ga_instance.best_solution()
         self.converter.update_all_objects_from_vector(solution)
         print(f"[GA] Zakonczono. Wynik: {fitness:.6f}")
-        return solution
+
+        self.ready = 1
+        return 1
+        #return solution
     
-    def on_generation(ga_instance):
+    def on_generation(self,ga_instance):
         print("Generation : ", ga_instance.generations_completed)
         print("Fitness of the best solution :", ga_instance.best_solution()[1])

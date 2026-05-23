@@ -7,7 +7,7 @@ from PySide6.QtCore import QFile
 from PySide6.QtWidgets import (QApplication, QMainWindow, QPushButton, QTableWidgetItem, 
                                QWidget, QVBoxLayout, QFormLayout, QLabel, QSpinBox, 
                                QListWidget, QListWidgetItem, QHBoxLayout, QComboBox, 
-                               QDialog, QDialogButtonBox)
+                               QDialog, QDialogButtonBox, QLineEdit)
 from PySide6.QtCore import Qt
 
 #regular expression - input veryfication
@@ -22,7 +22,7 @@ from PySide6.QtCore import QObject
 from worker import Worker
 from place import Place
 from shift import ShiftPlace
-from scheduler import Scheduler
+from genetic import GeneticScheduler
 
 from drawSchedule import MainWindow as ScheduleWindow
 from datetime import datetime, time, timedelta
@@ -112,9 +112,54 @@ class MainWindow(QObject):
 
         self.ui.worker_schedule.clicked.connect(self.worker_schedule)
 
-        self.scheduler = Scheduler(self.workers_list, self.place_list)
+       
 
         self.ui.worker_availability.clicked.connect(self.open_schedule_view)
+
+        self.main_year_edit = self.ui.findChild(QLineEdit, "year_line_edit")  
+        self.main_month_combo = self.ui.findChild(QComboBox, "month_combo_box")
+
+        today = datetime.today()
+
+        plan_month = plan_year = 0
+
+        #jestesmy juz w nastepnym roku
+        if today.month == 12:
+            self.main_month_combo.setCurrentIndex(0)
+            self.main_year_edit.setText(str(today.year+1))
+            plan_year = today.year+1
+        else:
+
+            self.main_month_combo.setCurrentIndex(today.month)
+            plan_month = today.month
+            self.main_year_edit.setText(str(today.year))
+            plan_year = today.year
+            
+        
+
+        self.scheduler = GeneticScheduler(self.workers_list, self.place_list, plan_month, plan_year )
+
+        if self.main_year_edit and self.main_month_combo:
+          
+            self.main_year_edit.textChanged.connect(self.handle_date_selection_changed)
+            self.main_month_combo.currentIndexChanged.connect(self.handle_date_selection_changed)
+
+
+
+    def handle_date_selection_changed(self):
+       
+        # Pobieramy rok jako string i czyścimy ze spacji
+        year_str = self.main_year_edit.text().strip()
+    
+        if not year_str.isdigit() or len(year_str) < 4:
+            return  
+
+        selected_year = int(year_str)
+        
+        # Pobieramy miesiąc (currentIndex zwraca wartości 0-11, więc dodajemy 1)
+        selected_month = self.main_month_combo.currentIndex() + 1
+        
+        self.scheduler.updateDate(selected_month, selected_year)
 
     def closeEvent(self, event: QCloseEvent):
         # This triggers right before the window closes
@@ -126,63 +171,38 @@ class MainWindow(QObject):
         event.accept() #allow to close the window
 
     def view_workplace_aval(self):
-        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'place', self.ui)
+        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'place',self.main_month_combo.currentIndex(), self.ui)
   
         self.ui.hide()
 
         self.schedule_window.ui.show()
 
     def create_schedule(self):
-        dialog = QDialog(self.ui)
-        dialog.setWindowTitle("Select Schedule Period")
-        layout = QFormLayout(dialog)
-
-        # 2. Tworzymy pole wyboru roku (QSpinBox)
-        year_spin = QSpinBox()
-        year_spin.setRange(2024, 2050) # Zakres lat
-        year_spin.setValue(datetime.today().year) # Domyślnie obecny rok
-
-        # 3. Tworzymy listę rozwijaną dla miesiąca (QComboBox)
-        month_combo = QComboBox()
-        months = ["January", "February", "March", "April", "May", "June", 
-                  "July", "August", "September", "October", "November", "December"]
-        month_combo.addItems(months)
-        month_combo.setCurrentIndex(datetime.today().month - 1) # Domyślnie obecny miesiąc
-
-        # Dodajemy elementy do okna
-        layout.addRow("Year:", year_spin)
-        layout.addRow("Month:", month_combo)
-
-        # 4. Przyciski OK / Cancel
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.accepted.connect(dialog.accept)
-        buttons.rejected.connect(dialog.reject)
-        layout.addWidget(buttons)
-
-        # 5. Wyświetlamy okno i czekamy na reakcję
-        if dialog.exec() == QDialog.Accepted:
-            selected_year = year_spin.value()
-            selected_month = month_combo.currentIndex() + 1
-            
-            # Resetujemy flagę gotowości przed nowym generowaniem
+      
+         # Resetujemy flagę gotowości przed nowym generowaniem
             self.scheduler.ready = 0
             
             # Uruchamiamy algorytm dla wybranego miesiąca
-            result = self.scheduler.createPlan(selected_month, selected_year)
+            result = self.scheduler.createPlan()
             
             if result == -1:
                 #self.ui.info_label.setText("Failed to create schedule (Check availability).")
                 QMessageBox.information(None, "Failed to create schedule", "Check availability).")
             else:
                 #self.ui.info_label.setText(f"Schedule created for {months[selected_month-1]} {selected_year}")
-                QMessageBox.information(None, "Success", f"Schedule created for {months[selected_month-1]} {selected_year}")
+                QMessageBox.information(None, "Success", f"Schedule created")
 
     def worker_schedule(self):
-        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'worker', self.ui)
-  
-        self.ui.hide()
 
-        self.schedule_window.ui.show()
+        if(self.scheduler.ready == 0):
+            QMessageBox.information(None, "Not available", "Schedule hasn't been created yet")
+        else:
+
+            self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'worker',  self.scheduler.createdScheduleMonth(), self.ui)
+    
+            self.ui.hide()
+
+            self.schedule_window.ui.show()
 
     def add_worker(self):
      
@@ -220,10 +240,12 @@ class MainWindow(QObject):
 
            self.workers_list.append(worker)
           
+
+    #opens requested shedule for worker
     def open_schedule_view(self):
 
         #create new window and class
-        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'request_worker', self.ui)
+        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'request_worker', self.main_month_combo.currentIndex(), self.ui)
   
         self.ui.hide()
 

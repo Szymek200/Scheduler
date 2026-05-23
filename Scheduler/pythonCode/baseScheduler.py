@@ -18,15 +18,24 @@ if TYPE_CHECKING:
 
 
 class BaseScheduler(ABC):
-    def __init__(self, workers: list[Worker], places: list [Place]):
+    def __init__(self, workers: list[Worker], places: list [Place], month, year):
         #workers have requested schedule and its requirements
         #places have required shifts to fill  
         
         
-        self.placeSchedule = False
+       
         self.ready = 0
         self.places = places
         self.workers = workers
+        self.year = year
+        self.month = month
+
+        self.created_month = 0
+
+    def updateDate(self, month: int, year: int):
+        self.year = year
+        self.month = month
+        self.ready = 0 #generated schedule is false
 
       
     #for every shift we check
@@ -40,7 +49,7 @@ class BaseScheduler(ABC):
         return False
     
     @abstractmethod
-    def createPlan(self, month, year):
+    def createPlan(self):
         pass
 
 
@@ -88,32 +97,14 @@ class BaseScheduler(ABC):
                         pointer_begin += interval
                         pointer_end += interval
         
-        self.placeSchedule = True
+      
 
-         #REQUESTED SCHEDULE FOR PLACES
+    def createdScheduleMonth(self):
+        return self.created_month
 
-        #request schedule which is designed only based on rules for worker
-    """
-    def defaultRequestedSchedule(self, worker, year, month):
+         #REQUESTED SCHEDULE FOR WORKERS
 
-        import rules 
-        worker.rqSchedule.clear()
-
-        #defaultPlaceSchedule required first
-        if self.placeSchedule == False:
-            self.defaultPlaceSchedule( year, month)
-
-        # 3. GENEROWANIE REQUEST SCHEDULE DLA PRACOWNIKA
-        for place in self.places:
-            for shift in place.schedule:
-                # UŻYWAMY FILTRU: sprawdzamy tylko reguły dziedziczące po rules.Rule
-                if worker.compliesRules(shift, rules.AvalRule):
-                    worker_shift = copy.deepcopy(shift)
-                    worker_shift.worker = worker
-                    worker.rqSchedule.append(worker_shift)
-        """
-
-    def defaultRequestedSchedule(self, worker, year, month):
+    def defaultRequestedSchedule(self, worker, year = 0, month = 0):
         import rules 
         from datetime import datetime, timedelta
         import copy
@@ -121,8 +112,8 @@ class BaseScheduler(ABC):
         worker.rqSchedule.clear()
 
         # 1. Upewniamy się, że grafik miejsc na dany miesiąc istnieje
-        if self.placeSchedule == False:
-            self.defaultPlaceSchedule(year, month)
+       # if self.placeSchedule == False:
+       # self.defaultPlaceSchedule(year, month)
 
         # 2. SANITY CHECK / NAPRAWA TYPÓW DANYCH Z JSON DLA REGUŁ PRACOWNIKA
         # Ponieważ JSON wczytuje daty jako stringi, a interwały jako float, musimy je naprawić
@@ -141,7 +132,9 @@ class BaseScheduler(ABC):
 
         # 3. GENEROWANIE REQUEST SCHEDULE POPRZEZ FILTROWANIE GOTOWEGO GRAFIKU MIEJSC
         for place in self.places:
+            print("number of shifts")
             for shift in place.schedule:
+                print("shift")
                 
                 # Sprawdzamy reguły dostępności (AvalRule)
                 if worker.compliesRules(shift, rules.AvalRule):

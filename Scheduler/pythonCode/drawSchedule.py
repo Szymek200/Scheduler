@@ -10,7 +10,7 @@ from scheduler import Scheduler
 
 class MainWindow(QObject):
     #add scheduler to constructor
-    def __init__(self, workers, places, scheduler, window_type, main_window=None):
+    def __init__(self, workers, places, scheduler, window_type, month, main_window=None):
         super().__init__()
         self.workers_list = workers
         self.place_list = places
@@ -41,7 +41,8 @@ class MainWindow(QObject):
     
         
         #current month as default
-        current_month_idx = datetime.date.today().month - 1
+        #current_month_idx = datetime.date.today().month - 1
+        current_month_idx = month
         self.ui.monthCombo.setCurrentIndex(current_month_idx)
 
         # change month -> refresh table

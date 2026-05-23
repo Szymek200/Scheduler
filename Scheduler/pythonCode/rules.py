@@ -469,7 +469,7 @@ class BetweenShifts(RightRule):
                 difference = self.value - delta
                 overlapHours += delta
 
-        return overlapHours.total_seconds //3600 * HARD_PENALTY
+        return overlapHours.total_seconds() //3600 * HARD_PENALTY
                 
         
     
@@ -505,7 +505,9 @@ def deserialize_rule(rule_data, entity):
         new_rule = FreeWeekend(entity, rule_name, quantity)
 
     elif rule_type == "BetweenShifts":
-        value = rule_data.get("value")
+        value_seconds = rule_data.get("value", 39600) #defaut = 11 hours
+        value = timedelta(seconds=value_seconds)
+
         new_rule = BetweenShifts(entity, rule_name, value)
 
     elif rule_type == "UnorderedRule":

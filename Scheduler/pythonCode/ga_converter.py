@@ -87,28 +87,27 @@ class GAConverter:
         for w in self.workers:
             w.schedule = []
 
-        for p in self.places:
-            p.schedule = []
+
+        place_map = {p.name: p for p in self.places}
 
         for i, worker_id in enumerate(vector):
             shift = self.ordered_slots[i]
-           
             w_id = int(worker_id)
             
             if w_id in self.worker_map:
                 worker = self.worker_map[w_id]
                 shift.worker = worker
-                worker.addAcqShift(shift) # Dodaje do worker.schedule
+                worker.addAcqShift(shift) 
 
-                if shift.place in self.places:
-                    shift.place.addShift(shift)
-                else:
-                    shift.place = None
-
+                # Sprawdź czy shift.place to string czy obiekt
+                p_name = shift.place.name if hasattr(shift.place, 'name') else shift.place
+                
+                if p_name in place_map:
+                    actual_place = place_map[p_name]
+                    shift.place = actual_place  # Podmieniamy string na właściwy obiekt Place
+                    actual_place.schedule.append(shift) # Dodajemy zmianę do grafiku miejsca
             else:
                 shift.worker = None
-
-        
 
 
     def get_invalid_slots_count(self) -> int:
