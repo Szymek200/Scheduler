@@ -66,9 +66,9 @@ class Worker:
         if isinstance(rqSchedule, list) and all(isinstance(s, ShiftPlace) for s in rqSchedule):
             self.rqSchedule = rqSchedule
 
-    def availableToday(self, date: datetime) -> bool:
+    def availableToday(self, date: ShiftPlace) -> bool:
         for shift in self.rqSchedule:
-             if shift.begin.date() >= date and shift.end.date() <= date:
+             if shift.begin >= date.begin and shift.end <= date.end:
                     return True
         return False
 
@@ -76,44 +76,47 @@ class Worker:
     def compliesRules(self, shift: ShiftPlace, rule_class=None) -> bool:
         import rules
         
-        # Jesli nie podano konkretnej klasy, sprawdzamy wszystkie reguly (rules.Rule)
-        if rule_class is None:
-            rule_class = rules.Rule
-
-        # Filtrujemy reguly pracownika - bierzemy tylko te, ktore naleza do szukanej klasy
-        # Dzieki temu mozemy sprawdzic np. tylko dostepnosc (AvalRule)
-        applicable_rules = [r for r in self.rules if isinstance(r, rule_class)]
-
-        # Rozdzielamy przefiltrowane reguly na twarde (Right) i dostepnosci (Aval)
-        right_rules = [r for r in applicable_rules if isinstance(r, rules.RightRule)]
-        aval_rules = [r for r in applicable_rules if isinstance(r, rules.AvalRule)]
-
-        # LOGIKA 1: Reguly twarde (np. przerwy miedzy zmianami) 
-        # Wszystkie musza byc spelnione jednoczesnie.
-        for rule in right_rules:
-            # Niektore reguly RightRule wymagaja dodatkowych argumentow, 
-            # sprawdzamy czy isFulfilled zadziala z samym shift
-            try:
-                if not rule.isFulfilled(shift):
-                    return False
-            except TypeError:
-                # Jesli regula wymaga wiecej danych (np. miesiaca), 
-                # na tym etapie ja pomijamy
-                continue
-                
-        # LOGIKA 2: Reguly dostepnosci (np. CyclicRule - "pracuje w poniedzialki")
-        # Przynajmniej jedna z nich musi byc spelniona, abysmy uznali, ze pracownik jest dostepny.
-        if aval_rules:
-            passed_any = False
-            for rule in aval_rules:
-                if rule.isFulfilled(shift):
-                    passed_any = True
-                    break
+        # Jeśli jawnie wskazaliśmy, że chcemy sprawdzić konkretną klasę reguł (np. tylko AvalRule)
+        if rule_class is not None:
+            selected_rules = [r for r in self.rules if isinstance(r, rule_class)]
             
-            if not passed_any:
+            # Jeśli szukamy reguł dostępności, a pracownik ich nie ma - domyślnie jest niedostępny
+            # (lub True, jeśli wolisz, żeby domyślnie mógł pracować wszędzie)
+            if rule_class == rules.AvalRule and not selected_rules:
+                return False 
+                
+            # Dla reguł dostępności (AvalRule) - wystarczy, że JEDNA jest spełniona (logika OR)
+            if rule_class == rules.AvalRule:
+                for rule in selected_rules:
+                    if rule.isFulfilled(shift):
+                        return True
                 return False
                 
-        return True
+            # Dla innych reguł (np. RightRule) - wszystkie muszą być spełnione (logika AND)
+            for rule in selected_rules:
+                if not rule.isFulfilled(shift):
+                    return False
+            return True
+
+        # --- DOMYŚLNA LOGIKA (gdy rule_class == None) ---
+        # 1. RightRules (AND)
+        worker_rules = [r for r in self.rules if isinstance(r, rules.RightRule)]
+        for rule in worker_rules:
+            if not rule.isFulfilled(shift):
+                return False
+                
+        # 2. Availability rules (OR)
+        availability_rules = [r for r in self.rules if isinstance(r, rules.AvalRule)]
+        if not availability_rules:
+            return True
+            
+        passed_any = False
+        for rule in availability_rules:
+            if rule.isFulfilled(shift):
+                passed_any = True
+                break
+                
+        return passed_any
     
     def addAcqShift(self, shift: ShiftPlace) -> None:
         self.schedule.append(shift)

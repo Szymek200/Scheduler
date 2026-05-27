@@ -9,28 +9,48 @@ class GAConverter:
     def __init__(self, workers: List[Worker], places: List[Place]):
         self.workers = workers
         self.places = places
-        # Mapa dla szybkiego wyszukiwania pracownika po ID
+        #slownik: id and worker
         self.worker_map = {w.id: w for w in workers}
-        # Lista wszystkich dostepnych ID pracownikow (alleli)
         self.worker_ids = [w.id for w in workers]
+        # Lista wszystkich dostepnych ID pracownikow (alleli)
         
         # To bedzie przechowywac stala kolejnosc slotow dla danego uruchomienia
         self.ordered_slots: List[ShiftPlace] = []
 
-    def prepare_slots(self, month: int, year: int):
+    def prepare_slots(self, month: int, year: int, availability_cache: dict) -> list:
         """
-        Zbiera wszystkie zmiany ze wszystkich miejsc pracy dla danego miesiaca.
-        Musi byc wywolane przed startem algorytmu.
+        Zbiera wszystkie zmiany i buduje ograniczoną przestrzeń genów (gene_space)
+        na podstawie cache'u dostępności pracowników.
         """
         self.ordered_slots = []
-        # Sortujemy miejsca po ID, zeby zawsze miec te sama kolejnosc
+        gene_space = [] 
+        
+       
         for place in sorted(self.places, key=lambda p: p.id):
-            # Zakladamy, ze place.schedule jest juz wypelnione pustymi zmianami 
-            # przez scheduler.defaultPlaceSchedule(year, month)
+            
             for shift in sorted(place.schedule, key=lambda s: s.begin):
                 self.ordered_slots.append(shift)
+
+             
+                #changing shift to text from object
+                shift_key = f"{shift.begin.isoformat()}_{shift.end.isoformat()}_{getattr(shift.place, 'name', shift.place)}"
+
+                
+                allowed_workers_for_this_shift = []
+                for w in self.workers:
+                    
+                    worker_cache = availability_cache.get(w.id, set()) #we take out set of all shifts of a working
+                    if shift_key in worker_cache:
+                        allowed_workers_for_this_shift.append(w.id)
+
+                #if no worker wants to work this day we put everyone - so alg. can create any answear
+                if not allowed_workers_for_this_shift:
+                    allowed_workers_for_this_shift = list(self.worker_map.keys())
+
+                #for every shift in ordered_slots is coresponding list of workers who can work that shift
+                gene_space.append(allowed_workers_for_this_shift)
         
-        return len(self.ordered_slots)
+        return gene_space
 
     def to_vector(self) -> np.ndarray:
         """
@@ -63,6 +83,35 @@ class GAConverter:
                 worker.addAcqShift(shift) # Dodaje do worker.schedule
             else:
                 shift.worker = None
+
+    def update_all_objects_from_vector(self, vector: np.ndarray):
+        for w in self.workers:
+            w.schedule = []
+
+        for p in self.places:
+            p.schedule = []
+
+        place_map = {p.name: p for p in self.places}
+
+        for i, worker_id in enumerate(vector):
+            shift = self.ordered_slots[i]
+            w_id = int(worker_id)
+            
+            if w_id in self.worker_map:
+                worker = self.worker_map[w_id]
+                shift.worker = worker
+                worker.addAcqShift(shift) 
+
+                # Sprawdź czy shift.place to string czy obiekt
+                p_name = shift.place.name if hasattr(shift.place, 'name') else shift.place
+                
+                if p_name in place_map:
+                    actual_place = place_map[p_name]
+                    shift.place = actual_place  # Podmieniamy string na właściwy obiekt Place
+                    actual_place.schedule.append(shift) # Dodajemy zmianę do grafiku miejsca
+            else:
+                shift.worker = None
+
 
     def get_invalid_slots_count(self) -> int:
         """Zwraca liczbe nieobsadzonych zmian (kara dla fitness)"""

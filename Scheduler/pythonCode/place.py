@@ -64,6 +64,10 @@ class Place:
         if isinstance(rule, rules.Rule):
             self.rules.append(rule)
 
+    def addShift(self, shift: ShiftPlace):
+        if shift not in self.schedule:
+            self.schedule.append(shift)
+
     def availableShift(self, argShift: ShiftPlace) -> bool:
         for shift in self.schedule:
             #we need cast because generally there is worker 
@@ -96,6 +100,6 @@ class Place:
             "address":self.address,
             "id":self.id,
             "rules":[rule.serializer() for rule in self.rules],
-            "schedule":self.schedule
+            #"schedule":self.schedule
             
         }   

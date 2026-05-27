@@ -8,8 +8,8 @@
         "rules": [
             {
                 "__type__": "CyclicRule",
-                "id": 0,
-                "name": "jeden",
+                "id": 8,
+                "name": "Morning Shift Pref",
                 "begin": {
                     "__type__": "ShiftPlace",
                     "begin": "2026-03-04T06:00:00",
@@ -17,20 +17,29 @@
                     "place": "Burowiec",
                     "worker": 1
                 },
-                "interval": 7
+                "interval": 86400.0
             },
             {
-                "__type__": "CyclicRule",
-                "id": 1,
-                "name": "dwa",
-                "begin": {
-                    "__type__": "ShiftPlace",
-                    "begin": "2026-03-05T06:00:00",
-                    "end": "2026-03-05T14:00:00",
-                    "place": "Burowiec",
-                    "worker": 1
-                },
-                "interval": 7
+                "__type__": "BetweenShifts",
+                "id": 101,
+                "owner": 1,
+                "name": "Min Rest 11h",
+                "value": 39600.0
+            },
+            {
+                "__type__": "Etat Rule",
+                "id": 102,
+                "owner": 1,
+                "name": "Full Time 160h",
+                "value": 576000.0,
+                "deviation": 28800.0
+            },
+            {
+                "__type__": "FreeWeekend",
+                "id": 103,
+                "owner": 1,
+                "name": "2 Free Weekends",
+                "quantity": 2
             }
         ]
     },
@@ -43,8 +52,8 @@
         "rules": [
             {
                 "__type__": "CyclicRule",
-                "id": 2,
-                "name": "codzienie",
+                "id": 10,
+                "name": "Afternoon Shift Pref",
                 "begin": {
                     "__type__": "ShiftPlace",
                     "begin": "2026-03-04T14:00:00",
@@ -52,7 +61,21 @@
                     "place": "Burowiec",
                     "worker": 2
                 },
-                "interval": 1
+                "interval": 86400.0
+            },
+            {
+                "__type__": "BetweenShifts",
+                "id": 104,
+                "owner": 2,
+                "name": "Min Rest 11h",
+                "value": 39600.0
+            },
+            {
+                "__type__": "FreeWeekend",
+                "id": 105,
+                "owner": 2,
+                "name": "All Weekends Free",
+                "quantity": 4
             }
         ]
     },
@@ -64,30 +87,19 @@
         "id": 3,
         "rules": [
             {
-                "__type__": "CyclicRule",
-                "id": 3,
-                "name": "jeden przerwa",
-                "begin": {
-                    "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T14:00:00",
-                    "end": "2026-03-04T22:00:00",
-                    "place": "Burowiec",
-                    "worker": 3
-                },
-                "interval": 3
+                "__type__": "Etat Rule",
+                "id": 106,
+                "owner": 3,
+                "name": "Student Part-Time 80h",
+                "value": 288000.0,
+                "deviation": 36000.0
             },
             {
-                "__type__": "CyclicRule",
-                "id": 4,
-                "name": "jeden przerwy",
-                "begin": {
-                    "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T06:00:00",
-                    "end": "2026-03-04T14:00:00",
-                    "place": "Zadole",
-                    "worker": 3
-                },
-                "interval": 3
+                "__type__": "BetweenShifts",
+                "id": 107,
+                "owner": 3,
+                "name": "Min Rest 11h",
+                "value": 39600.0
             }
         ]
     },
@@ -99,43 +111,125 @@
         "id": 4,
         "rules": [
             {
+                "__type__": "BetweenShifts",
+                "id": 108,
+                "owner": 4,
+                "name": "Min Rest 11h",
+                "value": 39600.0
+            },
+            {
+                "__type__": "FreeWeekend",
+                "id": 109,
+                "owner": 4,
+                "name": "Standard Weekends",
+                "quantity": 2
+            }
+        ]
+    },
+    {
+        "__type__": "Worker",
+        "name": "Marek",
+        "surname": "Kowalski",
+        "pesel": "85011244567",
+        "id": 5,
+        "rules": [
+            {
+                "__type__": "Etat Rule",
+                "id": 110,
+                "owner": 5,
+                "name": "Full Time 160h",
+                "value": 576000.0,
+                "deviation": 14400.0
+            },
+            {
+                "__type__": "BetweenShifts",
+                "id": 111,
+                "owner": 5,
+                "name": "Strict Rest",
+                "value": 43200.0
+            }
+        ]
+    },
+    {
+        "__type__": "Worker",
+        "name": "Katarzyna",
+        "surname": "Zielinska",
+        "pesel": "92050512345",
+        "id": 6,
+        "rules": [
+            {
+                "__type__": "FreeWeekend",
+                "id": 112,
+                "owner": 6,
+                "name": "Needs Weekends",
+                "quantity": 3
+            },
+            {
+                "__type__": "BetweenShifts",
+                "id": 113,
+                "owner": 6,
+                "name": "Min Rest 11h",
+                "value": 39600.0
+            }
+        ]
+    },
+    {
+        "__type__": "Worker",
+        "name": "Piotr",
+        "surname": "Wisniewski",
+        "pesel": "78102098765",
+        "id": 7,
+        "rules": [
+            {
+                "__type__": "Etat Rule",
+                "id": 114,
+                "owner": 7,
+                "name": "Half-Time 80h",
+                "value": 288000.0,
+                "deviation": 14400.0
+            },
+            {
+                "__type__": "BetweenShifts",
+                "id": 115,
+                "owner": 7,
+                "name": "Min Rest 11h",
+                "value": 39600.0
+            },
+            {
                 "__type__": "CyclicRule",
-                "id": 5,
-                "name": "codziennie",
+                "id": 27,
+                "name": "test",
                 "begin": {
                     "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T06:00:00",
-                    "end": "2026-03-04T14:00:00",
+                    "begin": "2026-05-24T00:00:00",
+                    "end": "2026-05-27T00:00:00",
                     "place": "Burowiec",
-                    "worker": 4
+                    "worker": 7
                 },
-                "interval": 1
+                "interval": 259200.0
+            }
+        ]
+    },
+    {
+        "__type__": "Worker",
+        "name": "Ola",
+        "surname": "Nowacka",
+        "pesel": "95031411223",
+        "id": 8,
+        "rules": [
+            {
+                "__type__": "BetweenShifts",
+                "id": 116,
+                "owner": 8,
+                "name": "Min Rest 11h",
+                "value": 39600.0
             },
             {
-                "__type__": "CyclicRule",
-                "id": 6,
-                "name": "codziennie zadole",
-                "begin": {
-                    "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T06:00:00",
-                    "end": "2026-03-04T01:04:00",
-                    "place": "Zadole",
-                    "worker": 4
-                },
-                "interval": 1
-            },
-            {
-                "__type__": "CyclicRule",
-                "id": 7,
-                "name": "popo",
-                "begin": {
-                    "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T14:00:00",
-                    "end": "2026-03-04T22:00:00",
-                    "place": "Zadole",
-                    "worker": 4
-                },
-                "interval": 1
+                "__type__": "FreeWeekend",
+                "id": 117,
+                "owner": 8,
+                "name": "2 Free Weekends",
+                "quantity": 2
             }
         ]
     }

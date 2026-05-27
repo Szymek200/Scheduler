@@ -1,122 +1,122 @@
 [
-  {
-    "__type__": "Place",
-    "name": "Burowiec",
-    "address": "Konna",
-    "id": 1,
-    "rules": [
-      {
-        "__type__": "CyclicRule",
-        "id": 0,
-        "name": "rano1",
-        "begin": {
-          "__type__": "ShiftPlace",
-          "begin": "2026-03-04T06:00:00",
-          "end": "2026-03-04T14:00:00",
-          "place": "Burowiec",
-          "worker": null
-        },
-        "interval": 1
-      },
-      {
-        "__type__": "CyclicRule",
+    {
+        "__type__": "Place",
+        "name": "Burowiec",
+        "address": "Konna",
         "id": 1,
-        "name": "rano2",
-        "begin": {
-          "__type__": "ShiftPlace",
-          "begin": "2026-03-04T06:00:00",
-          "end": "2026-03-04T14:00:00",
-          "place": "Burowiec",
-          "worker": null
-        },
-        "interval": 1
-      },
-      {
-        "__type__": "CyclicRule",
-        "id": 2,
-        "name": "popo1",
-        "begin": {
-          "__type__": "ShiftPlace",
-          "begin": "2026-03-04T14:00:00",
-          "end": "2026-03-04T22:00:00",
-          "place": "Burowiec",
-          "worker": null
-        },
-        "interval": 1
-      },
-      {
-        "__type__": "CyclicRule",
-        "id": 3,
-        "name": "popo2",
-        "begin": {
-          "__type__": "ShiftPlace",
-          "begin": "2026-03-04T14:00:00",
-          "end": "2026-03-04T22:00:00",
-          "place": "Burowiec",
-          "worker": null
-        },
-        "interval": 1
-      }
-    ]
-  },
-  {
-    "__type__": "Place",
-    "name": "Zadole",
-    "address": "Ceglana",
-    "id": 1,
-    "rules": [
-      {
-        "__type__": "CyclicRule",
-        "id": 4,
-        "name": "rano1",
-        "begin": {
-          "__type__": "ShiftPlace",
-          "begin": "2026-03-04T06:00:00",
-          "end": "2026-03-04T14:00:00",
-          "place": "Burowiec",
-          "worker": null
-        },
-        "interval": 1
-      },
-      {
-        "__type__": "CyclicRule",
-        "id": 5,
-        "name": "rano2",
-        "begin": {
-          "__type__": "ShiftPlace",
-          "begin": "2026-03-04T06:00:00",
-          "end": "2026-03-04T14:00:00",
-          "place": "Burowiec",
-          "worker": null
-        },
-        "interval": 1
-      },
-      {
-        "__type__": "CyclicRule",
-        "id": 6,
-        "name": "popo1",
-        "begin": {
-          "__type__": "ShiftPlace",
-          "begin": "2026-03-04T14:00:00",
-          "end": "2026-03-04T22:00:00",
-          "place": "Burowiec",
-          "worker": 1
-        },
-        "interval": 1
-      },
-      {
-        "__type__": "CyclicRule",
-        "id": 7,
-        "name": "popo2",
-        "begin": {
-          "__type__": "ShiftPlace",
-          "begin": "2026-03-04T14:00:00",
-          "end": "2026-03-04T22:00:00",
-          "place": "Burowiec",
-          "worker": 1
-        },
-        "interval": 1
-      }
-    ]
-  }
+        "rules": [
+            {
+                "__type__": "CyclicRule",
+                "id": 0,
+                "name": "rano1",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T06:00:00",
+                    "end": "2026-03-04T14:00:00",
+                    "place": "Burowiec",
+                    "worker": null
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 1,
+                "name": "rano2",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T06:00:00",
+                    "end": "2026-03-04T14:00:00",
+                    "place": "Burowiec",
+                    "worker": null
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 2,
+                "name": "popo1",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T14:00:00",
+                    "end": "2026-03-04T22:00:00",
+                    "place": "Burowiec",
+                    "worker": null
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 3,
+                "name": "popo2",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T14:00:00",
+                    "end": "2026-03-04T22:00:00",
+                    "place": "Burowiec",
+                    "worker": null
+                },
+                "interval": 86400.0
+            }
+        ]
+    },
+    {
+        "__type__": "Place",
+        "name": "Zadole",
+        "address": "Ceglana",
+        "id": 1,
+        "rules": [
+            {
+                "__type__": "CyclicRule",
+                "id": 4,
+                "name": "rano1",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T06:00:00",
+                    "end": "2026-03-04T14:00:00",
+                    "place": "Burowiec",
+                    "worker": null
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 5,
+                "name": "rano2",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T06:00:00",
+                    "end": "2026-03-04T14:00:00",
+                    "place": "Burowiec",
+                    "worker": null
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 6,
+                "name": "popo1",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T14:00:00",
+                    "end": "2026-03-04T22:00:00",
+                    "place": "Burowiec",
+                    "worker": null
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "CyclicRule",
+                "id": 7,
+                "name": "popo2",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-03-04T14:00:00",
+                    "end": "2026-03-04T22:00:00",
+                    "place": "Burowiec",
+                    "worker": null
+                },
+                "interval": 86400.0
+            }
+        ]
+    }
 ]

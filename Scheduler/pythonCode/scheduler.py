@@ -149,10 +149,12 @@ class Scheduler(BaseScheduler):
         if self.schedulePossible() == False:
             return 
         
+        self.defaultPlaceSchedule(year, month)
+        
         #cleaning old data
         for worker in self.workers:
-            worker.acquiredSchedule.clear()
-            self.defaultSchedule(worker, year, month)
+            worker.schedule.clear()
+            self.defaultRequestedSchedule(worker, year, month)
           
         emptyShifts = []
 
@@ -232,7 +234,7 @@ class Scheduler(BaseScheduler):
         result = []
 
         for worker in self.workers:
-            for shift in worker.rqschedule:
+            for shift in worker.rqSchedule:
                 if shift.sameShift(argShift):
 
                     #how many shifts he will lose by this transfer
@@ -362,7 +364,7 @@ class Scheduler(BaseScheduler):
                     #to do - it would be better to check first for collisions around added shift!!!!!
                     #to do - remember exchages to stop echange loop
 
-                    for shift in importWorker.acquiredSchedule:
+                    for shift in importWorker.schedule:
                         # we check if new guy can work here
                         for newGuy in lessEtat:
                             for rqShift in newGuy.rqSchedule:
@@ -371,7 +373,7 @@ class Scheduler(BaseScheduler):
 
                                     #now we need to check is exchange did resolve issue with import Guy
                                     
-                                    importWorker.acquiredSchedule.remove(shift)
+                                    importWorker.schedule.remove(shift)
 
                                     #this is ok
                                     shift.worker = newGuy
@@ -399,7 +401,7 @@ class Scheduler(BaseScheduler):
                                         break
                                     else:
 
-                                        newGuy.acquiredSchedule.remove(shift)
+                                        newGuy.schedule.remove(shift)
                                         shift.worker = importWorker #odl worker, which was before
                                         importWorker.addWorkerShift(shift)
 
