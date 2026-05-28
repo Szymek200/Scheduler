@@ -12,9 +12,7 @@ from shift import ShiftPlace
 class Place:
 
     #class variable
-
     availableId: int = 1
-
 
     def __init__(self, name:str, address: str):
         self.name: str = name
@@ -24,10 +22,6 @@ class Place:
         self.availableId += 1
         self.rules: list['Rule'] = []
         self.schedule: list[ShiftPlace] = []
-
-    
-
-        
 
     def addRequestedSchedule(self, rqSchedule: list[ShiftPlace]) -> None:
 
@@ -71,7 +65,7 @@ class Place:
     def availableShift(self, argShift: ShiftPlace) -> bool:
         for shift in self.schedule:
             #we need cast because generally there is worker 
-            if shift.sameShift(argShift):
+            if shift.__eq__(argShift):
                 return True
         return False
 
@@ -81,7 +75,7 @@ class Place:
     def addWorkerToShift(self, argShift: ShiftPlace) -> None:
         for shift in self.schedule:
             #we need cast because generally there is worker 
-            if shift.sameShift(argShift):
+            if shift.__eq__(argShift):
                 #will it change value on the list?
                 shift = argShift
                 break
@@ -99,7 +93,5 @@ class Place:
             "name": self.name,
             "address":self.address,
             "id":self.id,
-            "rules":[rule.serializer() for rule in self.rules],
-            #"schedule":self.schedule
-            
+            "rules":[rule.serializer() for rule in self.rules]
         }   

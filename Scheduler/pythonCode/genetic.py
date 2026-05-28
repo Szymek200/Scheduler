@@ -85,7 +85,7 @@ class GeneticScheduler(BaseScheduler):
         return 1.0 / (float(penalty) + 0.001)
     
     def createPlan(self):
-
+        # Generujemy bazowy grafik zapotrzebowania dla miejsc pracy
         self.defaultPlaceSchedule(self.year, self.month)
         
         self.availability_cache.clear()
@@ -96,56 +96,41 @@ class GeneticScheduler(BaseScheduler):
             
             # Budujemy aktualny zestaw kluczy dla tego pracownika
             self.availability_cache[worker.id] = {
-                f"{s.begin.isoformat()}_{s.end.isoformat()}_{getattr(s.place, 'name', s.place)}" 
+                f"{s.begin.isoformat()}_{s.end.isoformat()}_{getattr(s.place, 'name', shift.place if 'shift' in locals() else s.place)}" 
                 for s in worker.rqSchedule
             }
 
-
-        # --- TRYB TESTOWY: Male wartosci, zeby sprawdzic czy dziala ---
-
+        # 1. Budujemy dedykowaną przestrzeń genów na podstawie preferencji
         custom_gene_space = self.converter.prepare_slots(self.month, self.year, self.availability_cache)
-
-        num_genes:int = len(self.converter.ordered_slots)
-
-        #ga_instance = pygad.GA(
-        #    num_generations=200,           # Tylko 20 pokolen na start
-        #    num_parents_mating=5,
-        #    fitness_func=self.fitness_func,
-        #    sol_per_pop=20,               # Tylko 20 osobnikow
-        #    num_genes=num_genes,
-        #    gene_space=custom_gene_space,
-        #    on_generation=self.on_generation, # Widzisz postep w konsoli!
-        #    mutation_percent_genes=5
-        #)
+        num_genes: int = len(self.converter.ordered_slots)
 
         self.created_month = self.month
 
+        # 2. Konfiguracja algorytmu PyGAD z uwzględnieniem custom_gene_space
         ga_instance = pygad.GA(
-            num_generations=200,
-            sol_per_pop=100,
-            num_parents_mating=30,
+            num_generations=300,           # Zwiększamy liczbę pokoleń, by dać mu czas na naukę
+            sol_per_pop=80,                # Optymalna wielkość populacji
+            num_parents_mating=20,
             fitness_func=self.fitness_func,
             num_genes=num_genes,
-            gene_space=self.converter.worker_ids, 
+            gene_space=custom_gene_space,  # <-- POPRAWIONO: Teraz algorytm losuje tylko dozwolonych pracowników!
             on_generation=self.on_generation,
-            mutation_percent_genes=15,    # Wyższa mutacja, żeby "wybić" algorytm z zastoju
-            mutation_type="random",       # Szukamy losowo nowych rozwiązań
-            keep_elitism=5                # Trzymamy 5 najlepszych grafików
+            mutation_percent_genes=10,     # Zbalansowana mutacja chroniąca dobre geny
+            mutation_type="random",       
+            keep_elitism=3                 # Pozostawiamy 3 najlepsze rozwiązania bez zmian
         )
-
-        #for ui what month schedule did we created
-        self.created_month = self.month
         
         print(f"[GA] Start ewolucji (Slotow: {num_genes})...")
         ga_instance.run()
         
+        # Pobranie i aplikacja najlepszego rozwiązania
         solution, fitness, idx = ga_instance.best_solution()
         self.converter.update_objects_from_vector(solution)
-        print(f"[GA] Zakonczono. Wynik: {fitness:.6f}")
+        print(f"[GA] Zakonczono. Wynik Fitness: {fitness:.6f}")
 
+        # Jeśli kara spadła do akceptowalnego poziomu (brak pustych slotów i ciężkich naruszeń), wynik będzie wysoki
         self.ready = 1
         return 1
-        #return solution
     
     def on_generation(self,ga_instance):
 

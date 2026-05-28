@@ -1,114 +1,14 @@
-# -*- coding: utf-8 -*-
 from __future__ import annotations
-from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-from copy import deepcopy
-from typing import Any, TYPE_CHECKING
-from shift import ShiftPlace
+from abc import abstractmethod
+from typing import TYPE_CHECKING
+from constans import HARD_PENALTY
+
+from .Rule import Rule
 
 if TYPE_CHECKING:
     from shift import ShiftPlace
     from worker import Worker
-    from place import Place
-
-from constans import HARD_PENALTY, SOFT_PENALTY
-
-class Rule(ABC):
-    idBase: int = 0
-    def __init__(self, name: str):
-        self.id = Rule.idBase
-        Rule.idBase += 1
-        self.name = name
-     
-    @abstractmethod
-    def serializer(self) -> dict[str, Any]:
-        pass
-
-class AvalRule(Rule):
-    def __init__(self, name):
-        super().__init__(name)
-      
-    @abstractmethod
-    def isFulfilled(self, shift: ShiftPlace) -> bool:
-        from shift import ShiftPlace
-        return isinstance(shift, ShiftPlace)
-
-    @abstractmethod
-    def uncompliedShifts(self, shift: ShiftPlace) -> list[ShiftPlace]:
-        pass
-
-    @abstractmethod
-    def serializer(self) -> dict[str, Any]:
-        pass
-
-class UnorderedRule(AvalRule):
-    def __init__(self, shiftList: list[ShiftPlace], name: str):
-        from shift import ShiftPlace # Poprawione wciecie
-        super().__init__(name)
-        self.shiftList = shiftList
-        
-    def isFulfilled(self, shift: ShiftPlace) -> bool:
-        from shift import ShiftPlace # Poprawione wciecie
-        for item in self.shiftList:
-            if (item == shift):
-                return True
-        return False
-    
-    def serializer(self) -> dict[str, Any]:
-        return {
-            "__type__": "UnorderedRule",
-            "id": self.id,
-            "name": self.name,
-            'shiftList': [shift.serializer() for shift in self.shiftList]
-        }
-    
-    def uncompliedShifts(self, shift: ShiftPlace) -> list[ShiftPlace]:
-        from shift import ShiftPlace
-        if isinstance(shift, ShiftPlace):
-            for item in self.shiftList:
-                if (item != shift):
-                    return [shift]
-            return []
-        return []
-
-class CyclicRule(AvalRule):
-
-    def __init__(self, begin: ShiftPlace, interval: timedelta, name: str):
-        from shift import ShiftPlace
-        super().__init__(name)
-        self.begin = begin
-        self.interval = interval
-        self.type_name = "cyclic"
-        self.name = name
-
-    def isFulfilled(self, shift: ShiftPlace) -> bool:
-        from shift import ShiftPlace # Dodany brakujacy import lokalny
-        if not isinstance(shift, ShiftPlace):
-            return False
-        if shift.begin < self.begin.begin:
-            return False
-        delta = shift.begin - self.begin.begin
-        # Sprawdzanie interwalu w dniach
-        int_interval = self.interval.days if hasattr(self.interval, 'days') else int(self.interval)
-        if delta.days % int_interval == 0 and delta.seconds == 0:
-            if getattr(shift.place, 'name', shift.place) == getattr(self.begin.place, 'name', self.begin.place):
-                return True
-        return False
-    
-    def serializer(self) -> dict[str, Any]:
-        return {
-            "__type__": "CyclicRule",
-            "id": self.id,
-            "name": self.name,
-            "begin": self.begin.serializer(),
-            "interval": self.interval.total_seconds()
-        }
-    
-    def uncompliedShifts(self, shift: ShiftPlace) -> list[ShiftPlace]:
-        from shift import ShiftPlace
-        if not self.isFulfilled(shift):
-            return [shift]
-        return []
 
 class RightRule(Rule):
     def __init__(self, owner, name: str):
@@ -160,14 +60,18 @@ class EtatRule(RightRule):
 
 
     def serializer(self):
+        if self.owner is not None:
+            owner_id = self.owner.id if hasattr(self.owner, 'id') else int(self.owner)
+        else:
+            owner_id = None
+
         return {
             "__type__": "Etat Rule",
             "id": self.id,
-            "owner": self.owner.id if getattr(self, 'owner', None) is not None else None, #when this rule is used for place
+            "owner": owner_id,
             "name": self.name,
-            "value": self.value.total_seconds(),
-            "deviation": self.deviation.total_seconds()
-
+            "value": self.value.total_seconds() if hasattr(self.value, 'total_seconds') else self.value,
+            "deviation": self.deviation.total_seconds() if hasattr(self.deviation, 'total_seconds') else self.deviation
         }
 
 class FreeWeekend(RightRule):
@@ -199,31 +103,25 @@ class FreeWeekend(RightRule):
     
 
     def isFulfilled(self, shift):
-
         checkedMonth = shift.begin.month
         emptyWeekend = 0
-        #we check iof whole weekend is empty
 
-        if not isinstance(checkedMonth, int) or 1 <= checkedMonth <= 12:
+        if not isinstance(checkedMonth, int) or not (1 <= checkedMonth <= 12):
             raise ValueError("Parametr 'checkedMonth' musi być liczbą całkowitą z zakresu 1-12")
 
-        #we check every weekend in the month
-
         pointer = datetime.today() 
-
-        # 2. Use .replace() to create a new object with the desired month and day=1
         pointer = pointer.replace(month=checkedMonth, day=1)
 
-        while(pointer.strftime("%A") != "Saturday"):
+        # Przewijamy do pierwszej soboty w miesiącu
+        while pointer.strftime("%A") != "Saturday":
             pointer += timedelta(days=1)
 
-        while(pointer.month == checkedMonth):
-            
-            if pointer.strftime("%A") != "Saturday":
-                pointer += timedelta(days=1)
-                if pointer.strftime("%A") != "Sunday":
-                    emptyWeekend+=1
-
+        # Sprawdzamy wszystkie weekendy w danym miesiącu
+        while pointer.month == checkedMonth:
+            # POPRAWIONO: Inkrementacja daty musi być wykonywana ZAWSZE na końcu pętli
+            if pointer.strftime("%A") not in ("Saturday", "Sunday"):
+                emptyWeekend += 1
+            pointer += timedelta(days=1)
 
         if emptyWeekend >= self.quantity:
             return True
@@ -295,13 +193,18 @@ class FreeWeekend(RightRule):
 
     
     def serializer(self):
-        return{
+        # Bezpieczne wyciąganie ID właściciela (niezależnie czy self.owner to obiekt, czy już surowy int)
+        if self.owner is not None:
+            owner_id = self.owner.id if hasattr(self.owner, 'id') else int(self.owner)
+        else:
+            owner_id = None
+
+        return {
             "__type__": "FreeWeekend",
             "id": self.id,
-            "owner": self.owner.id if getattr(self, 'owner', None) is not None else None,
+            "owner": owner_id,
             "name": self.name,
             "quantity": self.quantity
-
         }
         
 
@@ -356,72 +259,15 @@ class BetweenShifts(RightRule):
         return float(penalty)
                 
     def serializer(self):
+        if self.owner is not None:
+            owner_id = self.owner.id if hasattr(self.owner, 'id') else int(self.owner)
+        else:
+            owner_id = None
+
         return {
             "__type__": "BetweenShifts",
             "id": self.id,
-            "owner": getattr(self.owner, 'id', self.owner) if self.owner is not None else None,
+            "owner": owner_id,
             "name": self.name,
             "value": self.value.total_seconds() if hasattr(self.value, 'total_seconds') else self.value
         }
-
-
-# Dodaj na samym końcu pliku rules.py
-
-def deserialize_rule(rule_data, entity):
-    from worker import Worker
-    from shift import ShiftPlace
-    
-    rule_type = rule_data.get("__type__")
-    rule_name = rule_data.get("name", "Unnamed")
-    rule_id = rule_data.get("id")
-    
-    # DEBUG: Zobaczymy co program widzi w pliku
-    print(f"[LOADER] Trying to load rule: {rule_name} of type: {rule_type}")
-
-    new_rule = None
-
-    # Dopasowanie typów - upewnij się, że te stringi są identyczne jak w pliku JSON!
-    if rule_type == "FreeWeekend":
-        quantity = rule_data.get("quantity", 2)
-        new_rule = FreeWeekend(entity, rule_name, quantity)
-
-    elif rule_type == "BetweenShifts":
-        val = rule_data.get("value", 39600)
-        new_rule = BetweenShifts(entity, rule_name, timedelta(seconds=float(val)))
-
-    elif rule_type == "CyclicRule":
-        begin_data = rule_data.get("begin", {})
-        interval_val = rule_data.get("interval", 1)
-        try:
-            b_dt = datetime.fromisoformat(begin_data["begin"])
-            e_dt = datetime.fromisoformat(begin_data["end"])
-            p_name = begin_data.get("place", "")
-            # Tworzymy obiekt pomocniczy dla reguły
-            start_shift = ShiftPlace(b_dt, e_dt, p_name, entity if isinstance(entity, Worker) else None)
-            
-            # Decyzja: czy interwał to dni czy sekundy?
-            if float(interval_val) > 1000: # sekundy
-                delta = timedelta(seconds=float(interval_val))
-            else: # dni
-                delta = timedelta(days=int(interval_val))
-                
-            new_rule = CyclicRule(start_shift, delta, rule_name)
-        except Exception as e:
-            print(f"[LOADER ERROR] CyclicRule fail: {e}")
-
-    elif rule_type in ["Etat Rule", "EtatRule"]:
-        try:
-            v = rule_data.get("value", 0)
-            d = rule_data.get("deviation", 0)
-            new_rule = EtatRule(entity, rule_name, timedelta(seconds=float(v)), timedelta(seconds=float(d)))
-        except Exception as e:
-            print(f"[LOADER ERROR] EtatRule fail: {e}")
-
-    if new_rule:
-        if rule_id is not None:
-            new_rule.id = rule_id
-        print(f"[LOADER] SUCCESS: Added {rule_name} to {entity.name}")
-        return new_rule
-    else:
-        print(f"[LOADER WARNING] FAILED to recognize rule type: {rule_type}")
-        return None

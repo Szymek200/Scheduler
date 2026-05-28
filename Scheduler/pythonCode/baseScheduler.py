@@ -9,7 +9,10 @@ from itertools import combinations
 from dataclasses import dataclass, field
 import copy
 from typing import TYPE_CHECKING
-from rules import CyclicRule
+
+from myExceptions import MonthRange
+
+from rules import Rule, AvalRule, CyclicRule, UnorderedRule
 
 if TYPE_CHECKING:
     from worker import Worker
@@ -21,9 +24,7 @@ class BaseScheduler(ABC):
     def __init__(self, workers: list[Worker], places: list [Place], month, year):
         #workers have requested schedule and its requirements
         #places have required shifts to fill  
-        
-        
-       
+
         self.ready = 0
         self.places = places
         self.workers = workers
@@ -57,14 +58,26 @@ class BaseScheduler(ABC):
 
     def defaultPlaceSchedule(self, year, month):
 
+        print("Creating place schedule")
+
+        if(month < 0 or month > 11):
+            raise MonthRange("Month value out of range")
+
         from shift import ShiftPlace
-        start_date = datetime(year, month, 1, 0, 0, 0)
         
-        # Obliczamy koniec miesiąca
-        if month == 12:
+        # 👇 POPRAWIONO: Konwersja formatu 0-11 na format systemowy 1-12 dla datetime
+        system_month = month + 1
+        
+        start_date = datetime(year, system_month, 1, 0, 0, 0)
+        print(f"Begin date: {start_date}")
+        
+        # Obsługa przejścia z grudnia (12) na styczeń (1) kolejnego roku dla end_date
+        if system_month == 12:
             end_date = datetime(year + 1, 1, 1, 0, 0, 0) - timedelta(seconds=1)
         else:
-            end_date = datetime(year, month + 1, 1, 0, 0, 0) - timedelta(seconds=1)
+            end_date = datetime(year, system_month + 1, 1, 0, 0, 0) - timedelta(seconds=1)
+            
+        print(f"End date: {end_date}")
         
         for place in self.places:
             place.schedule.clear()
@@ -72,28 +85,20 @@ class BaseScheduler(ABC):
             
             for rule in place.rules:
                 if isinstance (rule, CyclicRule):
-                    interval = rule.interval
+                    interval: timedelta = rule.interval
                     pointer_begin = rule.begin.begin
                     pointer_end = rule.begin.end
-                    
-                    # Obsluga interwalu (zamiana na int jesli trzeba)
-                    raw_interval = rule.interval
-                    int_interval = raw_interval.days if hasattr(raw_interval, 'days') else int(raw_interval)
                     
                     # Przewijanie do wybranego miesiaca
                     if pointer_begin < start_date:
                         delta_days = (start_date.date() - pointer_begin.date()).days
                         interval_days = interval.days if hasattr(interval, 'days') else int(interval)
-                        
-                        # Jeśli interval_days z jakiegoś powodu wynosi 0, zabezpieczamy się przed ZeroDivisionError
-                        if interval_days == 0:
-                            interval_days = 1
-                            
+                    
                         jumps = (delta_days // interval_days) + (1 if delta_days % interval_days != 0 else 0)
                         
-                        # Tutaj zostaje bez zmian, bo timedelta pozwala na mnożenie przez int
                         pointer_begin += timedelta(days=jumps * interval_days)
                         pointer_end += timedelta(days=jumps * interval_days)
+                        
                     while pointer_begin <= end_date:
                         new_shift = ShiftPlace(pointer_begin, pointer_end, place, None)
                         place.schedule.append(new_shift)
@@ -101,11 +106,7 @@ class BaseScheduler(ABC):
                         delta = interval if isinstance(interval, timedelta) else timedelta(days=int(interval))
                         pointer_begin += delta
                         pointer_end += delta
-        
-      
 
-    def createdScheduleMonth(self):
-        return self.created_month
 
          #REQUESTED SCHEDULE FOR WORKERS
 
@@ -116,32 +117,21 @@ class BaseScheduler(ABC):
 
         worker.rqSchedule.clear()
 
-        # 1. Upewniamy się, że grafik miejsc na dany miesiąc istnieje
-       # if self.placeSchedule == False:
-       # self.defaultPlaceSchedule(year, month)
-
-        # 2. SANITY CHECK / NAPRAWA TYPÓW DANYCH Z JSON DLA REGUŁ PRACOWNIKA
-        # Ponieważ JSON wczytuje daty jako stringi, a interwały jako float, musimy je naprawić
+        # SANITY CHECK / NAPRAWA TYPÓW DANYCH Z JSON DLA REGUŁ PRACOWNIKA
         for rule in worker.rules:
             if isinstance(rule, rules.CyclicRule):
-                # Naprawa interwału (jeśli jest float/int sekundy -> zamiana na timedelta)
                 if not isinstance(rule.interval, timedelta):
                     rule.interval = timedelta(seconds=float(rule.interval))
                 
-                # Naprawa obiektu ShiftPlace wewnątrz reguły (jeśli begin/end to stringi)
                 if hasattr(rule, 'begin') and rule.begin is not None:
                     if isinstance(rule.begin.begin, str):
                         rule.begin.begin = datetime.fromisoformat(rule.begin.begin)
                     if isinstance(rule.begin.end, str):
                         rule.begin.end = datetime.fromisoformat(rule.begin.end)
 
-        # 3. GENEROWANIE REQUEST SCHEDULE POPRZEZ FILTROWANIE GOTOWEGO GRAFIKU MIEJSC
+        # GENEROWANIE REQUEST SCHEDULE POPRZEZ FILTROWANIE GOTOWEGO GRAFIKU MIEJSC
         for place in self.places:
-            #print("number of shifts")
             for shift in place.schedule:
-                #print("shift")
-                
-                # Sprawdzamy reguły dostępności (AvalRule)
                 if worker.compliesRules(shift, rules.AvalRule):
                     from shift import ShiftPlace
                     worker_shift = ShiftPlace(shift.begin, shift.end, shift.place, worker)

@@ -123,7 +123,7 @@ class MainWindow(QObject):
         schedule_table.setRowCount(0)
         
         # Ważne: defaultSchedule musi dostać miesiąc z ComboBoxa, a nie z daty dzisiejszej
-        selected_month = self.ui.monthCombo.currentIndex() + 1
+        selected_month = self.ui.monthCombo.currentIndex()
 
         """
         if self.window_type == 'request_worker':
@@ -245,11 +245,14 @@ class MainWindow(QObject):
 
     def update_month_view(self):
         """Ustawia tydzień na pierwszy tydzień wybranego miesiąca."""
-        selected_month = self.ui.monthCombo.currentIndex() + 1
+        selected_month_0_11 = self.ui.monthCombo.currentIndex()
         year = datetime.date.today().year
         
+        # 👇 Konwersja na format systemowy 1-12 wyłącznie dla potrzeb datetime
+        system_month = selected_month_0_11 + 1
+        
         # Znalezienie pierwszego dnia miesiąca i jego numeru tygodnia
-        first_day = datetime.date(year, selected_month, 1)
+        first_day = datetime.date(year, system_month, 1)
         self.week_num = first_day.isocalendar()[1]
         
         self.draw_schedule()
@@ -257,26 +260,32 @@ class MainWindow(QObject):
 
     def previous_week(self):
         print("Kliknięto Previous") # Debug
-        selected_month = self.ui.monthCombo.currentIndex() + 1
+        selected_month_0_11 = self.ui.monthCombo.currentIndex()
         year = datetime.date.today().year
+        
+        # 👇 Konwersja na format systemowy 1-12 dla biblioteki datetime
+        system_month = selected_month_0_11 + 1
         
         potential_week = self.week_num - 1
         first_day_of_week = datetime.date.fromisocalendar(year, potential_week, 1)
         last_day_of_week = first_day_of_week + datetime.timedelta(days=6)
         
-        if first_day_of_week.month == selected_month or last_day_of_week.month == selected_month:
+        if first_day_of_week.month == system_month or last_day_of_week.month == system_month:
             self.week_num = potential_week
             self.draw_schedule()
 
     def next_week(self):
         print("Kliknięto Next") # Debug
-        selected_month = self.ui.monthCombo.currentIndex() + 1
+        selected_month_0_11 = self.ui.monthCombo.currentIndex()
         year = datetime.date.today().year
+        
+        # 👇 Konwersja na format systemowy 1-12 dla biblioteki datetime
+        system_month = selected_month_0_11 + 1
         
         potential_week = self.week_num + 1
         first_day_of_week = datetime.date.fromisocalendar(year, potential_week, 1)
         last_day_of_week = first_day_of_week + datetime.timedelta(days=6)
         
-        if first_day_of_week.month == selected_month or last_day_of_week.month == selected_month:
+        if first_day_of_week.month == system_month or last_day_of_week.month == system_month:
             self.week_num = potential_week
             self.draw_schedule()

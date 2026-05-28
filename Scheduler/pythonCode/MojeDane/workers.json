@@ -12,12 +12,33 @@
                 "name": "Morning Shift Pref",
                 "begin": {
                     "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T06:00:00",
-                    "end": "2026-03-04T14:00:00",
+                    "begin": "2026-06-01T06:00:00",
+                    "end": "2026-06-01T14:00:00",
                     "place": "Burowiec",
                     "worker": 1
                 },
                 "interval": 86400.0
+            },
+            {
+                "__type__": "UnorderedRule",
+                "id": 201,
+                "name": "Bartek Custom Shifts",
+                "shiftList": [
+                    {
+                        "__type__": "ShiftPlace",
+                        "begin": "2026-06-01T06:00:00",
+                        "end": "2026-06-01T14:00:00",
+                        "place": "Zadole",
+                        "worker": 1
+                    },
+                    {
+                        "__type__": "ShiftPlace",
+                        "begin": "2026-06-15T06:00:00",
+                        "end": "2026-06-15T14:00:00",
+                        "place": "Zadole",
+                        "worker": 1
+                    }
+                ]
             },
             {
                 "__type__": "BetweenShifts",
@@ -32,7 +53,7 @@
                 "owner": 1,
                 "name": "Full Time 160h",
                 "value": 576000.0,
-                "deviation": 28800.0
+                "deviation": 216000.0
             },
             {
                 "__type__": "FreeWeekend",
@@ -56,12 +77,33 @@
                 "name": "Afternoon Shift Pref",
                 "begin": {
                     "__type__": "ShiftPlace",
-                    "begin": "2026-03-04T14:00:00",
-                    "end": "2026-03-04T22:00:00",
+                    "begin": "2026-06-01T14:00:00",
+                    "end": "2026-06-01T22:00:00",
                     "place": "Burowiec",
                     "worker": 2
                 },
                 "interval": 86400.0
+            },
+            {
+                "__type__": "UnorderedRule",
+                "id": 202,
+                "name": "Zosia Preferred Days",
+                "shiftList": [
+                    {
+                        "__type__": "ShiftPlace",
+                        "begin": "2026-06-05T14:00:00",
+                        "end": "2026-06-05T22:00:00",
+                        "place": "Zadole",
+                        "worker": 2
+                    },
+                    {
+                        "__type__": "ShiftPlace",
+                        "begin": "2026-06-20T14:00:00",
+                        "end": "2026-06-20T22:00:00",
+                        "place": "Zadole",
+                        "worker": 2
+                    }
+                ]
             },
             {
                 "__type__": "BetweenShifts",
@@ -75,7 +117,7 @@
                 "id": 105,
                 "owner": 2,
                 "name": "All Weekends Free",
-                "quantity": 4
+                "quantity": 2
             }
         ]
     },
@@ -87,12 +129,39 @@
         "id": 3,
         "rules": [
             {
+                "__type__": "CyclicRule",
+                "id": 11,
+                "name": "Artur Day Cycle",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-06-01T06:00:00",
+                    "end": "2026-06-01T14:00:00",
+                    "place": "Zadole",
+                    "worker": 3
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "UnorderedRule",
+                "id": 203,
+                "name": "Artur Single Shifts",
+                "shiftList": [
+                    {
+                        "__type__": "ShiftPlace",
+                        "begin": "2026-06-10T08:00:00",
+                        "end": "2026-06-10T16:00:00",
+                        "place": "Burowiec",
+                        "worker": 3
+                    }
+                ]
+            },
+            {
                 "__type__": "Etat Rule",
                 "id": 106,
                 "owner": 3,
-                "name": "Student Part-Time 80h",
-                "value": 288000.0,
-                "deviation": 36000.0
+                "name": "Student Full-Time 160h",
+                "value": 576000.0,
+                "deviation": 216000.0
             },
             {
                 "__type__": "BetweenShifts",
@@ -100,6 +169,13 @@
                 "owner": 3,
                 "name": "Min Rest 11h",
                 "value": 39600.0
+            },
+            {
+                "__type__": "FreeWeekend",
+                "id": 29,
+                "owner": 3,
+                "name": "Standard Free",
+                "quantity": 2
             }
         ]
     },
@@ -110,6 +186,33 @@
         "pesel": "23147812374",
         "id": 4,
         "rules": [
+            {
+                "__type__": "CyclicRule",
+                "id": 12,
+                "name": "Basia Fast Rotation",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-06-01T14:00:00",
+                    "end": "2026-06-01T22:00:00",
+                    "place": "Zadole",
+                    "worker": 4
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "UnorderedRule",
+                "id": 204,
+                "name": "Basia Requested List",
+                "shiftList": [
+                    {
+                        "__type__": "ShiftPlace",
+                        "begin": "2026-06-15T08:00:00",
+                        "end": "2026-06-15T16:00:00",
+                        "place": "Burowiec",
+                        "worker": 4
+                    }
+                ]
+            },
             {
                 "__type__": "BetweenShifts",
                 "id": 108,
@@ -134,19 +237,46 @@
         "id": 5,
         "rules": [
             {
+                "__type__": "CyclicRule",
+                "id": 13,
+                "name": "Marek Continuous Base",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-06-01T06:00:00",
+                    "end": "2026-06-01T14:00:00",
+                    "place": "Burowiec",
+                    "worker": 5
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "UnorderedRule",
+                "id": 205,
+                "name": "Marek Individual Needs",
+                "shiftList": [
+                    {
+                        "__type__": "ShiftPlace",
+                        "begin": "2026-06-01T14:00:00",
+                        "end": "2026-06-01T22:00:00",
+                        "place": "Zadole",
+                        "worker": 5
+                    }
+                ]
+            },
+            {
                 "__type__": "Etat Rule",
                 "id": 110,
                 "owner": 5,
                 "name": "Full Time 160h",
                 "value": 576000.0,
-                "deviation": 14400.0
+                "deviation": 216000.0
             },
             {
                 "__type__": "BetweenShifts",
                 "id": 111,
                 "owner": 5,
-                "name": "Strict Rest",
-                "value": 43200.0
+                "name": "Min Rest 11h",
+                "value": 39600.0
             }
         ]
     },
@@ -158,11 +288,31 @@
         "id": 6,
         "rules": [
             {
-                "__type__": "FreeWeekend",
-                "id": 112,
-                "owner": 6,
-                "name": "Needs Weekends",
-                "quantity": 3
+                "__type__": "CyclicRule",
+                "id": 14,
+                "name": "Kasia Flat Rotation",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-06-01T14:00:00",
+                    "end": "2026-06-01T22:00:00",
+                    "place": "Burowiec",
+                    "worker": 6
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "UnorderedRule",
+                "id": 206,
+                "name": "Kasia Dynamic Selection",
+                "shiftList": [
+                    {
+                        "__type__": "ShiftPlace",
+                        "begin": "2026-06-12T06:00:00",
+                        "end": "2026-06-12T14:00:00",
+                        "place": "Zadole",
+                        "worker": 6
+                    }
+                ]
             },
             {
                 "__type__": "BetweenShifts",
@@ -170,6 +320,13 @@
                 "owner": 6,
                 "name": "Min Rest 11h",
                 "value": 39600.0
+            },
+            {
+                "__type__": "FreeWeekend",
+                "id": 112,
+                "owner": 6,
+                "name": "Needs Weekends",
+                "quantity": 2
             }
         ]
     },
@@ -181,12 +338,39 @@
         "id": 7,
         "rules": [
             {
+                "__type__": "CyclicRule",
+                "id": 27,
+                "name": "Piotr Dense Cycle",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-06-01T06:00:00",
+                    "end": "2026-06-01T14:00:00",
+                    "place": "Zadole",
+                    "worker": 7
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "UnorderedRule",
+                "id": 207,
+                "name": "Piotr Custom Shifts",
+                "shiftList": [
+                    {
+                        "__type__": "ShiftPlace",
+                        "begin": "2026-06-05T14:00:00",
+                        "end": "2026-06-05T22:00:00",
+                        "place": "Burowiec",
+                        "worker": 7
+                    }
+                ]
+            },
+            {
                 "__type__": "Etat Rule",
                 "id": 114,
                 "owner": 7,
-                "name": "Half-Time 80h",
-                "value": 288000.0,
-                "deviation": 14400.0
+                "name": "Full-Time 160h",
+                "value": 576000.0,
+                "deviation": 216000.0
             },
             {
                 "__type__": "BetweenShifts",
@@ -194,19 +378,6 @@
                 "owner": 7,
                 "name": "Min Rest 11h",
                 "value": 39600.0
-            },
-            {
-                "__type__": "CyclicRule",
-                "id": 27,
-                "name": "test",
-                "begin": {
-                    "__type__": "ShiftPlace",
-                    "begin": "2026-05-24T00:00:00",
-                    "end": "2026-05-27T00:00:00",
-                    "place": "Burowiec",
-                    "worker": 7
-                },
-                "interval": 259200.0
             }
         ]
     },
@@ -217,6 +388,33 @@
         "pesel": "95031411223",
         "id": 8,
         "rules": [
+            {
+                "__type__": "CyclicRule",
+                "id": 15,
+                "name": "Ola Fixed Pattern",
+                "begin": {
+                    "__type__": "ShiftPlace",
+                    "begin": "2026-06-01T14:00:00",
+                    "end": "2026-06-01T22:00:00",
+                    "place": "Zadole",
+                    "worker": 8
+                },
+                "interval": 86400.0
+            },
+            {
+                "__type__": "UnorderedRule",
+                "id": 208,
+                "name": "Ola Extra Availability",
+                "shiftList": [
+                    {
+                        "__type__": "ShiftPlace",
+                        "begin": "2026-06-18T06:00:00",
+                        "end": "2026-06-18T14:00:00",
+                        "place": "Burowiec",
+                        "worker": 8
+                    }
+                ]
+            },
             {
                 "__type__": "BetweenShifts",
                 "id": 116,

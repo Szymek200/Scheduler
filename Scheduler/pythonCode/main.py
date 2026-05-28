@@ -62,14 +62,11 @@ class MainWindow(QObject):
         self.workers_list = []
         self.place_list = []
 
-        setup_saver = Saving(self.workers_list, self.place_list, "MojeDane")
-    
-        self.workers_list, self.place_list = setup_saver.reading() 
-
-        
         self.saving = Saving(self.workers_list, self.place_list, "MojeDane")
-       
-
+        
+        # Ładujemy dane bezpośrednio modyfikując zmienne
+        self.saving.reading()
+        
         #rules typoe dictionary
         self.rules_registry = {
             "Free Weekend": self.create_empty_ui,
@@ -121,22 +118,24 @@ class MainWindow(QObject):
 
         today = datetime.today()
 
-        plan_month = plan_year = 0
+        plan_month = 0
+        plan_year = today.year
 
-        #jestesmy juz w nastepnym roku
+        # today.month zwraca format systemowy (1 - 12)
         if today.month == 12:
+            # Jeśli jest grudzień (12), planujemy na styczeń (0) kolejnego roku
             self.main_month_combo.setCurrentIndex(0)
-            self.main_year_edit.setText(str(today.year+1))
-            plan_year = today.year+1
+            self.main_year_edit.setText(str(today.year + 1))
+            plan_year = today.year + 1
+            plan_month = 0
         else:
-
+            # Jeśli jest np. maj (5), chcemy planować kolejny miesiąc, czyli czerwiec.
+            # Czerwiec w formacie 0-11 to indeks 5! 
             self.main_month_combo.setCurrentIndex(today.month)
             plan_month = today.month
             self.main_year_edit.setText(str(today.year))
             plan_year = today.year
             
-        
-
         self.scheduler = GeneticScheduler(self.workers_list, self.place_list, plan_month, plan_year )
 
         if self.main_year_edit and self.main_month_combo:
@@ -148,24 +147,25 @@ class MainWindow(QObject):
 
     def handle_date_selection_changed(self):
        
-        # Pobieramy rok jako string i czyścimy ze spacji
         year_str = self.main_year_edit.text().strip()
-    
         if not year_str.isdigit() or len(year_str) < 4:
             return  
 
         selected_year = int(year_str)
-        
-        # Pobieramy miesiąc (currentIndex zwraca wartości 0-11, więc dodajemy 1)
-        selected_month = self.main_month_combo.currentIndex() + 1
-        
+        # ZMIANA: Zostawiamy czysty indeks 0-11
+        selected_month = self.main_month_combo.currentIndex() 
+
         self.scheduler.updateDate(selected_month, selected_year)
 
     def closeEvent(self, event: QCloseEvent):
-        if len(self.workers_list) > 0 or len(self.place_list) > 0:
-            saver = Saving(self.workers_list, self.place_list, "MojeDane")
-            saver.saving()
-        event.accept()#allow to close the window
+        # POPRAWIONO: Bezpieczny i jedyny zapis przed wyjściem
+        try:
+            self.saving.saving()
+            print("[SAVER SUCCESS] Dane i nowe reguły zostały zapisane.")
+        except Exception as e:
+            print(f"[SAVER ERROR] Coś poszło nie tak: {e}")
+            
+        event.accept()
 
     def view_workplace_aval(self):
         self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'place',self.main_month_combo.currentIndex(), self.ui)
@@ -173,6 +173,8 @@ class MainWindow(QObject):
         self.ui.hide()
 
         self.schedule_window.ui.show()
+
+        
 
     def create_schedule(self):
       
@@ -474,7 +476,7 @@ class MainWindow(QObject):
         rule_type = self.rules_dialog.combo_rule_type.currentText()
         rule_name = self.rules_dialog.rule_name.text()
         
-        # currectly chosen page number
+        # obecnie wybrany widget strony formularza
         current_page = self.rules_dialog.rule_form.currentWidget()
         
         new_rule = None
@@ -483,51 +485,59 @@ class MainWindow(QObject):
             new_rule = rules.FreeWeekend(self.current_entity, rule_name)
 
         elif rule_type == "Between Shifts":
-
             rest_widget = current_page.findChild(QSpinBox, "rest_hours_input")
-            
             if rest_widget:
-                # 2. Pobieramy wartość int (np. 11)
                 hours_value = rest_widget.value()
-                # 3. Konwertujemy na timedelta, bo tego oczekuje klasa BetweenShifts
                 rest_timedelta = timedelta(hours=hours_value)
-            new_rule = rules.BetweenShifts(self.current_entity, rule_name, rest_timedelta) 
+                new_rule = rules.BetweenShifts(self.current_entity, rule_name, rest_timedelta) 
             
         elif rule_type == "Unordered Rule":
             shift_list_widget = current_page.findChild(QListWidget, "unordered_shift_list")
-            
             if shift_list_widget and shift_list_widget.count() > 0:
                 shifts_array = []
-                
-            
                 for i in range(shift_list_widget.count()):
                     item = shift_list_widget.item(i)
-                    
                     shift_obj = item.data(Qt.UserRole)
                     shifts_array.append(shift_obj)
-                
-                #creating rule
                 new_rule = rules.UnorderedRule(shifts_array, rule_name)
             else:
                 print("Błąd: Nie dodano żadnych zmian do reguły!")
                 
         elif rule_type == "Cyclic Rule":
-            
             interval_widget = current_page.findChild(QSpinBox, "interval_input")
-            
-            # Sprawdzamy, czy użytkownik ustawił "begin_shift" przyciskiem i zapisał to w obiekcie strony
             if interval_widget and hasattr(current_page, 'selected_begin_shift') and current_page.selected_begin_shift:
                 interval = interval_widget.value()
                 begin_shift = current_page.selected_begin_shift
                 new_rule = rules.CyclicRule(begin_shift, timedelta(days=interval), rule_name)
             else:
-                # Opcjonalnie: tutaj można dodać okienko z błędem dla użytkownika (QMessageBox)
                 print("Błąd: Musisz najpierw ustawić zmianę początkową (Set Begin Shift)!")
 
+        # ZAPIS I GENEROWANIE ID
         if new_rule:
+            # Korzystamy z faktu, że klasa reguły ma dostęp do klasy bazowej Rule i jej idBase przez __js__ / MRO
+            # Dobieramy się do klasy Rule bezpośrednio przez hierarchię klas nowej reguły,
+            # unikając jakichkolwiek lokalnych importów ukrywających moduł globalny.
+            base_rule_class = new_rule.__class__.__base__.__base__ # Rule -> AvalRule/RightRule -> rule_type
+            
+            # Bezpieczny fallback na wypadek głębszego dziedziczenia:
+            if not hasattr(base_rule_class, 'idBase'):
+                # Jeśli powyższe spudłuje, używamy wprost globalnego modułu rules zaimportowanego na górze pliku main.py
+                new_rule.id = rules.Rule.idBase
+                rules.Rule.idBase += 1
+            else:
+                new_rule.id = base_rule_class.idBase
+                base_rule_class.idBase += 1
+            
             self.current_entity.rules.append(new_rule)
             self.refresh_rules_table()
             self.rules_dialog.rule_name.clear()
+            
+            # Bezpieczny zapis na dysk
+            try:
+                self.saving.saving()
+                print(f"[SYSTEM SUCCESS] Reguła '{rule_name}' została zapisana na dysku pod ID: {new_rule.id}")
+            except Exception as e:
+                print(f"[SYSTEM ERROR] Nie udało się zapisać nowej reguły: {e}")
 
 
     def delete_rule_handler(self):
@@ -566,7 +576,7 @@ class MainWindow(QObject):
         # show window
         wynik = self.shift_dialog.exec() 
 
-        if wynik == 1: #ok ok button is clicked
+        if wynik == 1: # ok button is clicked
             # 1. Pobieramy obiekty QDateTime z widgetów
             begin_qt = self.shift_dialog.begin_datetime.dateTime() 
             end_qt = self.shift_dialog.end_datetime.dateTime()
@@ -575,14 +585,22 @@ class MainWindow(QObject):
             begin_dt = begin_qt.toPython() 
             end_dt = end_qt.toPython()
             
-            # 3. Pobieramy wybrane miejsce
+            # 3. Pobieramy wybraną z menu nazwę miejsca (tekst)
             place_name = self.shift_dialog.selected_place.currentText()
             
-            # 4. Tworzymy obiekt ShiftPlace (pamiętaj, że ShiftPlace przyjmuje set miejsc)
-            shift = ShiftPlace(begin_dt, end_dt, place_name, sender)
+            # 👇 POPRAWIONO: Szukamy prawdziwego obiektu Place w naszej liście miejsc!
+            actual_place_object = next((p for p in self.place_list if p.name == place_name), None)
+            
+            # Zabezpieczenie: jeśli z jakiegoś powodu nie znaleziono obiektu, tworzymy tymczasowy
+            if actual_place_object is None:
+                print(f"[SYSTEM WARNING] Nie znaleziono obiektu Place dla nazwy: {place_name}. Tworzę zastępczy.")
+                actual_place_object = Place(place_name, "")
+            
+            # 4. Tworzymy obiekt ShiftPlace przekazując żywy OBIEKT klasy Place, a nie string!
+            shift = ShiftPlace(begin_dt, end_dt, actual_place_object, sender)
 
             return shift
-        
+
         self.shift_dialog.deleteLater()
         return None
 
@@ -718,11 +736,5 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
     window.ui.show() 
-
-
-    # saving when command Q
-    app.aboutToQuit.connect(window.saving.saving) 
-
-    window.ui.show()
 
     sys.exit(app.exec())

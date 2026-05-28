@@ -57,67 +57,76 @@ class Shift:
     @classmethod
     def deserializer(cls, json_string: str) -> Self: #Self - funkcja zwraca typ klasy, na rzecz ktorej zostala wywolana
         #translate json file into data structure we understand
-        dane = json.loads(json_string)
+        data = json.loads(json_string)
 
-        return cls(begin = dane["begin"], end = dane["end"])
+        begin = datetime.fromisoformat(data["begin"])
+        end = datetime.fromisoformat(data["begin"])
+
+        return cls(begin, end)
     
         
-#place shouldn't be set but just one particular object
+# place shouldn't be set but just one particular object
 class ShiftPlace(Shift):
-    # Zmiana: 'places' na 'place' (pojedynczy obiekt)
-    def __init__(self, begin: datetime, end: datetime, place: Place, worker: Optional[Worker] =None):
+    def __init__(self, begin: datetime, end: datetime, place: Place | str, worker: Optional[Worker | int] = None):
         super().__init__(begin, end)
-        
-        # Przypisujemy pojedyncze miejsce
         self.place = place
-        
-        # Opcjonalny pracownik
         self.worker = worker
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, ShiftPlace):
             return False
-        # Porównujemy miejsce (sprawdzamy np. po nazwie lub ID, jeśli to obiekt)
+        
+        # Bezpieczne porównanie miejsc (jako obiekty lub stringi)
+        self_p = getattr(self.place, 'name', self.place)
+        other_p = getattr(other.place, 'name', other.place)
+        
         if self.begin == other.begin and self.end == other.end:
-            if getattr(self.place, 'name', self.place) == getattr(other.place, 'name', other.place):
+            if self_p == other_p:
                 return True
         return False
     
     def contains(self, shift: Shift) -> bool:
-        
-        if self.begin <= shift.begin and self.end >= shift.end:
-                if isinstance(shift, ShiftPlace):
-                     # Sprawdzamy czy to samo miejsce
-                    if getattr(self.place, 'name', self.place) == getattr(shift.place, 'name', shift.place):
-                        return True 
-                else:
-                    return True
-               
+        if super().contains(shift):   
+            self_p = getattr(self.place, 'name', self.place)
+            other_p = getattr(shift, 'place', None)
+            if hasattr(shift, 'place'):
+                other_p = getattr(shift.place, 'name', shift.place)
+            if self_p == other_p:
+                return True 
         return False
 
-    #checks houurs and place
     def sameShift(self, shift: ShiftPlace) -> bool:
-        if isinstance(shift, ShiftPlace):
-            if self.begin == shift.begin and self.end == shift.end:
-                if getattr(self.place, 'name', self.place) == getattr(shift.place, 'name', shift.place):
-                    return True 
+        if self.__eq__(shift):
+            self_w = getattr(self.worker, 'id', self.worker)
+            other_w = getattr(shift.worker, 'id', shift.worker)
+            if self_w == other_w:
+                return True
         return False
         
     def serializer(self) -> dict[str, Any]:
+        # Gwarancja pobrania wyłącznie czystych ID/Nazw do pliku JSON
+        place_id = getattr(self.place, 'name', self.place)
+        worker_id = getattr(self.worker, 'id', self.worker) if self.worker is not None else None
+
         return {
             "__type__": "ShiftPlace",
-            # Bezpieczny zapis daty
-            "begin": self.begin.isoformat() if hasattr(self.begin, 'isoformat') else str(self.begin),
-            "end": self.end.isoformat() if hasattr(self.end, 'isoformat') else str(self.end),
-            
-            # Pobieramy nazwę lub ID miejsca, aby JSON mógł to zapisać
-            "place": self.place.name if hasattr(self.place, 'name') else str(self.place),
-            
-            # Bezpieczne ID pracownika (jeśli przypisany)
-           # "worker": self.worker.id if hasattr(self, 'worker') and hasattr(self.worker, 'id') else None
-
-           #better works with mypy
-            "worker": self.worker.id if self.worker is not None else None
+            "begin": self.begin.isoformat(),
+            "end": self.end.isoformat(),
+            "place": place_id,
+            "worker": worker_id
         }
+    
+    @classmethod
+    def deserializer(cls, json_string: str) -> Self:
+        data = json.loads(json_string)
+        
+        begin = datetime.fromisoformat(data["begin"])
+        end = datetime.fromisoformat(data["end"])
+        
+        # Zwracamy tymczasowo z surowymi ID. saving.py podmieni je na obiekty.
+        place = data["place"]
+        worker = data.get("worker")
+        
+        return cls(begin, end, place, worker)
 
 
