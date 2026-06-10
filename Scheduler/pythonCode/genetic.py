@@ -13,42 +13,30 @@ from ga_converter import GAConverter
 
 from constans import HARD_PENALTY, SOFT_PENALTY
 
-from ga_converter import GAConverter
-import pygad
-
-
-
 class GeneticScheduler(BaseScheduler):
 
     def __init__(self, workers: list[Worker], places: list[Place], month, year):
-
         super().__init__(workers, places, month, year)
-
-        self.converter = GAConverter(workers, places);
-
+        self.converter = GAConverter(workers, places)
         print(f"[GA] Przygotowuje dane dla {len(self.workers)} pracownikow...")
-
-        # Szybki słownik dostepnosci
-        #klucz - worker id
-        #wartosc - wszystkie zmiany w formacie tekstowym
         self.availability_cache = {} 
         
-          
-      
     def hard_rules(self) -> float:
         penalty: float = 0.0
         
         for worker in self.workers:
-            # --- 1. OVERLAP CHECK (Kluczowe!) ---
-            # Sortujemy grafik pracownika, żeby sprawdzić czy zmiany na siebie nie nachodzą
+            # --- 1. DETEKCJA OVERLAPU I BRAKU ODPOCZYNKU ---
             sorted_sched = sorted(worker.schedule, key=lambda x: x.begin)
             for i in range(1, len(sorted_sched)):
+                # Zmiany nachodzą na siebie
                 if sorted_sched[i].begin < sorted_sched[i-1].end:
-                    # Jeśli zmiany się pokrywają, dajemy GIGANTYCZNĄ karę
-                    # To sprawi, że "klonowanie" będzie najgorszą rzeczą dla GA
-                    penalty += 100000.0 
+                    penalty += 500000.0  # Ekstremalna kara za jednoczesną pracę
+                
+                # Zmiany są bezpośrednio po sobie (brak wymaganych 11h odpoczynku)
+                elif sorted_sched[i].begin - sorted_sched[i-1].end < timedelta(hours=11):
+                    penalty += 150000.0  # Bardzo wysoka kara za brak przerwy między zmianami
 
-            # --- 2. EXISTING RULES (BetweenShifts, Etat, etc.) ---
+            # --- 2. POZOSTAŁE REGUŁY (Etat, Weekendy) ---
             for rule in worker.rules:
                 if isinstance(rule, RightRule):
                     penalty += rule.completion(worker)
@@ -56,86 +44,90 @@ class GeneticScheduler(BaseScheduler):
         return float(penalty)
     
     def fitness_func(self, ga_instance, solution, solution_idx):
+
+
+        custom_gene_space = ga_instance.gene_space # Pobieramy przestrzeń genów
+        repaired_solution = self.converter.repair_solution(solution, custom_gene_space)
+        
+        # Nadpisujemy rozwiązanie w PyGAD, żeby algorytm zapamiętał naprawionego osobnika
+        ga_instance.population[solution_idx] = repaired_solution
         self.converter.update_objects_from_vector(solution)
         
-        penalty = 0.0
-        # 1. Kara za puste sloty (zostawiamy wysoko)
-        penalty += self.converter.get_invalid_slots_count() * 5000.0
+        invalid_slots_penalty = self.converter.get_invalid_slots_count() * 10000.0
+        rules_penalty = self.hard_rules()
         
-        # 2. Twoje reguły (w tym Overlap Check z hard_rules)
-        penalty += self.hard_rules()
+        # Jeśli występuje jakikolwiek konflikt nakładania zmian (kara > 150k),
+        # zwracamy ekstremalnie niski fitness, eliminując osobnika z ewolucji.
+        if rules_penalty >= 150000.0:
+            return 1.0 / (rules_penalty * 100.0) # Bardzo, bardzo blisko 0
+            
+        total_penalty = invalid_slots_penalty + rules_penalty
         
-        # 3. --- NAGRODA ZA PREFERENCJE (Zwiększona) ---
         bonus = 0.0
-        for worker in self.workers:
-            w_cache = self.availability_cache.get(worker.id, set())
-            for shift in worker.schedule:
-                # Upewnij się, że ten klucz jest taki sam jak w createPlan!
-                key = f"{shift.begin.isoformat()}_{shift.end.isoformat()}_{getattr(shift.place, 'name', shift.place)}"
-                if key in w_cache:
-                    bonus += 500.0 # Zwiększamy nagrodę dziesięciokrotnie
+        if rules_penalty < 10000.0: 
+            for worker in self.workers:
+                w_cache = self.availability_cache.get(worker.id, set())
+                for shift in worker.schedule:
+                    key = f"{shift.begin.isoformat()}_{shift.end.isoformat()}_{getattr(shift.place, 'name', shift.place)}"
+                    if key in w_cache:
+                        bonus += 100.0
         
-        # Odejmujemy bonus od kary
-        penalty -= bonus
-        
-        # Zabezpieczenie: fitness nie może być liczony z ujemnej kary
-        if penalty < 0: 
-            penalty = 0.0
-        
-        return 1.0 / (float(penalty) + 0.001)
+        # Dla poprawnych czasowo harmonogramów minimalizujemy nieobsadzone etaty i zbieramy bonusy
+        score = total_penalty - bonus
+        if score < 0:
+            score = 0.0
+            
+        return 1.0 / (float(score) + 0.001)
     
     def createPlan(self):
-        # Generujemy bazowy grafik zapotrzebowania dla miejsc pracy
         self.defaultPlaceSchedule(self.year, self.month)
-        
         self.availability_cache.clear()
         
         for worker in self.workers:
-            # Generujemy grafik życzeń na właściwy, wybrany w danej chwili miesiąc
             self.defaultRequestedSchedule(worker, self.year, self.month) 
-            
-            # Budujemy aktualny zestaw kluczy dla tego pracownika
             self.availability_cache[worker.id] = {
-                f"{s.begin.isoformat()}_{s.end.isoformat()}_{getattr(s.place, 'name', shift.place if 'shift' in locals() else s.place)}" 
+                f"{s.begin.isoformat()}_{s.end.isoformat()}_{getattr(s.place, 'name', s.place)}" 
                 for s in worker.rqSchedule
             }
 
-        # 1. Budujemy dedykowaną przestrzeń genów na podstawie preferencji
         custom_gene_space = self.converter.prepare_slots(self.month, self.year, self.availability_cache)
         num_genes: int = len(self.converter.ordered_slots)
-
         self.created_month = self.month
 
-        # 2. Konfiguracja algorytmu PyGAD z uwzględnieniem custom_gene_space
+        # --- ZOPTYMALIZOWANA KONFIGURACJA PYGAD ---
         ga_instance = pygad.GA(
-            num_generations=300,           # Zwiększamy liczbę pokoleń, by dać mu czas na naukę
-            sol_per_pop=80,                # Optymalna wielkość populacji
-            num_parents_mating=20,
+            num_generations=400,                 # Więcej pokoleń dla dokładniejszego przeszukania
+            sol_per_pop=100,                     # Większa różnorodność genetyczna w populacji
+            num_parents_mating=30,               # Większa liczba rodziców dopuszczonych do krzyżowania
             fitness_func=self.fitness_func,
             num_genes=num_genes,
-            gene_space=custom_gene_space,  # <-- POPRAWIONO: Teraz algorytm losuje tylko dozwolonych pracowników!
+            gene_space=custom_gene_space,
             on_generation=self.on_generation,
-            mutation_percent_genes=10,     # Zbalansowana mutacja chroniąca dobre geny
+            
+            # Zmiana selekcji na turniejową (Tournament Selection) - drastycznie podnosi presję selekcyjną
+            parent_selection_type="tournament",
+            K_tournament=4,                      # Rozmiar turnieju
+            
+            # Zaawansowane dwupunktowe krzyżowanie (Two Points Crossover) - lepiej miesza bloki zmian
+            crossover_type="two_points",
+            
+            # Adaptacyjna mutacja losowa o obniżonym procencie genów, by nie niszczyć dobrych układów
+            mutation_percent_genes=5,            
             mutation_type="random",       
-            keep_elitism=3                 # Pozostawiamy 3 najlepsze rozwiązania bez zmian
+            keep_elitism=5                       # Zachowujemy 5 absolutnie najlepszych osobników
         )
         
-        print(f"[GA] Start ewolucji (Slotow: {num_genes})...")
+        print(f"[GA] Start zoptymalizowanej ewolucji (Slotow: {num_genes})...")
         ga_instance.run()
         
-        # Pobranie i aplikacja najlepszego rozwiązania
         solution, fitness, idx = ga_instance.best_solution()
-        self.converter.update_objects_from_vector(solution)
+        self.converter.update_all_objects_from_vector(solution)
         print(f"[GA] Zakonczono. Wynik Fitness: {fitness:.6f}")
 
-        # Jeśli kara spadła do akceptowalnego poziomu (brak pustych slotów i ciężkich naruszeń), wynik będzie wysoki
         self.ready = 1
         return 1
     
-    def on_generation(self,ga_instance):
-
+    def on_generation(self, ga_instance):
         from PySide6.QtWidgets import QApplication
         QApplication.processEvents()
-
-        print("Generation : ", ga_instance.generations_completed)
-        print("Fitness of the best solution :", ga_instance.best_solution()[1])
+        print(f"Generation: {ga_instance.generations_completed} | Best Fitness: {ga_instance.best_solution()[1]:.6f}")

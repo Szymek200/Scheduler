@@ -84,6 +84,46 @@ class GAConverter:
             else:
                 shift.worker = None
 
+
+    # Dodaj do klasy GAConverter w ga_converter.py:
+    def repair_solution(self, vector: np.ndarray, gene_space: list) -> np.ndarray:
+        """
+        Przechodzi przez wektor i jeśli wykryje nakładanie zmian u pracownika,
+        próbuje przypisać tę zmianę komuś innemu z gene_space.
+        """
+        self.update_objects_from_vector(vector)
+        repaired_vector = vector.copy()
+        
+        for worker in self.workers:
+            sorted_sched = sorted(worker.schedule, key=lambda x: x.begin)
+            for i in range(1, len(sorted_sched)):
+                # Wykryto overlap lub brak 11h odpoczynku
+                if sorted_sched[i].begin < sorted_sched[i-1].end or (sorted_sched[i].begin - sorted_sched[i-1].end < worker.getBetweenShiftTime()):
+                    conflict_shift = sorted_sched[i]
+                    # Znajdź indeks tego slotu w ordered_slots
+                    slot_idx = self.ordered_slots.index(conflict_shift)
+                    
+                    # Pobierz listę alternatywnych pracowników dla tego slotu z gene_space
+                    allowed_workers = gene_space[slot_idx]
+                    
+                    # Znajdź pierwszego pracownika z listy, który NIE ma wtedy konfliktu
+                    backup_worker_id = None
+                    for alt_id in allowed_workers:
+                        if alt_id != worker.id:
+                            alt_worker = self.worker_map[alt_id]
+                            # Szybkie sprawdzenie czy alt_worker nie ma wtedy zmiany
+                            has_conflict = any(s.begin < conflict_shift.end and conflict_shift.begin < s.end for s in alt_worker.schedule)
+                            if not has_conflict:
+                                backup_worker_id = alt_id
+                                break
+                    
+                    if backup_worker_id is not None:
+                        repaired_vector[slot_idx] = backup_worker_id
+                        # Aktualizujemy obiekt w locie, żeby kolejne iteracje pętli widziały zmianę
+                        conflict_shift.worker = self.worker_map[backup_worker_id]
+                        
+        return repaired_vector
+
     def update_all_objects_from_vector(self, vector: np.ndarray):
         for w in self.workers:
             w.schedule = []

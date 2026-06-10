@@ -31,6 +31,7 @@ import rules
 from saving import Saving
 import sys
 import traceback
+from pdf_exporter import SchedulePDFExporter
 
 #for errors showing
 def custom_excepthook(exc_type, exc_value, exc_traceback):
@@ -174,6 +175,27 @@ class MainWindow(QObject):
 
         self.schedule_window.ui.show()
 
+    # Przykład uruchomienia eksportu wewnątrz Twojego kontrolera / managera aplikacji:
+
+    def generate_pdf_report(self):
+        # 1. Inicjalizacja eksportera dla danego miesiąca i roku
+        exporter = SchedulePDFExporter(month=self.scheduler.month, year=self.scheduler.year)
+        
+        # 2. Eksport indywidualnych plików dla każdego pracownika
+        print("[PDF] Generowanie indywidualnych grafików...")
+        for worker in self.scheduler.workers:
+            # Tworzy plik np. "grafik_Jan_Kowalski.pdf"
+            filename = f"grafik_{worker.name}_{worker.surname}.pdf"
+            exporter.export_individual_pdf(worker, filename)
+            
+        # 3. Eksport zbiorczego dokumentu dla kierownika basenu
+        print("[PDF] Generowanie grafiku zbiorczego dla kierownika...")
+        exporter.export_manager_collective_pdf(
+            workers=self.scheduler.workers, 
+            output_path="grafik_zbiorczy_kierownik.pdf"
+        )
+        print("[PDF] Wszystkie pliki PDF zostały pomyślnie wygenerowane!")
+
         
 
     def create_schedule(self):
@@ -192,6 +214,7 @@ class MainWindow(QObject):
             else:
                 #self.ui.info_label.setText(f"Schedule created for {months[selected_month-1]} {selected_year}")
                 QMessageBox.information(None, "Success", f"Schedule created")
+                #self.generate_pdf_report()
 
     def worker_schedule(self):
 

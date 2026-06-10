@@ -139,7 +139,15 @@ class Worker:
             if isinstance(rule, EtatRule):
                 return rule
         return None
+    
+    def getBetweenShiftTime(self):
         
+        import rules
+        for rule in self.rules:
+            if isinstance(rule, rules.BetweenShifts):
+                return rule.value
+        return 0
+       
 
     def howManyHours(self)-> timedelta:
 
