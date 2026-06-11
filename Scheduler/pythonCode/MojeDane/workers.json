@@ -277,6 +277,13 @@
                 "owner": 5,
                 "name": "Min Rest 11h",
                 "value": 39600.0
+            },
+            {
+                "__type__": "FreeWeekend",
+                "id": 61,
+                "owner": 5,
+                "name": "wolny_weekend",
+                "quantity": 2
             }
         ]
     },
@@ -434,7 +441,7 @@
     {
         "__type__": "Worker",
         "name": "Jan",
-        "surname": "Król",
+        "surname": "Kr\u00f3l",
         "pesel": "89011212345",
         "id": 9,
         "rules": [
@@ -499,7 +506,7 @@
     {
         "__type__": "Worker",
         "name": "Anna",
-        "surname": "Wójcik",
+        "surname": "W\u00f3jcik",
         "pesel": "94032354321",
         "id": 10,
         "rules": [

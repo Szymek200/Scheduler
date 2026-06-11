@@ -162,6 +162,8 @@ class MainWindow(QObject):
 
 
     def handle_date_selection_changed(self):
+
+        self.reset_schedule_flags()
        
         year_str = self.main_year_edit.text().strip()
         if not year_str.isdigit() or len(year_str) < 4:
@@ -378,6 +380,8 @@ class MainWindow(QObject):
            worker = Worker(name, surname, pesel)
 
            self.workers_list.append(worker)
+        
+           self.reset_schedule_flags()
 
 
     def _execute_worker_availability_logic(self):
@@ -395,7 +399,13 @@ class MainWindow(QObject):
         self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'request_worker', self.main_month_combo.currentIndex(), self.ui)
 
         
-        self.worker_availability_done = True      
+        self.worker_availability_done = True    
+
+    def reset_schedule_flags(self):
+        """Resetuje flagi kroków, wymuszając ponowne przetworzenie logiki w tle."""
+        self.workplace_requirements_done = False
+        self.worker_availability_done = False
+        print("[FLAGI] Dane uległy zmianie – zresetowano flagi generowania grafiku.")  
 
     #opens requested shedule for worker
     def open_schedule_view(self):
@@ -438,6 +448,7 @@ class MainWindow(QObject):
 
            place = Place(name, address)
            self.place_list.append(place)
+           self.reset_schedule_flags()
            
 
     def view_workplace(self):
@@ -687,6 +698,8 @@ class MainWindow(QObject):
             self.current_entity.rules.append(new_rule)
             self.refresh_rules_table()
             self.rules_dialog.rule_name.clear()
+
+            self.reset_schedule_flags()
             
             # Bezpieczny zapis na dysk
             try:
@@ -700,6 +713,8 @@ class MainWindow(QObject):
         selected_row = self.rules_dialog.rules_list.currentRow()
         
         if selected_row >= 0:
+
+            self.reset_schedule_flags()
             # delete rule from memory
             del self.current_entity.rules[selected_row]
             # refresh ui UI
