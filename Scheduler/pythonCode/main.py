@@ -7,13 +7,14 @@ from PySide6.QtCore import QFile
 from PySide6.QtWidgets import (QApplication, QMainWindow, QPushButton, QTableWidgetItem, 
                                QWidget, QVBoxLayout, QFormLayout, QLabel, QSpinBox, 
                                QListWidget, QListWidgetItem, QHBoxLayout, QComboBox, 
-                               QDialog, QDialogButtonBox, QLineEdit)
+                               QDialog, QDialogButtonBox, QLineEdit, QFileDialog,)
 from PySide6.QtCore import Qt
 
 #regular expression - input veryfication
 from PySide6.QtGui import QRegularExpressionValidator
 from PySide6.QtCore import QRegularExpression
 from PySide6.QtGui import QCloseEvent
+
 
 #different opening and closing window
 from PySide6.QtCore import QObject 
@@ -32,6 +33,8 @@ from saving import Saving
 import sys
 import traceback
 from pdf_exporter import SchedulePDFExporter
+
+import myThreading
 
 #for errors showing
 def custom_excepthook(exc_type, exc_value, exc_traceback):
@@ -65,7 +68,7 @@ class MainWindow(QObject):
 
         self.saving = Saving(self.workers_list, self.place_list, "MojeDane")
         
-        # Ładujemy dane bezpośrednio modyfikując zmienne
+        
         self.saving.reading()
         
         #rules typoe dictionary
@@ -77,8 +80,11 @@ class MainWindow(QObject):
             "Place Specific Rule": self.create_empty_ui
         }
 
+        
+
         #current pash
         base_path = os.path.dirname(__file__)
+
         # adding folder with GUI
         ui_path = os.path.join(base_path, "GUI", "main_window.ui")
 
@@ -89,13 +95,19 @@ class MainWindow(QObject):
         if not ui_file.open(QFile.ReadOnly):
             print(f"File not found {ui_path}")
             sys.exit(-1)
+
         #when we don't pass self argument our window won't have parent -which is good
         self.ui = loader.load(ui_file)
         ui_file.close()
 
+        self.ui.setWindowTitle("Scheduler")
 
         #our own method for closing window
         self.ui.closeEvent = self.closeEvent
+
+        #flagi czy dany grafik jest utworzony
+        self.workplace_requirements_done = False
+        self.worker_availability_done = False
        
 
         #activating button
@@ -110,7 +122,10 @@ class MainWindow(QObject):
 
         self.ui.worker_schedule.clicked.connect(self.worker_schedule)
 
-       
+        self.btn_save_schedule = self.ui.findChild(QPushButton, "save_schedule")
+
+        # Podpięcie zdarzenia kliknięcia:
+        self.btn_save_schedule.clicked.connect(self.handle_save_all_schedules)
 
         self.ui.worker_availability.clicked.connect(self.open_schedule_view)
 
@@ -130,8 +145,8 @@ class MainWindow(QObject):
             plan_year = today.year + 1
             plan_month = 0
         else:
-            # Jeśli jest np. maj (5), chcemy planować kolejny miesiąc, czyli czerwiec.
-            # Czerwiec w formacie 0-11 to indeks 5! 
+            # planujemy na nastepny miesiac(wartosci 0 - 11)
+    
             self.main_month_combo.setCurrentIndex(today.month)
             plan_month = today.month
             self.main_year_edit.setText(str(today.year))
@@ -153,13 +168,13 @@ class MainWindow(QObject):
             return  
 
         selected_year = int(year_str)
-        # ZMIANA: Zostawiamy czysty indeks 0-11
+
         selected_month = self.main_month_combo.currentIndex() 
 
         self.scheduler.updateDate(selected_month, selected_year)
 
     def closeEvent(self, event: QCloseEvent):
-        # POPRAWIONO: Bezpieczny i jedyny zapis przed wyjściem
+      
         try:
             self.saving.saving()
             print("[SAVER SUCCESS] Dane i nowe reguły zostały zapisane.")
@@ -168,53 +183,158 @@ class MainWindow(QObject):
             
         event.accept()
 
+    def _execute_workplace_requirements_logic(self):
+        """Wykonuje logikę kroku 1 w tle, bez otwierania okna UI."""
+        print("[LOGIKA] Przetwarzanie wymagań miejsc pracy w tle...")
+        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'place',self.main_month_combo.currentIndex(), self.ui)
+        self.workplace_requirements_done = True
+
+
+
     def view_workplace_aval(self):
+
+        self.workplace_requirements_done = True
         self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'place',self.main_month_combo.currentIndex(), self.ui)
   
         self.ui.hide()
 
         self.schedule_window.ui.show()
 
-    # Przykład uruchomienia eksportu wewnątrz Twojego kontrolera / managera aplikacji:
+ 
 
     def generate_pdf_report(self):
-        # 1. Inicjalizacja eksportera dla danego miesiąca i roku
+    
         exporter = SchedulePDFExporter(month=self.scheduler.month, year=self.scheduler.year)
         
-        # 2. Eksport indywidualnych plików dla każdego pracownika
+        #Dla kazdego pracownika
         print("[PDF] Generowanie indywidualnych grafików...")
         for worker in self.scheduler.workers:
-            # Tworzy plik np. "grafik_Jan_Kowalski.pdf"
+           
             filename = f"grafik_{worker.name}_{worker.surname}.pdf"
             exporter.export_individual_pdf(worker, filename)
             
-        # 3. Eksport zbiorczego dokumentu dla kierownika basenu
-        print("[PDF] Generowanie grafiku zbiorczego dla kierownika...")
-        exporter.export_manager_collective_pdf(
-            workers=self.scheduler.workers, 
-            output_path="grafik_zbiorczy_kierownik.pdf"
-        )
+        # grafik na basen
+        print("[PDF] Generowanie grafiku zbiorczego dla kierownikow...")
+        for place in self.scheduler.places:
+            pdf_name = "grafik_zbiorczy_" + place.name+ ".pdf"
+            exporter.export_manager_collective_pdf(
+                place = place,
+                workers=self.scheduler.workers, 
+                output_path=pdf_name
+            )
         print("[PDF] Wszystkie pliki PDF zostały pomyślnie wygenerowane!")
 
         
-
+    #generowanie grafiku w watku
     def create_schedule(self):
-      
-         # Resetujemy flagę gotowości przed nowym generowaniem
-            self.scheduler.ready = 0
-            
-            # Uruchamiamy algorytm dla wybranego miesiąca
-            result = self.scheduler.createPlan()
 
-            QApplication.processEvents()
+        if not self.workplace_requirements_done:
+            print("[AUTO-CREATE] Brak Kroku 1. Uruchamianie Workplace requirements...")
+            self._execute_workplace_requirements_logic()
             
-            if result == -1:
-                #self.ui.info_label.setText("Failed to create schedule (Check availability).")
-                QMessageBox.information(None, "Failed to create schedule", "Check availability).")
-            else:
-                #self.ui.info_label.setText(f"Schedule created for {months[selected_month-1]} {selected_year}")
-                QMessageBox.information(None, "Success", f"Schedule created")
-                #self.generate_pdf_report()
+            
+        # 2. Jeśli nie zrobiono dostępności pracowników, uruchom krok 2
+        if not self.worker_availability_done:
+            print("[AUTO-CREATE] Brak Kroku 2. Uruchamianie Worker availability...")
+            self._execute_worker_availability_logic()
+            
+           
+        self.scheduler.ready = 0
+        
+        # okno ladowania
+        self.loading_dialog = myThreading.LoadingDialog(self.ui)
+        
+        # generator grafiku
+        self.scheduling_thread = myThreading.SchedulingWorker(self.scheduler)
+        
+        self.scheduling_thread.finished_signal.connect(self.handle_schedule_finished)
+        
+        self.scheduling_thread.start()
+        self.loading_dialog.show() 
+
+    def handle_save_all_schedules(self):
+        """Obsługuje wybór folderu i zapisuje wszystkie PDF-y do nowego podfolderu."""
+        
+        if not hasattr(self, 'scheduler') or self.scheduler.ready == 0:
+            QMessageBox.warning(self.ui, "Brak grafiku", "Grafik nie został jeszcze wygenerowany! Wygeneruj grafik przed zapisem.")
+            return
+
+        base_dir = QFileDialog.getExistingDirectory(
+            self.ui, 
+            "Wybierz miejsce docelowe do zapisu grafików",
+            os.path.expanduser("~")
+        )
+        
+        if not base_dir:
+            return # uzytkownik anulowal okno
+
+        try:
+           
+            current_month_idx = self.main_month_combo.currentIndex()
+            current_year = int(self.main_year_edit.text().strip())
+            
+            month_num = current_month_idx + 1
+            timestamp = datetime.now().strftime("%H%M%S")
+            folder_name = f"Grafiki_{current_year}_{month_num:02d}_{timestamp}"
+            
+            target_folder_path = os.path.join(base_dir, folder_name)
+            os.makedirs(target_folder_path, exist_ok=True)
+
+            # eksporter pdf
+            exporter = SchedulePDFExporter(current_month_idx, current_year)
+
+            # indywidualni
+            personal_folder = os.path.join(target_folder_path, "Grafiki_Indywidualne")
+            os.makedirs(personal_folder, exist_ok=True)
+            
+            for worker in self.scheduler.workers:
+                safe_name = f"{worker.surname}_{worker.name}".replace(" ", "_")
+                file_path = os.path.join(personal_folder, f"Grafik_{safe_name}.pdf")
+                exporter.export_individual_pdf(worker, file_path)
+
+            #zbiorowy
+            pools_folder = os.path.join(target_folder_path, "Grafiki_Zbiorcze_Baseny")
+            os.makedirs(pools_folder, exist_ok=True)
+            
+            if hasattr(self, 'place_list') and self.place_list:
+                for place in self.place_list:
+                    p_name = place.name if hasattr(place, 'name') else str(place)
+                    safe_place_name = p_name.replace(" ", "_")
+                    file_path = os.path.join(pools_folder, f"Grafik_Zbiorczy_{safe_place_name}.pdf")
+                    
+                    exporter.export_manager_collective_pdf(place, self.scheduler.workers, file_path)
+
+            QMessageBox.information(
+                self.ui, 
+                "Sukces", 
+                f"Wszystkie grafiki zostały pomyślnie zapisane w folderze:\n{target_folder_path}"
+            )
+
+        except Exception as e:
+            QMessageBox.critical(
+                self.ui, 
+                "Błąd krytyczny", 
+                f"Wystąpił błąd podczas zapisywania plików:\n{str(e)}"
+            )
+
+    
+    def handle_schedule_finished(self, result):
+      
+
+        if hasattr(self, 'loading_dialog') and self.loading_dialog:
+            self.loading_dialog.close()
+            self.loading_dialog.deleteLater()
+            
+        if hasattr(self, 'scheduling_thread') and self.scheduling_thread:
+            self.scheduling_thread.quit()
+            self.scheduling_thread.wait()
+            self.scheduling_thread.deleteLater()
+
+        if result == -1:
+            QMessageBox.information(None, "Failed to create schedule", "Check availability.")
+        else:
+            QMessageBox.information(None, "Success", "Schedule created")
+           
 
     def worker_schedule(self):
 
@@ -222,12 +342,8 @@ class MainWindow(QObject):
             QMessageBox.information(None, "Not available", "Schedule hasn't been created yet")
         else:
 
-            #self.schedule_window = ScheduleWindow(self.workers_list, self.place_list, self.scheduler, 'worker',  self.scheduler.createdScheduleMonth(), self.ui)
             self.schedule_window = ScheduleWindow(self.workers_list, self.place_list, self.scheduler, 'worker', self.scheduler.month, self.ui)
-
-    
             self.ui.hide()
-
             self.schedule_window.ui.show()
 
     def add_worker(self):
@@ -252,9 +368,6 @@ class MainWindow(QObject):
 
         self.dialog.etat_line.setValidator(validator2)
 
-
-        # 4. Wyświetlenie jako okno modalne
-        # .exec() zatrzymuje kod w tym miejscu, aż zamkniesz okno
         wynik = self.dialog.exec() 
 
         if wynik == 1: # Jeśli użytkownik kliknął OK (standard w QDialog)
@@ -265,10 +378,37 @@ class MainWindow(QObject):
            worker = Worker(name, surname, pesel)
 
            self.workers_list.append(worker)
-          
+
+
+    def _execute_worker_availability_logic(self):
+        """Wykonuje logikę kroku 2 w tle, bez otwierania okna UI."""
+        print("[LOGIKA] Przetwarzanie dostępności pracowników v tle...")
+        # Zabezpieczamy wykonanie kroku 1 w tle, jeśli nie był zrobiony
+        if not self.workplace_requirements_done:
+            self._execute_workplace_requirements_logic()
+            
+        # Aktualizacja daty lub załadowanie preferencji do schedulera w tle:
+        current_month_idx = self.main_month_combo.currentIndex()
+        current_year = int(self.main_year_edit.text().strip())
+        self.scheduler.updateDate(current_month_idx, current_year)
+
+        self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'request_worker', self.main_month_combo.currentIndex(), self.ui)
+
+        
+        self.worker_availability_done = True      
 
     #opens requested shedule for worker
     def open_schedule_view(self):
+
+        if not self.workplace_requirements_done:
+            print("[AUTO] Uruchamianie automatycznego przygotowania wymagań miejsc pracy...")
+            self._execute_workplace_requirements_logic()
+            # Ponieważ view_workplace_aval ukrywa okno i otwiera nowe, przerywamy wykonywanie,
+            # aby nie otworzyć dwóch okien na raz.
+            
+
+        # Oznaczenie, że dostępność pracowników została otwarta
+        self.worker_availability_done = True
 
         #create new window and class
         self.schedule_window = ScheduleWindow(self.workers_list, self.place_list,self.scheduler,'request_worker', self.main_month_combo.currentIndex(), self.ui)
@@ -491,7 +631,6 @@ class MainWindow(QObject):
             self.rules_dialog.rules_list.setItem(i, 0, QTableWidgetItem(wyswietlany_tekst))
             self.rules_dialog.rules_list.setItem(i, 1, QTableWidgetItem(typ))
             
-        # Opcjonalnie: Rozszerzenie kolumn, żeby ładnie wyglądały
         self.rules_dialog.rules_list.horizontalHeader().setStretchLastSection(True)
 
 
@@ -537,14 +676,8 @@ class MainWindow(QObject):
 
         # ZAPIS I GENEROWANIE ID
         if new_rule:
-            # Korzystamy z faktu, że klasa reguły ma dostęp do klasy bazowej Rule i jej idBase przez __js__ / MRO
-            # Dobieramy się do klasy Rule bezpośrednio przez hierarchię klas nowej reguły,
-            # unikając jakichkolwiek lokalnych importów ukrywających moduł globalny.
-            base_rule_class = new_rule.__class__.__base__.__base__ # Rule -> AvalRule/RightRule -> rule_type
-            
-            # Bezpieczny fallback na wypadek głębszego dziedziczenia:
+            base_rule_class = new_rule.__class__.__base__.__base__
             if not hasattr(base_rule_class, 'idBase'):
-                # Jeśli powyższe spudłuje, używamy wprost globalnego modułu rules zaimportowanego na górze pliku main.py
                 new_rule.id = rules.Rule.idBase
                 rules.Rule.idBase += 1
             else:
@@ -592,29 +725,24 @@ class MainWindow(QObject):
         self.shift_dialog.begin_datetime.setDateTime(current_begin)
         self.shift_dialog.end_datetime.setDateTime(current_begin) # End też startuje z dzisiejszą datą
 
-        # 2. Automatyczna zmiana daty w end_time przy zmianie w begin_time
-        # Używamy sygnału dateTimeChanged
         self.shift_dialog.begin_datetime.dateTimeChanged.connect(self.sync_shift_dates)
 
         # show window
         wynik = self.shift_dialog.exec() 
 
         if wynik == 1: # ok button is clicked
-            # 1. Pobieramy obiekty QDateTime z widgetów
+           
             begin_qt = self.shift_dialog.begin_datetime.dateTime() 
             end_qt = self.shift_dialog.end_datetime.dateTime()
             
-            # 2. Konwertujemy na natywny datetime Pythona
+            # Konwertujemy na natywny datetime Pythona
             begin_dt = begin_qt.toPython() 
             end_dt = end_qt.toPython()
             
-            # 3. Pobieramy wybraną z menu nazwę miejsca (tekst)
             place_name = self.shift_dialog.selected_place.currentText()
             
-            # 👇 POPRAWIONO: Szukamy prawdziwego obiektu Place w naszej liście miejsc!
             actual_place_object = next((p for p in self.place_list if p.name == place_name), None)
             
-            # Zabezpieczenie: jeśli z jakiegoś powodu nie znaleziono obiektu, tworzymy tymczasowy
             if actual_place_object is None:
                 print(f"[SYSTEM WARNING] Nie znaleziono obiektu Place dla nazwy: {place_name}. Tworzę zastępczy.")
                 actual_place_object = Place(place_name, "")
@@ -660,7 +788,7 @@ class MainWindow(QObject):
         page = QWidget()
         layout = QVBoxLayout()
         
-        # 1. Pole do wpisywania interwału
+        # Pole do wpisywania interwału
         form_layout = QFormLayout()
         spin_box = QSpinBox()
         spin_box.setMinimum(1)
@@ -668,7 +796,7 @@ class MainWindow(QObject):
         form_layout.addRow("Interval (days):", spin_box)
         layout.addLayout(form_layout)
 
-        # 2. Przycisk i etykieta dla zmiany (Shift)
+        # Przycisk i etykieta dla zmiany (Shift)
         shift_layout = QHBoxLayout()
         btn_set_shift = QPushButton("Set Begin Shift")
         lbl_shift_info = QLabel("No shift selected")

@@ -85,7 +85,7 @@ class GAConverter:
                 shift.worker = None
 
 
-    # Dodaj do klasy GAConverter w ga_converter.py:
+    
     def repair_solution(self, vector: np.ndarray, gene_space: list) -> np.ndarray:
         """
         Przechodzi przez wektor i jeśli wykryje nakładanie zmian u pracownika,
@@ -97,7 +97,7 @@ class GAConverter:
         for worker in self.workers:
             sorted_sched = sorted(worker.schedule, key=lambda x: x.begin)
             for i in range(1, len(sorted_sched)):
-                # Wykryto overlap lub brak 11h odpoczynku
+                # Wykryto overlap lub brak wymaganego odpoczynku
                 if sorted_sched[i].begin < sorted_sched[i-1].end or (sorted_sched[i].begin - sorted_sched[i-1].end < worker.getBetweenShiftTime()):
                     conflict_shift = sorted_sched[i]
                     # Znajdź indeks tego slotu w ordered_slots

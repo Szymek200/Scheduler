@@ -26,24 +26,24 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QGridLayout" name="main_menu_layout">
-         <item row="2" column="0">
-          <widget class="QPushButton" name="view_worker">
+         <item row="2" column="1">
+          <widget class="QPushButton" name="view_workplace">
            <property name="text">
-            <string>View workers</string>
+            <string>View workplace</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QPushButton" name="create_schedule">
+         <item row="3" column="0">
+          <widget class="QPushButton" name="worker_availability">
            <property name="text">
-            <string>Create schedule</string>
+            <string>Worker avability</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="add_workplace">
+         <item row="3" column="1">
+          <widget class="QPushButton" name="workplace_availability">
            <property name="text">
-            <string>Add workplace</string>
+            <string>Workplace requirements</string>
            </property>
           </widget>
          </item>
@@ -111,24 +111,17 @@
            </item>
           </widget>
          </item>
-         <item row="4" column="1">
-          <widget class="QPushButton" name="worker_schedule">
+         <item row="1" column="1">
+          <widget class="QPushButton" name="add_workplace">
            <property name="text">
-            <string>Worker schedule</string>
+            <string>Add workplace</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
-          <widget class="QPushButton" name="workplace_availability">
+         <item row="4" column="0">
+          <widget class="QPushButton" name="create_schedule">
            <property name="text">
-            <string>Workplace requirements</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QPushButton" name="view_workplace">
-           <property name="text">
-            <string>View workplace</string>
+            <string>Create schedule</string>
            </property>
           </widget>
          </item>
@@ -136,13 +129,6 @@
           <widget class="QPushButton" name="add_worker">
            <property name="text">
             <string>Add worker</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QPushButton" name="worker_availability">
-           <property name="text">
-            <string>Worker avability</string>
            </property>
           </widget>
          </item>
@@ -156,6 +142,27 @@
            </property>
            <property name="maxLength">
             <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QPushButton" name="worker_schedule">
+           <property name="text">
+            <string>Worker schedule</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="view_worker">
+           <property name="text">
+            <string>View workers</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QPushButton" name="save_schedule">
+           <property name="text">
+            <string>Save schedule</string>
            </property>
           </widget>
          </item>

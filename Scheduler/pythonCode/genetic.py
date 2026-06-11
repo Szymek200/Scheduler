@@ -25,7 +25,7 @@ class GeneticScheduler(BaseScheduler):
         penalty: float = 0.0
         
         for worker in self.workers:
-            # --- 1. DETEKCJA OVERLAPU I BRAKU ODPOCZYNKU ---
+            # DETEKCJA OVERLAPU I BRAKU ODPOCZYNKU ---
             sorted_sched = sorted(worker.schedule, key=lambda x: x.begin)
             for i in range(1, len(sorted_sched)):
                 # Zmiany nachodzą na siebie
@@ -36,7 +36,7 @@ class GeneticScheduler(BaseScheduler):
                 elif sorted_sched[i].begin - sorted_sched[i-1].end < timedelta(hours=11):
                     penalty += 150000.0  # Bardzo wysoka kara za brak przerwy między zmianami
 
-            # --- 2. POZOSTAŁE REGUŁY (Etat, Weekendy) ---
+            # pozostale reguly
             for rule in worker.rules:
                 if isinstance(rule, RightRule):
                     penalty += rule.completion(worker)
@@ -56,8 +56,7 @@ class GeneticScheduler(BaseScheduler):
         invalid_slots_penalty = self.converter.get_invalid_slots_count() * 10000.0
         rules_penalty = self.hard_rules()
         
-        # Jeśli występuje jakikolwiek konflikt nakładania zmian (kara > 150k),
-        # zwracamy ekstremalnie niski fitness, eliminując osobnika z ewolucji.
+        
         if rules_penalty >= 150000.0:
             return 1.0 / (rules_penalty * 100.0) # Bardzo, bardzo blisko 0
             
@@ -72,7 +71,6 @@ class GeneticScheduler(BaseScheduler):
                     if key in w_cache:
                         bonus += 100.0
         
-        # Dla poprawnych czasowo harmonogramów minimalizujemy nieobsadzone etaty i zbieramy bonusy
         score = total_penalty - bonus
         if score < 0:
             score = 0.0
@@ -94,27 +92,27 @@ class GeneticScheduler(BaseScheduler):
         num_genes: int = len(self.converter.ordered_slots)
         self.created_month = self.month
 
-        # --- ZOPTYMALIZOWANA KONFIGURACJA PYGAD ---
+       
         ga_instance = pygad.GA(
-            num_generations=400,                 # Więcej pokoleń dla dokładniejszego przeszukania
-            sol_per_pop=100,                     # Większa różnorodność genetyczna w populacji
-            num_parents_mating=30,               # Większa liczba rodziców dopuszczonych do krzyżowania
+            num_generations=400,                 # liczba pokolen
+            sol_per_pop=100,                     # roznorodnosc genetyczna w populacji
+            num_parents_mating=30,               # ilosc rodzicow do krzyzowania
             fitness_func=self.fitness_func,
             num_genes=num_genes,
             gene_space=custom_gene_space,
             on_generation=self.on_generation,
             
-            # Zmiana selekcji na turniejową (Tournament Selection) - drastycznie podnosi presję selekcyjną
+            # selekcja turniejowa
             parent_selection_type="tournament",
-            K_tournament=4,                      # Rozmiar turnieju
+            K_tournament=4,                      # rozmiar turnieju
             
-            # Zaawansowane dwupunktowe krzyżowanie (Two Points Crossover) - lepiej miesza bloki zmian
+            # Zaawansowane dwupunktowe krzyżowanie 
             crossover_type="two_points",
             
-            # Adaptacyjna mutacja losowa o obniżonym procencie genów, by nie niszczyć dobrych układów
+           
             mutation_percent_genes=5,            
             mutation_type="random",       
-            keep_elitism=5                       # Zachowujemy 5 absolutnie najlepszych osobników
+            keep_elitism=5                       # zachowujemy 5 najlepszych osobnikow
         )
         
         print(f"[GA] Start zoptymalizowanej ewolucji (Slotow: {num_genes})...")
